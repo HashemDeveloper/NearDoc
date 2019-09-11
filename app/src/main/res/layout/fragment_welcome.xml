@@ -6,21 +6,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".view.fragments.Welcome">
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Welcome login"
-            android:textSize="30sp" />
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/welcome_page_create_account_bt_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Create Account"
-            android:layout_below="@+id/text"
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/fragment_welcome_splash_image_view_id"
+            android:layout_width="@dimen/splash_image_dimen"
+            android:layout_height="@dimen/splash_image_dimen"
+            android:src="@drawable/heart"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp"
             />
     </RelativeLayout>
 </layout>
