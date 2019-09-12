@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
@@ -6,6 +6,18 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-    </style>
 
+        <item name="android:colorControlNormal" tools:ignore="NewApi">@android:color/white</item>
+        <item name="android:colorControlActivated" tools:ignore="NewApi">@android:color/white</item>
+        <item name="android:colorControlHighlight" tools:ignore="NewApi">@android:color/white</item>
+        <item name="android:navigationBarColor" tools:ignore="NewApi">@android:color/white</item>
+        <item name="android:windowDisablePreview">true</item>
+    </style>
+    <style name="TextAppearance.App.TextInputLayout" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+    <style name="InputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.Dense">
+        <item name="boxStrokeColor">#fff</item>
+        <item name="boxStrokeWidth">2dp</item>
+    </style>
 </resources>
