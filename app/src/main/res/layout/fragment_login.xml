@@ -87,5 +87,23 @@
                 android:textColorHint="@android:color/white"
                 />
         </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/fragment_login_bt_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fragment_login_enter_password_input_layout_id"
+            style="@style/Widget.MaterialComponents.Button"
+            app:cornerRadius="8dp"
+            app:backgroundTint="@android:color/white"
+            android:text="@string/log_in"
+            android:textStyle="bold"
+            android:textColor="@color/blue_gray_700"
+            android:fontFamily="@font/chonburi"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginEnd="12dp"
+            />
     </RelativeLayout>
 </RelativeLayout>
