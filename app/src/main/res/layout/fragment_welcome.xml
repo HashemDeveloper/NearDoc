@@ -5,7 +5,9 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.fragments.Welcome">
+        android:background="@drawable/dr_background"
+        tools:context=".view.fragments.Welcome"
+        >
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/fragment_welcome_splash_image_view_id"
             android:layout_width="@dimen/splash_image_dimen"
@@ -13,6 +15,7 @@
             android:src="@drawable/heart"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="50dp"
+            android:tint="@android:color/white"
             />
     </RelativeLayout>
 </layout>

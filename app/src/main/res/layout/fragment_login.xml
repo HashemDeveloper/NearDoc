@@ -3,14 +3,107 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.fragments.Login">
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/dr_background"
+    tools:context=".view.fragments.Login"
+    >
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/fragment_login_splash_view_id"
         android:layout_width="@dimen/splash_image_dimen"
         android:layout_height="@dimen/splash_image_dimen"
         android:src="@drawable/heart"
-       android:layout_centerHorizontal="true"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
+        android:tint="@android:color/white"
         />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/fragment_login_logo_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fragment_login_splash_view_id"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/chonburi"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:text="@string/app_name"
+        android:textSize="24sp" />
+    <RelativeLayout
+        android:id="@+id/fragment_login_container_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_centerInParent="true"
+        >
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/fragment_login_enter_username_input_layout_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/username"
+            app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
+            android:textColorHint="@android:color/white"
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/fragment_login_enter_username_edit_text_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_user_black_24dp"
+                android:drawableStart="@drawable/ic_user_black_24dp"
+                android:drawablePadding="8dp"
+                android:textColorHint="@android:color/white"
+                android:textColor="@android:color/white"
+                android:inputType="text"
+                android:maxLines="1"
+                android:imeOptions="actionNext"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/fragment_login_enter_password_input_layout_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fragment_login_enter_username_input_layout_id"
+            android:hint="@string/password"
+            app:passwordToggleEnabled="true"
+            app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
+            android:textColorHint="@android:color/white"
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/fragment_login_enter_password_edit_text_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:drawableLeft="@drawable/ic_password_black_24dp"
+                android:drawableStart="@drawable/ic_password_black_24dp"
+                android:drawablePadding="8dp"
+                android:maxLines="1"
+                android:imeOptions="actionDone"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/fragment_login_bt_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fragment_login_enter_password_input_layout_id"
+            style="@style/Widget.MaterialComponents.Button"
+            app:cornerRadius="8dp"
+            app:backgroundTint="@android:color/white"
+            android:text="@string/log_in"
+            android:textStyle="bold"
+            android:textColor="@color/blue_gray_700"
+            android:fontFamily="@font/chonburi"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginEnd="12dp"
+            />
+    </RelativeLayout>
 </RelativeLayout>
