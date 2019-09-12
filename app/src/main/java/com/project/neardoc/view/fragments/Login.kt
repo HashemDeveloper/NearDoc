@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import androidx.activity.OnBackPressedCallback
 
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
@@ -36,4 +37,5 @@ class Login : Fragment(), Injectable, CoroutineScope {
         fragment_login_logo_text_view.startAnimation(animation)
         fragment_login_container_id.startAnimation(animation)
     }
+
 }

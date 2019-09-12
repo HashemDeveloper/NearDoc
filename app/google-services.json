@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "643367425032",
+    "firebase_url": "https://neardoc-af101.firebaseio.com",
+    "project_id": "neardoc-af101",
+    "storage_bucket": "neardoc-af101.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:643367425032:android:c3f906f0df0ea00edfedbd",
+        "android_client_info": {
+          "package_name": "com.project.neardoc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "643367425032-n5gifjddrv5vcospfg6ugadv6lmr54uk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.project.neardoc",
+            "certificate_hash": "094a6b158fc1797717d10319a2395ad87bf7e10c"
+          }
+        },
+        {
+          "client_id": "643367425032-0cqnoukq925urmbh3ccc0kogqs78qj80.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJSgs0FP5JdsIO_cFkHccvQDBMsN138kA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "643367425032-0cqnoukq925urmbh3ccc0kogqs78qj80.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
