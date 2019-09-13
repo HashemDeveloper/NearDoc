@@ -41,15 +41,25 @@ class Login : Fragment(), Injectable, CoroutineScope {
         fragment_login_logo_text_view.startAnimation(animation)
         fragment_login_container_id.startAnimation(animation)
         fragment_login_create_new_account_bt_id.startAnimation(animation)
-        fragment_login_create_new_account_bt_id.setOnClickListener{
-            val navigateToRegistrationPage = LoginDirections.actionRegistration()
-            Navigation.findNavController(it).navigate(navigateToRegistrationPage)
-        }
-       requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+        performNavigateActions()
+        onBackPressed()
+    }
+    private fun onBackPressed() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 requireActivity().finish()
             }
         })
+    }
+    private fun performNavigateActions() {
+        fragment_login_forgot_pass_bt_id.setOnClickListener{
+            val navigateToForgoPasswordPage = LoginDirections.actionForgotPassword()
+            Navigation.findNavController(it).navigate(navigateToForgoPasswordPage)
+        }
+        fragment_login_create_new_account_bt_id.setOnClickListener{
+            val navigateToRegistrationPage = LoginDirections.actionRegistration()
+            Navigation.findNavController(it).navigate(navigateToRegistrationPage)
+        }
     }
 
     override fun onDestroyView() {

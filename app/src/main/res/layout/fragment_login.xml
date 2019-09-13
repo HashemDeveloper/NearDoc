@@ -89,12 +89,22 @@
                 android:textColorHint="@android:color/white"
                 />
         </com.google.android.material.textfield.TextInputLayout>
-
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/fragment_login_forgot_pass_bt_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fragment_login_enter_password_input_layout_id"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:text="@string/forgot_password"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/fragment_login_bt_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/fragment_login_enter_password_input_layout_id"
+            android:layout_below="@+id/fragment_login_forgot_pass_bt_id"
             style="@style/Widget.MaterialComponents.Button"
             app:cornerRadius="4dp"
             app:backgroundTint="@android:color/white"
