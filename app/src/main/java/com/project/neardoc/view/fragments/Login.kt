@@ -1,6 +1,7 @@
 package com.project.neardoc.view.fragments
 
 
+import android.content.ComponentCallbacks
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,6 +10,8 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
+import androidx.navigation.Navigation
 
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
@@ -18,6 +21,7 @@ import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 class Login : Fragment(), Injectable, CoroutineScope {
+
     private val job = Job()
 
     override val coroutineContext: CoroutineContext
@@ -36,6 +40,19 @@ class Login : Fragment(), Injectable, CoroutineScope {
         val animation: Animation = AnimationUtils.loadAnimation(context, android.R.anim.fade_in)
         fragment_login_logo_text_view.startAnimation(animation)
         fragment_login_container_id.startAnimation(animation)
+        fragment_login_create_new_account_bt_id.startAnimation(animation)
+        fragment_login_create_new_account_bt_id.setOnClickListener{
+            val navigateToRegistrationPage = LoginDirections.actionRegistration()
+            Navigation.findNavController(it).navigate(navigateToRegistrationPage)
+        }
+       requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                requireActivity().finish()
+            }
+        })
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+    }
 }
