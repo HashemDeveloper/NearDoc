@@ -8,6 +8,8 @@ apply plugin: 'kotlin-kapt'
 
 apply plugin: 'androidx.navigation.safeargs'
 
+apply plugin: 'com.google.gms.google-services'
+
 android {
     compileSdkVersion 29
     defaultConfig {
@@ -15,6 +17,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
+        multiDexEnabled true
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -24,7 +27,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
     dataBinding.enabled = true
 
     compileOptions {
@@ -37,7 +42,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.0.2'
+    implementation 'androidx.core:core-ktx:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -98,4 +103,16 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     testImplementation "androidx.arch.core:core-testing:$lifecycle_version"
+
+    // google login
+    implementation "com.google.android.gms:play-services-auth:$googlePlayServiceAuth"
+    implementation "com.shobhitpuri.custombuttons:google-signin:$customGoogleBt"
+    //firebase
+    implementation "com.google.firebase:firebase-analytics:$firebase_google_analytics"
+    implementation "com.google.firebase:firebase-core:$firebaseCore"
+    implementation "com.google.firebase:firebase-auth:$firebaseAuth"
+    implementation "com.google.firebase:firebase-storage:$firebaseUtils"
+    implementation "com.google.firebase:firebase-database:$firebaseAuth"
+    implementation "com.google.firebase:firebase-messaging:$firebaseMessaging"
+    implementation "com.google.firebase:firebase-dynamic-links:$firebaseAuth"
 }

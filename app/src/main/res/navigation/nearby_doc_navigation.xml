@@ -35,5 +35,17 @@
         <action
             android:id="@+id/actionRegistration"
             app:destination="@id/registration" />
+        <action
+            android:id="@+id/actionForgotPassword"
+            app:destination="@id/forgotPassword" />
+    </fragment>
+    <fragment
+        android:id="@+id/forgotPassword"
+        android:name="com.project.neardoc.view.fragments.ForgotPassword"
+        android:label="fragment_forgot_password"
+        tools:layout="@layout/fragment_forgot_password" >
+        <action
+            android:id="@+id/actionLoginPage"
+            app:destination="@id/login" />
     </fragment>
 </navigation>

@@ -10,6 +10,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.google.gms:google-services:4.3.2'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         def nav_version = "2.1.0"
@@ -44,6 +45,14 @@ ext {
     nav_version = "2.1.0"
     prefernce_version = "1.1.0"
     kotlin_coroutines_version = "1.2.0-alpha"
+    firebase_google_analytics = "17.2.0"
+    googlePlayServiceAuth = "17.0.0"
+    customGoogleBt = "1.0.0"
+    firebaseCore = "17.2.0"
+    firebaseUtils = "19.0.1"
+    firebaseMessaging = "20.0.0"
+    firebaseAuth = "19.0.0"
+
 }
 task clean(type: Delete) {
     delete rootProject.buildDir

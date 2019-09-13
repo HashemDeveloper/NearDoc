@@ -6,4 +6,7 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="log_in">LOG IN</string>
+    <string name="or">Or</string>
+    <string name="create_account"><u>Create Account</u></string>
+    <string name="forgot_password">Forgot password?</string>
 </resources>

@@ -28,6 +28,7 @@
         android:textColor="@android:color/white"
         android:text="@string/app_name"
         android:textSize="24sp" />
+
     <RelativeLayout
         android:id="@+id/fragment_login_container_id"
         android:layout_width="match_parent"
@@ -38,8 +39,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:layout_centerInParent="true"
+        android:layout_below="@+id/fragment_login_logo_text_view"
         >
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/fragment_login_enter_username_input_layout_id"
@@ -87,13 +89,24 @@
                 android:textColorHint="@android:color/white"
                 />
         </com.google.android.material.textfield.TextInputLayout>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/fragment_login_forgot_pass_bt_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fragment_login_enter_password_input_layout_id"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:text="@string/forgot_password"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/fragment_login_bt_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/fragment_login_enter_password_input_layout_id"
+            android:layout_below="@+id/fragment_login_forgot_pass_bt_id"
             style="@style/Widget.MaterialComponents.Button"
-            app:cornerRadius="8dp"
+            app:cornerRadius="4dp"
             app:backgroundTint="@android:color/white"
             android:text="@string/log_in"
             android:textStyle="bold"
@@ -104,6 +117,68 @@
             android:layout_marginStart="12dp"
             android:layout_marginRight="12dp"
             android:layout_marginEnd="12dp"
+            app:rippleColor="@color/blue_gray_400"
+            />
+
+        <RelativeLayout
+            android:id="@+id/fragment_login_divider_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_below="@+id/fragment_login_bt_id"
+            >
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="2dp"
+                android:layout_centerVertical="true"
+                android:background="@android:color/white"
+                android:layout_marginRight="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_toStartOf="@+id/sign_in_layout_option_or_text_view_id"
+                android:layout_toLeftOf="@+id/sign_in_layout_option_or_text_view_id" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/sign_in_layout_option_or_text_view_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:text="@string/or"
+                android:textColor="@android:color/white"
+                android:textSize="24sp"
+                android:fontFamily="@font/baloo_bhai"
+                />
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="2dp"
+                android:background="@android:color/white"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/sign_in_layout_option_or_text_view_id"
+                android:layout_toRightOf="@+id/sign_in_layout_option_or_text_view_id"
+                />
+        </RelativeLayout>
+        <com.shobhitpuri.custombuttons.GoogleSignInButton
+            android:id="@+id/fragment_login_google_loggin_bt_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fragment_login_divider_id"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:fontFamily="@font/baloo_bhai"
+            app:isDarkTheme="true"
             />
     </RelativeLayout>
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/fragment_login_create_new_account_bt_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/create_account"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:layout_marginBottom="10dp"
+        />
 </RelativeLayout>
