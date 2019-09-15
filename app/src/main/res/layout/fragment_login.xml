@@ -1,184 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/dr_background"
     tools:context=".view.fragments.Login"
     >
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/fragment_login_splash_view_id"
-        android:layout_width="@dimen/splash_image_dimen"
-        android:layout_height="@dimen/splash_image_dimen"
-        android:src="@drawable/heart"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-        android:tint="@android:color/white"
-        />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/fragment_login_logo_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/fragment_login_splash_view_id"
-        android:layout_centerHorizontal="true"
-        android:fontFamily="@font/chonburi"
-        android:textStyle="bold"
-        android:textColor="@android:color/white"
-        android:text="@string/app_name"
-        android:textSize="24sp" />
-
     <RelativeLayout
-        android:id="@+id/fragment_login_container_id"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="24dp"
-        android:layout_centerInParent="true"
-        android:layout_below="@+id/fragment_login_logo_text_view"
+        android:layout_height="match_parent"
+        android:background="@drawable/dr_background"
         >
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/fragment_login_enter_username_input_layout_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/username"
-            app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
-            android:textColorHint="@android:color/white"
-            >
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/fragment_login_enter_username_edit_text_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_user_black_24dp"
-                android:drawableStart="@drawable/ic_user_black_24dp"
-                android:drawablePadding="8dp"
-                android:textColorHint="@android:color/white"
-                android:textColor="@android:color/white"
-                android:inputType="text"
-                android:maxLines="1"
-                android:imeOptions="actionNext"
-                />
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/fragment_login_enter_password_input_layout_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/fragment_login_enter_username_input_layout_id"
-            android:hint="@string/password"
-            app:passwordToggleEnabled="true"
-            app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
-            android:textColorHint="@android:color/white"
-            >
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/fragment_login_enter_password_edit_text_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:drawableLeft="@drawable/ic_password_black_24dp"
-                android:drawableStart="@drawable/ic_password_black_24dp"
-                android:drawablePadding="8dp"
-                android:maxLines="1"
-                android:imeOptions="actionDone"
-                android:textColor="@android:color/white"
-                android:textColorHint="@android:color/white"
-                />
-        </com.google.android.material.textfield.TextInputLayout>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/fragment_login_splash_view_id"
+            android:layout_width="@dimen/splash_image_dimen"
+            android:layout_height="@dimen/splash_image_dimen"
+            android:src="@drawable/heart"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp"
+            android:tint="@android:color/white"
+            />
+
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/fragment_login_forgot_pass_bt_id"
+            android:id="@+id/fragment_login_logo_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/fragment_login_enter_password_input_layout_id"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:text="@string/forgot_password"
-            android:textColor="@android:color/white"
-            android:textSize="14sp"
-            />
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/fragment_login_bt_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/fragment_login_forgot_pass_bt_id"
-            style="@style/Widget.MaterialComponents.Button"
-            app:cornerRadius="4dp"
-            app:backgroundTint="@android:color/white"
-            android:text="@string/log_in"
-            android:textStyle="bold"
-            android:textColor="@color/blue_gray_700"
+            android:layout_below="@+id/fragment_login_splash_view_id"
+            android:layout_centerHorizontal="true"
             android:fontFamily="@font/chonburi"
-            android:layout_marginTop="30dp"
-            android:layout_marginLeft="12dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginRight="12dp"
-            android:layout_marginEnd="12dp"
-            app:rippleColor="@color/blue_gray_400"
-            />
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:text="@string/app_name"
+            android:textSize="24sp" />
 
         <RelativeLayout
-            android:id="@+id/fragment_login_divider_id"
+            android:id="@+id/fragment_login_container_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:layout_below="@+id/fragment_login_bt_id"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="24dp"
+            android:layout_centerInParent="true"
+            android:layout_below="@+id/fragment_login_logo_text_view"
             >
-            <View
-                android:layout_width="wrap_content"
-                android:layout_height="2dp"
-                android:layout_centerVertical="true"
-                android:background="@android:color/white"
-                android:layout_marginRight="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_toStartOf="@+id/sign_in_layout_option_or_text_view_id"
-                android:layout_toLeftOf="@+id/sign_in_layout_option_or_text_view_id" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/fragment_login_enter_username_input_layout_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/email"
+                app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
+                android:textColorHint="@android:color/white"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/fragment_login_enter_username_edit_text_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_email_black_24dp"
+                    android:drawableStart="@drawable/ic_email_black_24dp"
+                    android:drawablePadding="8dp"
+                    android:textColorHint="@android:color/white"
+                    android:textColor="@android:color/white"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:imeOptions="actionNext"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/fragment_login_enter_password_input_layout_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fragment_login_enter_username_input_layout_id"
+                android:hint="@string/password"
+                app:passwordToggleEnabled="true"
+                app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
+                android:textColorHint="@android:color/white"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/fragment_login_enter_password_edit_text_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:drawableLeft="@drawable/ic_password_black_24dp"
+                    android:drawableStart="@drawable/ic_password_black_24dp"
+                    android:drawablePadding="8dp"
+                    android:maxLines="1"
+                    android:imeOptions="actionDone"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@android:color/white"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/sign_in_layout_option_or_text_view_id"
+                android:id="@+id/fragment_login_forgot_pass_bt_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:text="@string/or"
+                android:layout_below="@+id/fragment_login_enter_password_input_layout_id"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:text="@string/forgot_password"
                 android:textColor="@android:color/white"
-                android:textSize="24sp"
-                android:fontFamily="@font/baloo_bhai"
+                android:textSize="14sp"
                 />
-            <View
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/fragment_login_bt_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fragment_login_forgot_pass_bt_id"
+                style="@style/Widget.MaterialComponents.Button"
+                app:cornerRadius="4dp"
+                app:backgroundTint="@android:color/white"
+                android:text="@string/log_in"
+                android:textStyle="bold"
+                android:textColor="@color/blue_gray_700"
+                android:fontFamily="@font/chonburi"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginEnd="12dp"
+                app:rippleColor="@color/blue_gray_400"
+                />
+
+            <RelativeLayout
+                android:id="@+id/fragment_login_divider_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:layout_below="@+id/fragment_login_bt_id"
+                >
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="2dp"
+                    android:layout_centerVertical="true"
+                    android:background="@android:color/white"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_toStartOf="@+id/sign_in_layout_option_or_text_view_id"
+                    android:layout_toLeftOf="@+id/sign_in_layout_option_or_text_view_id" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/sign_in_layout_option_or_text_view_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/or"
+                    android:textColor="@android:color/white"
+                    android:textSize="24sp"
+                    android:fontFamily="@font/baloo_bhai"
+                    />
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="2dp"
+                    android:background="@android:color/white"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/sign_in_layout_option_or_text_view_id"
+                    android:layout_toRightOf="@+id/sign_in_layout_option_or_text_view_id"
+                    />
+            </RelativeLayout>
+            <com.shobhitpuri.custombuttons.GoogleSignInButton
+                android:id="@+id/fragment_login_google_loggin_bt_id"
                 android:layout_width="wrap_content"
-                android:layout_height="2dp"
-                android:background="@android:color/white"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/sign_in_layout_option_or_text_view_id"
-                android:layout_toRightOf="@+id/sign_in_layout_option_or_text_view_id"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fragment_login_divider_id"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:fontFamily="@font/baloo_bhai"
+                app:isDarkTheme="true"
                 />
         </RelativeLayout>
-        <com.shobhitpuri.custombuttons.GoogleSignInButton
-            android:id="@+id/fragment_login_google_loggin_bt_id"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/fragment_login_create_new_account_bt_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/fragment_login_divider_id"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:fontFamily="@font/baloo_bhai"
-            app:isDarkTheme="true"
+            android:text="@string/create_account"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:layout_marginBottom="10dp"
             />
     </RelativeLayout>
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/fragment_login_create_new_account_bt_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="@string/create_account"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:layout_marginBottom="10dp"
-        />
-</RelativeLayout>
+</layout>

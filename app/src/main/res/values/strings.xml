@@ -9,4 +9,7 @@
     <string name="or">Or</string>
     <string name="create_account"><u>Create Account</u></string>
     <string name="forgot_password">Forgot password?</string>
+    <string name="full_name">Full Name</string>
+    <string name="email">Email</string>
+    <string name="already_have_an_account">Already have an account?</string>
 </resources>
