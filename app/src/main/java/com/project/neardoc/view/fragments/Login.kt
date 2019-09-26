@@ -60,6 +60,9 @@ class Login : Fragment(), Injectable, CoroutineScope {
             val navigateToRegistrationPage = LoginDirections.actionRegistration()
             Navigation.findNavController(it).navigate(navigateToRegistrationPage)
         }
+        fragment_login_google_loggin_bt_id.setOnClickListener{
+
+        }
     }
 
     override fun onDestroyView() {
