@@ -2,7 +2,6 @@ package com.project.neardoc.di.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import java.lang.RuntimeException
 import javax.inject.Inject
 import javax.inject.Provider

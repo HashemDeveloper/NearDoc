@@ -3,6 +3,9 @@
     <color name="colorPrimary">@color/blue_gray_700</color>
     <color name="colorPrimaryDark">@color/blue_gray_700</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="red_900">#B71C1C</color>
     <color name="green_800">#2E7D32</color>
     <color name="blue_gray_100">#CFD8DC</color>
     <color name="blue_gray_300">#90A4AE</color>
