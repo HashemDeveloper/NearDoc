@@ -30,11 +30,6 @@ import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 class Login : Fragment(), Injectable, CoroutineScope {
-    private lateinit var networkInfo: ConnectivityManager.NetworkCallback
-    private val isWifiSetting = false
-    private var isMobileData = false
-    @Inject
-    lateinit var iConnectionStateMonitor: IConnectionStateMonitor
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -83,32 +78,6 @@ class Login : Fragment(), Injectable, CoroutineScope {
         fragment_login_google_loggin_bt_id.setOnClickListener{
 
         }
-    }
-    private fun monitorConnectionSetting() {
-        this.iConnectionStateMonitor.getObserver().observe(this, Observer {isNetAvailable ->
-            if (isNetAvailable) {
-                Toast.makeText(activity, "Connected", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(activity, "Lost", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
-
-    override fun onStart() {
-        super.onStart()
-        monitorConnectionSetting()
-    }
-
-    override fun onStop() {
-        super.onStop()
-    }
-
-    override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
     }
 
     override fun onDestroyView() {

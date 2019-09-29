@@ -13,7 +13,7 @@ class ConnectionBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
        AndroidInjection.inject(this, p0)
         when (p1!!.action) {
             Constants.CONNECTIVITY_ACTION -> {
-
+                //do nothing
             }
         }
     }
