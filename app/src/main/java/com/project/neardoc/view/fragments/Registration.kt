@@ -25,9 +25,5 @@ class Registration : Fragment(), Injectable{
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        registration_page_create_account_bt_id.setOnClickListener{
-            val navToWelcome = RegistrationDirections.actionWelcomeFragment()
-            Navigation.findNavController(it).navigate(navToWelcome)
-        }
     }
 }

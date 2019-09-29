@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.project.neardoc">
 
     <dist:module dist:instant="true" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:name=".NearDocApp"
@@ -20,6 +23,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.google.firebase.auth.internal.FederatedSignInActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:launchMode="singleInstance"
+            android:permission="com.google.firebase.auth.api.gms.permission.LAUNCH_FEDERATED_SIGN_IN"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            tools:replace="android:launchMode" />
+        <receiver android:name=".broadcast.ConnectionBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
