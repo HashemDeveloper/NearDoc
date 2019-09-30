@@ -69,11 +69,14 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
                    }
                })
                if (isWifiConnected) {
-                   this.iRxEventBus.post(NetworkStateEvent(true, NearDocNetworkType.WIFI_DATA))
+                   EventBus.getDefault().postSticky(NetworkStateEvent(true, NearDocNetworkType.WIFI_DATA))
+//                   this.iRxEventBus.post(NetworkStateEvent(true, NearDocNetworkType.WIFI_DATA))
                } else {
-                   this.iRxEventBus.post(NetworkStateEvent(true, NearDocNetworkType.MOBILE_DATA))
+                   EventBus.getDefault().postSticky(NetworkStateEvent(true, NearDocNetworkType.MOBILE_DATA))
+//                   this.iRxEventBus.post(NetworkStateEvent(true, NearDocNetworkType.MOBILE_DATA))
                }
            } else {
+               EventBus.getDefault().postSticky(NetworkStateEvent(false, NearDocNetworkType.NO_NETWORK))
                Toast.makeText(this, "Connection lost", Toast.LENGTH_SHORT).show()
            }
         })

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.IntentFilter
 import android.net.*
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -64,14 +65,13 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
         if (connectivityManager != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 for (networks in this.connectivityManager!!.allNetworks) {
-                    if (this.connectivityManager!!.getNetworkCapabilities(networks)!!.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                        this.usingMobileDataLiveData.postValue(true)
-                        postValue(true)
-                    } else if (this.connectivityManager!!.getNetworkCapabilities(networks)!!.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                    if (this.connectivityManager!!.getNetworkCapabilities(networks)!!.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
                         this.wifiConnectedLiveData.postValue(true)
-                        postValue(true)
+                        break
                     } else {
-                        postValue(false)
+                        if (this.connectivityManager!!.getNetworkCapabilities(networks)!!.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                            this.usingMobileDataLiveData.postValue(true)
+                        }
                     }
                 }
             }
@@ -92,5 +92,10 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
         override fun onLost(network: Network) {
             connectionStateMonitor.postValue(false)
         }
+
+        override fun onUnavailable() {
+            connectionStateMonitor.postValue(false)
+        }
+
     }
 }
