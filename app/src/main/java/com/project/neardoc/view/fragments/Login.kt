@@ -18,19 +18,21 @@ import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.rxeventbus.IRxEventBus
+import com.project.neardoc.utils.ConnectionSettings
 import com.project.neardoc.viewmodel.LoginViewModel
 import dagger.android.support.AndroidSupportInjection
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.coroutines.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 class Login : Fragment(), Injectable, CoroutineScope{
-    private val MOBILE_DATA = "MOBILE_DATA"
-    private val WIFI_DATA = "WIFI_DATA"
+    private val mobileData = "MOBILE_DATA"
+    private val wifiData = "WIFI_DATA"
     private val compositeDisposable = CompositeDisposable()
     @Inject
     lateinit var iRxEventBus: IRxEventBus
@@ -41,6 +43,7 @@ class Login : Fragment(), Injectable, CoroutineScope{
     private val loginViewModel: LoginViewModel by viewModels {
         this.viewModelFactory
     }
+    private var isInternetAvailable = false
 
     private val job = Job()
 
@@ -81,30 +84,36 @@ class Login : Fragment(), Injectable, CoroutineScope{
             Navigation.findNavController(it).navigate(navigateToRegistrationPage)
         }
         fragment_login_google_loggin_bt_id.setOnClickListener{
+            if (this.isInternetAvailable) {
 
+            } else {
+                val connectionSettings = ConnectionSettings(activity!!, view!!)
+                connectionSettings.initWifiSetting(false)
+            }
         }
     }
 
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun onNetworkStateChangedEvent(networkStateEvent: NetworkStateEvent) {
+        if (networkStateEvent.getIsNetworkAvailable()) {
+            if (networkStateEvent.getNetworkType()!!.name == wifiData) {
+                this.isInternetAvailable = true
+            } else if (networkStateEvent.getNetworkType()!!.name == mobileData) {
+                this.isInternetAvailable = true
+                Toast.makeText(activity, R.string.using_mobile_data, Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            this.isInternetAvailable = false
+        }
+    }
     override fun onStart() {
         super.onStart()
-        this.compositeDisposable.add(this.iRxEventBus.observable(NetworkStateEvent::class.java)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { event ->
-                if (event != null) {
-                    if (event.getIsNetworkAvailable()) {
-                        if (event.getNetworkType()!!.name == WIFI_DATA) {
-                            Toast.makeText(activity, R.string.using_wifi, Toast.LENGTH_SHORT).show()
-                        } else if (event.getNetworkType()!!.name == MOBILE_DATA) {
-                            Toast.makeText(activity, R.string.using_mobile_data, Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-            })
+        EventBus.getDefault().register(this)
     }
 
     override fun onStop() {
         super.onStop()
+        EventBus.getDefault().unregister(this)
     }
 
     override fun onDestroyView() {
