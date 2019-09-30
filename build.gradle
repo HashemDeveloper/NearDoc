@@ -52,6 +52,7 @@ ext {
     firebaseUtils = "19.0.1"
     firebaseMessaging = "20.0.0"
     firebaseAuth = "19.0.0"
+    event_bus_v = "3.1.1"
 
 }
 task clean(type: Delete) {

@@ -65,10 +65,10 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 for (networks in this.connectivityManager!!.allNetworks) {
                     if (this.connectivityManager!!.getNetworkCapabilities(networks)!!.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                        this.wifiConnectedLiveData.postValue(true)
+                        this.usingMobileDataLiveData.postValue(true)
                         postValue(true)
                     } else if (this.connectivityManager!!.getNetworkCapabilities(networks)!!.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                        this.usingMobileDataLiveData.postValue(true)
+                        this.wifiConnectedLiveData.postValue(true)
                         postValue(true)
                     } else {
                         postValue(false)

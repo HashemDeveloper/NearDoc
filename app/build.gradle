@@ -116,4 +116,6 @@ dependencies {
     implementation "com.google.firebase:firebase-database:$firebaseAuth"
     implementation "com.google.firebase:firebase-messaging:$firebaseMessaging"
     implementation "com.google.firebase:firebase-dynamic-links:$firebaseAuth"
+    //event bus
+    implementation "org.greenrobot:eventbus:$event_bus_v"
 }
