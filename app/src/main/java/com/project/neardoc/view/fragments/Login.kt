@@ -83,14 +83,24 @@ class Login : Fragment(), Injectable, CoroutineScope{
             val navigateToRegistrationPage = LoginDirections.actionRegistration()
             Navigation.findNavController(it).navigate(navigateToRegistrationPage)
         }
-        fragment_login_google_loggin_bt_id.setOnClickListener{
+        fragment_login_bt_id.setOnClickListener{
             if (this.isInternetAvailable) {
-
+                // perform login
             } else {
-                val connectionSettings = ConnectionSettings(activity!!, view!!)
-                connectionSettings.initWifiSetting(false)
+                displayConnectionSetting()
             }
         }
+        fragment_login_google_loggin_bt_id.setOnClickListener{
+            if (this.isInternetAvailable) {
+                // perform login...
+            } else {
+               displayConnectionSetting()
+            }
+        }
+    }
+    private fun displayConnectionSetting() {
+        val connectionSettings = ConnectionSettings(activity!!, view!!)
+        connectionSettings.initWifiSetting(false)
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
