@@ -6,6 +6,8 @@ import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.SharedPrefService
 import com.project.neardoc.rxauth.IRxAuthentication
 import com.project.neardoc.rxauth.RxAuthentication
+import com.project.neardoc.rxeventbus.IRxEventBus
+import com.project.neardoc.rxeventbus.RxEventBus
 import com.project.neardoc.utils.ConnectionStateMonitor
 import com.project.neardoc.utils.IConnectionStateMonitor
 import dagger.Module
@@ -31,7 +33,17 @@ class ApplicationModule {
     }
     @Singleton
     @Provides
-    fun provideSharedPrefService(sharedPrefService: SharedPrefService): ISharedPrefService {
+    fun provideSharedPrefService(context: Context): SharedPrefService {
+        return SharedPrefService.invoke(context)
+    }
+    @Singleton
+    @Provides
+    fun provideSharedPref(sharedPrefService: SharedPrefService): ISharedPrefService {
         return sharedPrefService
+    }
+    @Singleton
+    @Provides
+    fun provideRxEventBus(rxEventBus: RxEventBus): IRxEventBus{
+        return rxEventBus
     }
 }
