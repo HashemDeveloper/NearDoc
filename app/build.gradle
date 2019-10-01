@@ -82,7 +82,7 @@ dependencies {
 
     // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-extensions:$lifeCycleExtensionVersion"
-    kapt "androidx.lifecycle:lifecycle-compiler:$lifeCycleExtensionVersion"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifeCycleExtensionVersion"
 
 
     // glide
