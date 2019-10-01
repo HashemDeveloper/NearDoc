@@ -20,6 +20,8 @@ android {
         multiDexEnabled true
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        resValue "string", "firebase_web_key", (project.findProperty("FIREBASE_WEB_API_KEY") ?: "")
+        resValue "string", "firebase_db_secret", (project.findProperty("FIREBASE_DB_SECRET") ?: "")
         resValue "string", "google_sign_in_api_key", (project.findProperty("GOOGLE_SIGN_IN_API_KEY") ?: "")
     }
     buildTypes {

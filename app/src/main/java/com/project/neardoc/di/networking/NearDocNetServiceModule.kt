@@ -23,7 +23,7 @@ object NearDocNetServiceModule {
     @Singleton
     @Provides
     @JvmStatic
-    internal fun provideRetrofit(gson: Gson, @Named("auth_base_url") baseUrl: String): Retrofit{
+    internal fun provideRetrofit(gson: Gson, @Named("base_url") baseUrl: String): Retrofit{
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create(gson))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
