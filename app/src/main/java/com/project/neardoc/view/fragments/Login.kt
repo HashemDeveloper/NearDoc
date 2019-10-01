@@ -1,5 +1,6 @@
 package com.project.neardoc.view.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 
 import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
@@ -29,11 +31,22 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
+import android.app.Activity.RESULT_OK
+import android.util.Log
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
 
 class Login : Fragment(), Injectable, CoroutineScope{
+    companion object {
+        @JvmStatic private val GOOGLE_SIGN_IN_CODE: Int = 0
+    }
     private val mobileData = "MOBILE_DATA"
     private val wifiData = "WIFI_DATA"
     private val compositeDisposable = CompositeDisposable()
+    @Inject
+    lateinit var googleSignInClient: GoogleSignInClient
     @Inject
     lateinit var iRxEventBus: IRxEventBus
     @Inject
@@ -83,14 +96,25 @@ class Login : Fragment(), Injectable, CoroutineScope{
             val navigateToRegistrationPage = LoginDirections.actionRegistration()
             Navigation.findNavController(it).navigate(navigateToRegistrationPage)
         }
-        fragment_login_google_loggin_bt_id.setOnClickListener{
+        fragment_login_bt_id.setOnClickListener{
             if (this.isInternetAvailable) {
-
+                // perform login
             } else {
-                val connectionSettings = ConnectionSettings(activity!!, view!!)
-                connectionSettings.initWifiSetting(false)
+                displayConnectionSetting()
             }
         }
+        fragment_login_google_loggin_bt_id.setOnClickListener{
+            if (this.isInternetAvailable) {
+                val intent: Intent = this.googleSignInClient.signInIntent
+                startActivityForResult(intent, GOOGLE_SIGN_IN_CODE)
+            } else {
+               displayConnectionSetting()
+            }
+        }
+    }
+    private fun displayConnectionSetting() {
+        val connectionSettings = ConnectionSettings(activity!!, view!!)
+        connectionSettings.initWifiSetting(false)
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
@@ -106,6 +130,22 @@ class Login : Fragment(), Injectable, CoroutineScope{
             this.isInternetAvailable = false
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                if (task.isSuccessful) {
+                    val accountIfo: GoogleSignInAccount = task.result!!
+                    this.loginViewModel.processLoginWithGoogle(activity, accountIfo)
+                }
+            } catch (apiEx: ApiException) {
+                Log.i("ApiException:", apiEx.localizedMessage!!)
+            }
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)

@@ -70,10 +70,8 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
                })
                if (isWifiConnected) {
                    EventBus.getDefault().postSticky(NetworkStateEvent(true, NearDocNetworkType.WIFI_DATA))
-//                   this.iRxEventBus.post(NetworkStateEvent(true, NearDocNetworkType.WIFI_DATA))
                } else {
                    EventBus.getDefault().postSticky(NetworkStateEvent(true, NearDocNetworkType.MOBILE_DATA))
-//                   this.iRxEventBus.post(NetworkStateEvent(true, NearDocNetworkType.MOBILE_DATA))
                }
            } else {
                EventBus.getDefault().postSticky(NetworkStateEvent(false, NearDocNetworkType.NO_NETWORK))
