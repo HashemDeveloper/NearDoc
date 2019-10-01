@@ -153,7 +153,17 @@ class Login : Fragment(), Injectable, CoroutineScope, ILoginViewModel{
     override fun onLoginActionPerformed() {
         this.loginViewModel.getLoadingLiveData().observe(this, Observer {isLoading ->
             if (isLoading) {
-                Toast.makeText(activity, "Loading", Toast.LENGTH_SHORT).show()
+               //
+            }
+        })
+        this.loginViewModel.getErrorLiveData().observe(this, Observer { isError ->
+            if (isError) {
+                //
+            }
+        })
+        this.loginViewModel.getLoginSuccessLiveData().observe(this, Observer {isLoginSuccess ->
+            if (isLoginSuccess) {
+                //
             }
         })
     }
@@ -171,5 +181,6 @@ class Login : Fragment(), Injectable, CoroutineScope, ILoginViewModel{
     override fun onDestroyView() {
         super.onDestroyView()
         this.compositeDisposable.clear()
+        this.loginViewModel.removeLoginViewModelListener(this)
     }
 }

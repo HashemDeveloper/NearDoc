@@ -66,6 +66,12 @@ class LoginViewModel @Inject constructor() : ViewModel() {
     fun setLoginViewModelListener(iLoginViewModel: ILoginViewModel) {
         this.iLoginViewModel = iLoginViewModel
     }
+    fun removeLoginViewModelListener(listener: ILoginViewModel) {
+        this.iLoginViewModel = listener
+        if (iLoginViewModel != null) {
+            this.iLoginViewModel = null
+        }
+    }
     fun getLoadingLiveData(): LiveData<Boolean> {
         return this.loadingLiveData
     }

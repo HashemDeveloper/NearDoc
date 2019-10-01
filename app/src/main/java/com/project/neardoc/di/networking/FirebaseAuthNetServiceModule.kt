@@ -1,5 +1,6 @@
 package com.project.neardoc.di.networking
 
+import com.project.neardoc.data.local.remote.NearDocRemoteRepoModule
 import dagger.Module
 import dagger.Provides
 import okhttp3.Call
@@ -7,7 +8,7 @@ import okhttp3.OkHttpClient
 import javax.inject.Named
 import javax.inject.Singleton
 
-@Module
+@Module(includes = [NearDocRemoteRepoModule::class])
 object FirebaseAuthNetServiceModule {
     @Singleton
     @Provides
@@ -17,9 +18,9 @@ object FirebaseAuthNetServiceModule {
             .build()
     }
     @Singleton
-    @Named("auth_base_url")
+    @Named("base_url")
     @JvmStatic
     internal fun provideBaseUrl(): String {
-        return ""
+        return "https://neardoc-af101.firebaseio.com/"
     }
 }

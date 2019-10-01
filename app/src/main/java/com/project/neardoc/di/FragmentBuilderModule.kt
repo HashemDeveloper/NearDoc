@@ -1,9 +1,6 @@
 package com.project.neardoc.di
 
-import com.project.neardoc.view.fragments.ForgotPassword
-import com.project.neardoc.view.fragments.Login
-import com.project.neardoc.view.fragments.Registration
-import com.project.neardoc.view.fragments.Welcome
+import com.project.neardoc.view.fragments.*
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -17,4 +14,6 @@ abstract class FragmentBuilderModule {
     abstract fun contributeLogin(): Login
     @ContributesAndroidInjector
     abstract fun contributeForgotPasswordFragment(): ForgotPassword
+    @ContributesAndroidInjector
+    abstract fun contributeHomePageFragment(): HomePage
 }
