@@ -24,7 +24,7 @@ class ViewModelFactory @Inject constructor(private val creator: Map<Class<out Vi
             "Unknown model class $modelClass"
         }
         try {
-            return creator as T
+            return creator.get() as T
         } catch (e: Exception) {
             throw RuntimeException()
         }

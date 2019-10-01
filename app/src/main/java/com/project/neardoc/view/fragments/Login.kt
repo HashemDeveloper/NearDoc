@@ -33,12 +33,15 @@ import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 import android.app.Activity.RESULT_OK
 import android.util.Log
+import androidx.lifecycle.Observer
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.project.neardoc.viewmodel.listeners.ILoginViewModel
 
-class Login : Fragment(), Injectable, CoroutineScope{
+class Login : Fragment(), Injectable, CoroutineScope, ILoginViewModel{
+
     companion object {
         @JvmStatic private val GOOGLE_SIGN_IN_CODE: Int = 0
     }
@@ -79,6 +82,7 @@ class Login : Fragment(), Injectable, CoroutineScope{
         fragment_login_create_new_account_bt_id.startAnimation(animation)
         performNavigateActions()
         onBackPressed()
+        this.loginViewModel.setLoginViewModelListener(this)
     }
     private fun onBackPressed() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
@@ -144,6 +148,14 @@ class Login : Fragment(), Injectable, CoroutineScope{
                 Log.i("ApiException:", apiEx.localizedMessage!!)
             }
         }
+    }
+
+    override fun onLoginActionPerformed() {
+        this.loginViewModel.getLoadingLiveData().observe(this, Observer {isLoading ->
+            if (isLoading) {
+                Toast.makeText(activity, "Loading", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     override fun onStart() {
