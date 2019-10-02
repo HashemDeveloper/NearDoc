@@ -120,4 +120,9 @@ dependencies {
     implementation "com.google.firebase:firebase-dynamic-links:$firebaseAuth"
     //event bus
     implementation "org.greenrobot:eventbus:$event_bus_v"
+
+    //worker manager
+    implementation "androidx.work:work-runtime:$work_version"
+    implementation "androidx.work:work-rxjava2:$work_version"
+    androidTestImplementation "androidx.work:work-testing:$work_version"
 }

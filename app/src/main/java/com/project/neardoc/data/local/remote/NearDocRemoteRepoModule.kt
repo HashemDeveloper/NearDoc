@@ -10,7 +10,7 @@ object NearDocRemoteRepoModule {
     @Singleton
     @Provides
     @JvmStatic
-    internal fun providesNearDocRemoteRepo(retrofit: Retrofit): INearDocRemoteRepo {
-        return retrofit.create(INearDocRemoteRepo::class.java)
+    internal fun providesNearDocRemoteRepo(retrofit: Retrofit): INearDocRemoteApi {
+        return retrofit.create(INearDocRemoteApi::class.java)
     }
 }

@@ -17,7 +17,7 @@ object FirebaseAuthNetServiceModule {
         return OkHttpClient.Builder()
             .build()
     }
-    @Singleton
+    @Provides
     @Named("base_url")
     @JvmStatic
     internal fun provideBaseUrl(): String {
