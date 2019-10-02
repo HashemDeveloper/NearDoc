@@ -4,6 +4,8 @@ import android.content.Context
 import com.project.neardoc.NearDocApp
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.SharedPrefService
+import com.project.neardoc.data.local.remote.INearDocRemoteRepo
+import com.project.neardoc.data.local.remote.NearDocRemoteRepo
 import com.project.neardoc.rxauth.IRxAuthentication
 import com.project.neardoc.rxauth.RxAuthentication
 import com.project.neardoc.rxeventbus.IRxEventBus
@@ -45,5 +47,10 @@ class ApplicationModule {
     @Provides
     fun provideRxEventBus(rxEventBus: RxEventBus): IRxEventBus{
         return rxEventBus
+    }
+    @Singleton
+    @Provides
+    fun provideNearDocRemoteRep(nearDocRemoteRepo: NearDocRemoteRepo): INearDocRemoteRepo {
+        return nearDocRemoteRepo
     }
 }
