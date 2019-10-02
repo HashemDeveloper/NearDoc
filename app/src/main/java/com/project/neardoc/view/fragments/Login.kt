@@ -34,6 +34,7 @@ import kotlin.coroutines.CoroutineContext
 import android.app.Activity.RESULT_OK
 import android.util.Log
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
@@ -153,7 +154,7 @@ class Login : Fragment(), Injectable, CoroutineScope, ILoginViewModel{
     override fun onLoginActionPerformed() {
         this.loginViewModel.getLoadingLiveData().observe(this, Observer {isLoading ->
             if (isLoading) {
-               //
+                Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
             }
         })
         this.loginViewModel.getErrorLiveData().observe(this, Observer { isError ->
@@ -163,7 +164,8 @@ class Login : Fragment(), Injectable, CoroutineScope, ILoginViewModel{
         })
         this.loginViewModel.getLoginSuccessLiveData().observe(this, Observer {isLoginSuccess ->
             if (isLoginSuccess) {
-                //
+                val openHomePage = findNavController()
+                openHomePage.navigate(R.id.homePage)
             }
         })
     }

@@ -23,6 +23,7 @@ import com.project.neardoc.viewmodel.listeners.ILoginViewModel
 import com.project.neardoc.worker.LoginWorker
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.Consumer
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -45,32 +46,21 @@ class LoginViewModel @Inject constructor() : ViewModel() {
 
     fun processLoginWithGoogle(activity: FragmentActivity?, accountIfo: GoogleSignInAccount) {
         this.iLoginViewModel?.onLoginActionPerformed()
-        this.loadingLiveData.postValue(true)
+        this.loadingLiveData.value = true
         val authCredential: AuthCredential =
             GoogleAuthProvider.getCredential(accountIfo.idToken, null)
-        this.compositeDisposable.add(this.iRxAuthentication.googleSignIn(
-            activity!!,
-            this.firebaseAuth,
-            authCredential
-        )
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(object : DisposableObserver<FirebaseUser>() {
-                override fun onComplete() {
-                    loadingLiveData.postValue(false)
-                    errorLiveData.postValue(false)
-                }
-
-                override fun onNext(firebaseUser: FirebaseUser) {
-                   processGoogleLoginData(activity, firebaseUser)
-                }
-
-                override fun onError(e: Throwable) {
-                    loadingLiveData.postValue(false)
-                    errorLiveData.postValue(true)
-                }
-            })
-        )
+       this.compositeDisposable.add(this.iRxAuthentication.googleSignIn(activity!!, this.firebaseAuth, authCredential)
+           .subscribeOn(Schedulers.io())
+           .observeOn(AndroidSchedulers.mainThread())
+           .subscribe({firebaseUser ->
+               this.loadingLiveData.value = false
+               this.errorLiveData.value = false
+               this.loginSuccessLiveData.value = true
+               processGoogleLoginData(activity, firebaseUser)
+           }, {onError ->
+               this.loadingLiveData.value = false
+               this.errorLiveData.value = true
+           }))
     }
     private fun processGoogleLoginData(activity: FragmentActivity?, firebaseUser: FirebaseUser) {
         val imagePath: String = firebaseUser.photoUrl.toString()

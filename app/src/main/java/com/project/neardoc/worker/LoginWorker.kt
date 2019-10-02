@@ -57,10 +57,10 @@ class LoginWorker @Inject constructor(context: Context, workerParams: WorkerPara
                     Log.i("onError: ", e.localizedMessage!!)
                 }
             }))
-        if (isSaveSuccess) {
-            return Result.success()
+        return if (isSaveSuccess) {
+            Result.success()
         } else {
-            return Result.retry()
+            Result.retry()
         }
     }
 }
