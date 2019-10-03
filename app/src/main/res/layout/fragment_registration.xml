@@ -77,6 +77,7 @@
                 android:textColorHint="@color/blue_gray_800"
                 >
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/fragment_register_username_edit_text_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_user_black_24dp"
@@ -128,6 +129,8 @@
                 android:layout_marginEnd="16dp"
                 android:layout_below="@+id/fragment_register_email_input_layout_id"
                 android:hint="@string/password"
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="@color/blue_gray_600"
                 >
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/fragment_register_password_edit_text_id"
