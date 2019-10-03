@@ -1,6 +1,5 @@
 package com.project.neardoc.viewmodel
 
-import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,17 +13,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.project.neardoc.R
-import com.project.neardoc.data.local.remote.INearDocRemoteApi
-import com.project.neardoc.model.Username
-import com.project.neardoc.model.Users
 import com.project.neardoc.rxauth.IRxAuthentication
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.viewmodel.listeners.ILoginViewModel
 import com.project.neardoc.worker.LoginWorker
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.Consumer
-import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 

@@ -182,5 +182,9 @@
                 android:layout_marginStart="8dp"
                 />
         </RelativeLayout>
+        <include android:id="@+id/fragment_registration_progress_bar_id"
+            layout="@layout/global_progress_bar_layout"
+            android:visibility="visible"
+            />
     </RelativeLayout>
 </layout>

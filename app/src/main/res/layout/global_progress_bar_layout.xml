@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:id="@+id/global_progress_bar_layout_id"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.5"
+        android:background="@color/blue_gray_100"
+        />
+    <ProgressBar
+        android:id="@+id/fragment_registration_progress_bar_id"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:indeterminate="true"
+        android:layout_gravity="center"
+        android:indeterminateDrawable="@drawable/global_progress_bar"
+        android:background="@drawable/global_progress_bar_shape"
+        style="?android:attr/progressBarStyleLargeInverse"
+        android:max="100"
+        android:progress="65"
+        android:visibility="visible"
+        />
+</FrameLayout>
