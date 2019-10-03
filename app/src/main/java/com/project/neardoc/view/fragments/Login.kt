@@ -115,7 +115,7 @@ class Login : Fragment(), Injectable, ILoginViewModel{
         connectionSettings.initWifiSetting(false)
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onNetworkStateChangedEvent(networkStateEvent: NetworkStateEvent) {
         if (networkStateEvent.getIsNetworkAvailable()) {
             if (networkStateEvent.getNetworkType()!!.name == wifiData) {
