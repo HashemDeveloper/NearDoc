@@ -54,7 +54,7 @@ class Registration : Fragment(), Injectable{
         val connectionSettings = ConnectionSettings(activity!!, view!!)
         connectionSettings.initWifiSetting(false)
     }
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onNetworkStateChangedEvent(networkStateEvent: NetworkStateEvent) {
         if (networkStateEvent.getIsNetworkAvailable()) {
             if (networkStateEvent.getNetworkType()!!.name == wifiData) {
