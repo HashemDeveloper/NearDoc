@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.project.neardoc.di.scopes.ViewModelKey
 import com.project.neardoc.viewmodel.LoginViewModel
+import com.project.neardoc.viewmodel.RegistrationViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -16,4 +17,8 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(LoginViewModel::class)
     internal abstract fun provideViewModelForLogin(loginViewModel: LoginViewModel): ViewModel
+    @Binds
+    @IntoMap
+    @ViewModelKey(RegistrationViewModel::class)
+    internal abstract fun provideViewModelForRegistration(registrationViewModel: RegistrationViewModel): ViewModel
 }

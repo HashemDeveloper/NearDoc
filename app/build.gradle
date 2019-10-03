@@ -39,6 +39,9 @@ android {
         sourceCompatibility java_version
         targetCompatibility java_version
     }
+    androidExtensions {
+        experimental = true
+    }
 }
 
 dependencies {

@@ -7,21 +7,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
+import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.utils.ConnectionSettings
 import com.project.neardoc.utils.validators.EmailValidator
 import com.project.neardoc.utils.validators.EmptyFieldValidator
 import com.project.neardoc.utils.validators.PasswordValidator
 import com.project.neardoc.utils.validators.UsernameValidator
+import com.project.neardoc.viewmodel.RegistrationViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_registration.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import javax.inject.Inject
 
 class Registration : Fragment(), Injectable{
     private var isInternetAvailable: Boolean = false
@@ -31,6 +35,12 @@ class Registration : Fragment(), Injectable{
     private var usernameValidator: UsernameValidator? = null
     private var emailValidator: EmailValidator? = null
     private var passwordValidator: PasswordValidator?= null
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    private val registrationViewModel: RegistrationViewModel by viewModels {
+        this.viewModelFactory
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -77,7 +87,7 @@ class Registration : Fragment(), Injectable{
         val isPasswordValidated: Boolean = this.passwordValidator!!.getIsValidated(password)
 
         if (isNameValidated && isUsernameValidated && isEmailValidated && isPasswordValidated) {
-            Toast.makeText(activity, "Register", Toast.LENGTH_SHORT).show()
+            this.registrationViewModel.processRegistration(fullName, username, email, password)
         }
     }
 
