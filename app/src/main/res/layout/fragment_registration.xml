@@ -184,7 +184,7 @@
         </RelativeLayout>
         <include android:id="@+id/fragment_registration_progress_bar_id"
             layout="@layout/global_progress_bar_layout"
-            android:visibility="visible"
+            android:visibility="gone"
             />
     </RelativeLayout>
 </layout>
