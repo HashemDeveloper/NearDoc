@@ -43,6 +43,7 @@ class LoginViewModel @Inject constructor() : ViewModel() {
         this.loadingLiveData.value = true
         val authCredential: AuthCredential =
             GoogleAuthProvider.getCredential(accountIfo.idToken, null)
+        val fullName = accountIfo.givenName + " " + accountIfo.familyName
        this.compositeDisposable.add(this.iRxAuthentication.googleSignIn(activity!!, this.firebaseAuth, authCredential)
            .subscribeOn(Schedulers.io())
            .observeOn(AndroidSchedulers.mainThread())
@@ -50,13 +51,13 @@ class LoginViewModel @Inject constructor() : ViewModel() {
                this.loadingLiveData.value = false
                this.errorLiveData.value = false
                this.loginSuccessLiveData.value = true
-               processGoogleLoginData(activity, firebaseUser)
+               processGoogleLoginData(activity, firebaseUser, fullName)
            }, {onError ->
                this.loadingLiveData.value = false
                this.errorLiveData.value = true
            }))
     }
-    private fun processGoogleLoginData(activity: FragmentActivity?, firebaseUser: FirebaseUser) {
+    private fun processGoogleLoginData(activity: FragmentActivity?, firebaseUser: FirebaseUser, fullName: String) {
         val imagePath: String = firebaseUser.photoUrl.toString()
         val displayName: String = firebaseUser.displayName!!
         val email: String = firebaseUser.email!!
@@ -64,6 +65,7 @@ class LoginViewModel @Inject constructor() : ViewModel() {
 
         val credentialData = Data.Builder()
             .putString(Constants.WORKER_DB_AUTH_KEY, dbAuthKey)
+            .putString(Constants.WORKER_FULL_NAME, fullName)
             .putString(Constants.WORKER_IMAGE_PATH, imagePath)
             .putString(Constants.WORKER_EMAIL, email)
             .putString(Constants.WORKER_DISPLAY_NAME, displayName)

@@ -9,6 +9,8 @@ class Constants {
         val CONNECTIVITY_ACTION = "android.net.conn.CONNECTIVITY_CHANGE"
         val GLOBAL_SHARED_PREF = "global_shared_pref"
         val SIGN_IN_PROVIDER_GOOGLE = "google"
+        val SIGN_IN_PROVIDER_FIREBASE = "firebase"
+        val WORKER_FULL_NAME = "fullName"
         val WORKER_IMAGE_PATH = "imagePath"
         val WORKER_DISPLAY_NAME = "displayName"
         val WORKER_DB_AUTH_KEY = "dbAuthKey"

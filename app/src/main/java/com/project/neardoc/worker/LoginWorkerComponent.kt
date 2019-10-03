@@ -6,7 +6,5 @@ import dagger.android.AndroidInjector
 @Subcomponent
 interface LoginWorkerComponent: AndroidInjector<LoginWorker> {
     @Subcomponent.Builder
-    abstract class Builder: AndroidInjector.Builder<LoginWorker>() {
-
-    }
+    abstract class Builder: AndroidInjector.Builder<LoginWorker>()
 }
