@@ -74,6 +74,8 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
                         }
                     }
                 }
+            } else {
+                //
             }
         }
     }
