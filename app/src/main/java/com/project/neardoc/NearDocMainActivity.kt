@@ -57,7 +57,6 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
     private fun monitorConnectionSetting() {
         this.iConnectionStateMonitor.getObserver().observe(this, Observer {isNetAvailable ->
            if (isNetAvailable) {
-               Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show()
                this.iConnectionStateMonitor.isUsingWifiLiveData().observe(this, Observer {isWifi ->
                    if (isWifi) {
                        this.isWifiConnected = true
@@ -69,12 +68,12 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
                    }
                })
                if (isWifiConnected) {
-                   EventBus.getDefault().postSticky(NetworkStateEvent(true, NearDocNetworkType.WIFI_DATA))
+                   EventBus.getDefault().post(NetworkStateEvent(true, NearDocNetworkType.WIFI_DATA))
                } else {
-                   EventBus.getDefault().postSticky(NetworkStateEvent(true, NearDocNetworkType.MOBILE_DATA))
+                   EventBus.getDefault().post(NetworkStateEvent(true, NearDocNetworkType.MOBILE_DATA))
                }
            } else {
-               EventBus.getDefault().postSticky(NetworkStateEvent(false, NearDocNetworkType.NO_NETWORK))
+               EventBus.getDefault().post(NetworkStateEvent(false, NearDocNetworkType.NO_NETWORK))
                Toast.makeText(this, "Connection lost", Toast.LENGTH_SHORT).show()
            }
         })

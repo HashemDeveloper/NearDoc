@@ -144,6 +144,7 @@
                     />
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/fragment_registration_create_account_bt_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/fragment_register_have_account_text_view_id"
