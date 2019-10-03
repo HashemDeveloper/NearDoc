@@ -22,7 +22,7 @@ class RegistrationViewModel @Inject constructor(): ViewModel() {
     private val loadingLiveData: MutableLiveData<Boolean> = MutableLiveData()
     private val errorLiveData: MutableLiveData<Boolean> = MutableLiveData()
     private val errorMessageLiveData: MutableLiveData<String> = MutableLiveData()
-    private val successLiveData: MutableLiveData<Boolean> = MutableLiveData()
+    private val successLiveData: MutableLiveData<String> = MutableLiveData()
     private val usernameExistsLiveData: MutableLiveData<Boolean> = MutableLiveData()
     private val usernameLiveData: MutableLiveData<String> = MutableLiveData()
     @Inject
@@ -33,16 +33,29 @@ class RegistrationViewModel @Inject constructor(): ViewModel() {
         this.compositeDisposable.clear()
     }
 
+    fun sendEmailVerificationLink(activity: FragmentActivity?, idToken: String?) {
+        this.compositeDisposable.add(this.iNearDocRemoteRepo.sendEmailVerification(Constants.FIREBASE_AUTH_EMAIL_VERIFICATION_ENDPOINT, Constants.FIREBASE_EMAIL_VERFICATION_REQUEST_TYPE,
+            idToken!!, activity?.resources!!.getString(R.string.firebase_web_key))
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({response ->
+                Log.i("Email: ", response.email)
+                this.loadingLiveData.value = false
+            }, {onError ->
+                this.loadingLiveData.value = false
+                this.errorLiveData.value = true
+                Log.i("Error: ", onError.localizedMessage!!)
+            }))
+    }
+
     fun processRegistration(activity: FragmentActivity?, fullName: String, username: String, email: String, password: String) {
         this.compositeDisposable.add(this.iNearDocRemoteRepo.signUpWithEmailAndPassword(Constants.FIREBASE_AUTH_SIGN_UP_ENDPOINT, activity?.resources!!.getString(R.string.firebase_web_key),
             email, password, true)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({response ->
-               Log.i("IdToken: ", response.idToken)
-                this.loadingLiveData.value = false
                 this.errorLiveData.value = false
-                this.successLiveData.value = true
+                this.successLiveData.value = response.idToken
                 val data = Data.Builder()
                     .putString(Constants.WORKER_FULL_NAME, fullName)
                     .putString(Constants.WORKER_DISPLAY_NAME, username)
@@ -58,6 +71,7 @@ class RegistrationViewModel @Inject constructor(): ViewModel() {
                 Log.i("RegistrationError: ", onError.localizedMessage!!)
                 this.loadingLiveData.value = false
                 this.errorLiveData.value = true
+                this.errorMessageLiveData.value = onError.localizedMessage!!
             }))
     }
 
@@ -89,7 +103,7 @@ class RegistrationViewModel @Inject constructor(): ViewModel() {
     fun getErrorMessageLiveData(): LiveData<String> {
         return this.errorMessageLiveData
     }
-    fun getSuccessLiveData(): LiveData<Boolean> {
+    fun getSuccessLiveData(): LiveData<String> {
         return this.successLiveData
     }
     fun getUsernameExistsLiveData(): LiveData<Boolean> {

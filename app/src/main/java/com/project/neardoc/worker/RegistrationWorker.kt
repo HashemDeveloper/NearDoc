@@ -21,7 +21,6 @@ class RegistrationWorker @Inject constructor(context: Context, workerParameters:
 
     override fun doWork(): Result {
         NearDocWorkerInjection.inject(this)
-        var isSaveSuccess = false
         val displayName: String = inputData.getString(Constants.WORKER_DISPLAY_NAME)!!
         val fullName: String = inputData.getString(Constants.WORKER_FULL_NAME)!!
         val email: String = inputData.getString(Constants.WORKER_EMAIL)!!
@@ -36,21 +35,13 @@ class RegistrationWorker @Inject constructor(context: Context, workerParameters:
                 this.compositeDisposable.add(this.iNearDocRemoteRepo.storeUsersInfo(encodedEmail, dbKey, users)
                     .subscribeOn(Schedulers.io())
                     .subscribe({userRes ->
-                        isSaveSuccess = true
                     }, {onUserErr ->
                         Log.i("OnUserErr: ", onUserErr.localizedMessage!!)
-                        isSaveSuccess = false
                     }))
             }, {onUsernameErr ->
                 Log.i("OnUsernameErr: ", onUsernameErr.localizedMessage!!)
-                isSaveSuccess = false
             }))
-
-        return if (isSaveSuccess) {
-            Result.success()
-        } else {
-            Result.retry()
-        }
+        return Result.success()
     }
 
 }

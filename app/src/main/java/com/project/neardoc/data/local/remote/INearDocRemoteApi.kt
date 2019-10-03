@@ -27,7 +27,7 @@ interface INearDocRemoteApi {
 
     @Headers("Content-Type: application/json")
     @POST
-    fun sendEmailVerificationLink(@Url url: String, @Query("requestType") requestType: String, @Query("idToken") idToken: String): Observable<EmailVerificationRes>
+    fun sendEmailVerificationLink(@Url url: String, @Query("requestType") requestType: String, @Query("idToken") idToken: String, @Query("key") webKey: String): Observable<EmailVerificationRes>
 
     @Headers("Content-Type: application/json")
     @GET("/usernames/{node}/.json")

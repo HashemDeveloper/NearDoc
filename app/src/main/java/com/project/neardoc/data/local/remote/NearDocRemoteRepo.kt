@@ -34,9 +34,10 @@ class NearDocRemoteRepo @Inject constructor(): INearDocRemoteRepo {
     override fun sendEmailVerification(
         url: String,
         requestType: String,
-        idToken: String
+        idToken: String,
+        webKey: String
     ): Observable<EmailVerificationRes> {
-        return this.iNearDocRemoteApi.sendEmailVerificationLink(url, requestType, idToken)
+        return this.iNearDocRemoteApi.sendEmailVerificationLink(url, requestType, idToken, webKey)
     }
 
     override fun getUsernames(username: String, dbKey: String): Observable<UsernameRes> {

@@ -104,6 +104,16 @@ class Registration : Fragment(), Injectable{
                     displayLoading(false)
                 }
             })
+            this.registrationViewModel.getSuccessLiveData().observe(this, Observer { idToken ->
+                if (idToken != null) {
+                    this.registrationViewModel.sendEmailVerificationLink(activity, idToken)
+                }
+            })
+            this.registrationViewModel.getErrorMessageLiveData().observe(this, Observer { errorMessage ->
+                if (errorMessage != null) {
+                    fragment_register_email_input_layout_id.error = activity?.resources!!.getString(R.string.email_exists)
+                }
+            })
         }
     }
     private fun displayLoading(isLoading: Boolean) {

@@ -25,4 +25,5 @@
     <string name="invalid_email">Invalid email.</string>
     <string name="name_required">Please enter your name</string>
     <string name="username_exists">This username already exists</string>
+    <string name="email_exists">The email address is already in use by another account</string>
 </resources>
