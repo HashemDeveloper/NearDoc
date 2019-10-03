@@ -1,5 +1,9 @@
 package com.project.neardoc.utils
 
+import android.util.Patterns
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
 class Constants {
     companion object {
         val CONNECTIVITY_ACTION = "android.net.conn.CONNECTIVITY_CHANGE"
@@ -12,6 +16,30 @@ class Constants {
 
         fun encodeUserEmail(email: String): String {
             return email.replace(".", ",")
+        }
+        fun usernameValidator(username: String): Boolean {
+            val pattern: Pattern
+            val matcher: Matcher
+            val USERNAME_PATTERN = "^[a-z0-9_-]{3,12}$"
+            pattern = Pattern.compile(USERNAME_PATTERN)
+            matcher = pattern.matcher(username)
+            return matcher.matches()
+        }
+        fun emailValidator(email: String): Boolean {
+            val pattern: Pattern
+            val matcher: Matcher
+            val EMAIL_PATTERN = Patterns.EMAIL_ADDRESS.pattern()
+            pattern = Pattern.compile(EMAIL_PATTERN)
+            matcher = pattern.matcher(email)
+            return matcher.matches()
+        }
+        fun passwordValidator(password: String): Boolean {
+            val pattern: Pattern
+            val matcher: Matcher
+            val PASSWORD_PATTERN = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@.#$%]).{6,20})"
+            pattern = Pattern.compile(PASSWORD_PATTERN)
+            matcher = pattern.matcher(password)
+            return matcher.matches()
         }
     }
 }
