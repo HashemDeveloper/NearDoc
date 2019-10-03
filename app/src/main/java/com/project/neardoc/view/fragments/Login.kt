@@ -25,12 +25,10 @@ import com.project.neardoc.viewmodel.LoginViewModel
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_login.*
-import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 import android.app.Activity.RESULT_OK
 import android.util.Log
 import androidx.lifecycle.Observer
@@ -41,7 +39,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.project.neardoc.viewmodel.listeners.ILoginViewModel
 
-class Login : Fragment(), Injectable, CoroutineScope, ILoginViewModel{
+class Login : Fragment(), Injectable, ILoginViewModel{
 
     companion object {
         @JvmStatic private val GOOGLE_SIGN_IN_CODE: Int = 0
@@ -61,11 +59,6 @@ class Login : Fragment(), Injectable, CoroutineScope, ILoginViewModel{
         this.viewModelFactory
     }
     private var isInternetAvailable = false
-
-    private val job = Job()
-
-    override val coroutineContext: CoroutineContext
-        get() = this.job + Dispatchers.Main
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -155,11 +148,13 @@ class Login : Fragment(), Injectable, CoroutineScope, ILoginViewModel{
         this.loginViewModel.getLoadingLiveData().observe(this, Observer {isLoading ->
             if (isLoading) {
                 Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
+            } else {
+                // turn off loading
             }
         })
         this.loginViewModel.getErrorLiveData().observe(this, Observer { isError ->
             if (isError) {
-                //
+                //show error
             }
         })
         this.loginViewModel.getLoginSuccessLiveData().observe(this, Observer {isLoginSuccess ->
