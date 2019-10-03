@@ -1,9 +1,6 @@
 package com.project.neardoc.data.local.remote
 
-import com.project.neardoc.model.EmailVerificationRes
-import com.project.neardoc.model.RegistrationRes
-import com.project.neardoc.model.Username
-import com.project.neardoc.model.Users
+import com.project.neardoc.model.*
 import io.reactivex.Observable
 import javax.inject.Inject
 
@@ -40,5 +37,9 @@ class NearDocRemoteRepo @Inject constructor(): INearDocRemoteRepo {
         idToken: String
     ): Observable<EmailVerificationRes> {
         return this.iNearDocRemoteApi.sendEmailVerificationLink(url, requestType, idToken)
+    }
+
+    override fun getUsernames(username: String, dbKey: String): Observable<UsernameRes> {
+        return this.iNearDocRemoteApi.getUsernames(username, dbKey)
     }
 }

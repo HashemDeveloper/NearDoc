@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 
 import com.project.neardoc.R
@@ -19,6 +20,7 @@ import com.project.neardoc.utils.validators.EmailValidator
 import com.project.neardoc.utils.validators.EmptyFieldValidator
 import com.project.neardoc.utils.validators.PasswordValidator
 import com.project.neardoc.utils.validators.UsernameValidator
+import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.RegistrationViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_registration.*
@@ -87,7 +89,29 @@ class Registration : Fragment(), Injectable{
         val isPasswordValidated: Boolean = this.passwordValidator!!.getIsValidated(password)
 
         if (isNameValidated && isUsernameValidated && isEmailValidated && isPasswordValidated) {
-            this.registrationViewModel.processRegistration(fullName, username, email, password)
+            this.registrationViewModel.checkIfUsernameExists(activity, username)
+            this.registrationViewModel.getUsernameExistsLiveData().observe(this, Observer {isExists ->
+                if (isExists) {
+                    fragment_register_username_input_layout_id.error = activity?.resources!!.getString(R.string.username_exists)
+                } else {
+                    this.registrationViewModel.processRegistration(activity, fullName, username, email, password)
+                }
+            })
+            this.registrationViewModel.getLoadingLiveData().observe(this, Observer { isLoading ->
+                if (isLoading) {
+                    displayLoading(true)
+                } else {
+                    displayLoading(false)
+                }
+            })
+        }
+    }
+    private fun displayLoading(isLoading: Boolean) {
+        val globalLoadingBar = GlobalLoadingBar(activity!!, fragment_registration_progress_bar_id)
+        if (isLoading) {
+            globalLoadingBar.setVisibility(true)
+        } else {
+            globalLoadingBar.setVisibility(false)
         }
     }
 
