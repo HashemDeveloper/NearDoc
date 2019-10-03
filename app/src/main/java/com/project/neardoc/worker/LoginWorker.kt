@@ -25,6 +25,7 @@ class LoginWorker @Inject constructor(context: Context, workerParams: WorkerPara
         val displayName: String = inputData.getString(Constants.WORKER_DISPLAY_NAME)!!
         val email: String = inputData.getString(Constants.WORKER_EMAIL)!!
         val dbKey: String = inputData.getString(Constants.WORKER_DB_AUTH_KEY)!!
+        val fullName: String = inputData.getString(Constants.WORKER_FULL_NAME)!!
         val usernameModel = Username(displayName)
         var isSaveSuccess = false
         val encodedEmail = Constants.encodeUserEmail(email)
@@ -32,7 +33,7 @@ class LoginWorker @Inject constructor(context: Context, workerParams: WorkerPara
             .subscribeOn(Schedulers.io())
             .subscribeWith(object : DisposableObserver<Username>() {
                 override fun onComplete() {
-                    val users = Users(displayName, encodedEmail, imagePath, true, Constants.SIGN_IN_PROVIDER_GOOGLE)
+                    val users = Users(fullName, displayName, encodedEmail, imagePath, true, Constants.SIGN_IN_PROVIDER_GOOGLE)
                    compositeDisposable.add(iNearDocRemoteRepo.storeUsersInfo(encodedEmail, dbKey, users)
                        .subscribeOn(Schedulers.io())
                        .subscribeWith(object : DisposableObserver<Users>() {
@@ -44,6 +45,7 @@ class LoginWorker @Inject constructor(context: Context, workerParams: WorkerPara
                            }
 
                            override fun onError(e: Throwable) {
+                               isSaveSuccess = false
                                Log.i("onError: ", e.localizedMessage!!)
                            }
                        }))
@@ -54,6 +56,7 @@ class LoginWorker @Inject constructor(context: Context, workerParams: WorkerPara
                 }
 
                 override fun onError(e: Throwable) {
+                    isSaveSuccess = false
                     Log.i("onError: ", e.localizedMessage!!)
                 }
             }))

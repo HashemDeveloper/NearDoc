@@ -5,9 +5,13 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.project.neardoc.R
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
 import com.project.neardoc.utils.Constants
+import com.project.neardoc.worker.RegistrationWorker
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -39,8 +43,17 @@ class RegistrationViewModel @Inject constructor(): ViewModel() {
                 this.loadingLiveData.value = false
                 this.errorLiveData.value = false
                 this.successLiveData.value = true
-                //TODO: save user info into firebase using worker
-
+                val data = Data.Builder()
+                    .putString(Constants.WORKER_FULL_NAME, fullName)
+                    .putString(Constants.WORKER_DISPLAY_NAME, username)
+                    .putString(Constants.WORKER_EMAIL, email)
+                    .putString(Constants.WORKER_DB_AUTH_KEY, activity.resources.getString(R.string.firebase_db_secret))
+                    .build()
+                val oneTimeWorkRequest = OneTimeWorkRequest.Builder(RegistrationWorker::class.java)
+                    .setInputData(data)
+                    .build()
+                val workerManager = WorkManager.getInstance(activity)
+                workerManager.beginWith(oneTimeWorkRequest).enqueue()
             }, {onError ->
                 Log.i("RegistrationError: ", onError.localizedMessage!!)
                 this.loadingLiveData.value = false
