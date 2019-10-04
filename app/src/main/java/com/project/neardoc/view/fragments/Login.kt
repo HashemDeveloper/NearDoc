@@ -40,6 +40,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
 import com.project.neardoc.events.EmailVerificationEvent
+import com.project.neardoc.utils.DeCryptor
 import com.project.neardoc.viewmodel.listeners.ILoginViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -120,7 +121,7 @@ class Login : Fragment(), Injectable, ILoginViewModel{
         }
         fragment_login_bt_id.setOnClickListener{
             if (this.isInternetAvailable) {
-                // perform login
+               this.loginViewModel.checkIfEmailVerified()
             } else {
                 displayConnectionSetting()
             }

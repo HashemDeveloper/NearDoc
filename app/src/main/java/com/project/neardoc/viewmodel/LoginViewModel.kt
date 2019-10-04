@@ -1,5 +1,7 @@
 package com.project.neardoc.viewmodel
 
+import android.util.Base64
+import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,13 +15,17 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.project.neardoc.R
+import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.rxauth.IRxAuthentication
 import com.project.neardoc.utils.Constants
+import com.project.neardoc.utils.DeCryptor
+import com.project.neardoc.utils.EnCryptor
 import com.project.neardoc.viewmodel.listeners.ILoginViewModel
 import com.project.neardoc.worker.LoginWorker
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.nio.charset.Charset
 import javax.inject.Inject
 
 class LoginViewModel @Inject constructor() : ViewModel() {
@@ -29,7 +35,8 @@ class LoginViewModel @Inject constructor() : ViewModel() {
     private var iLoginViewModel: ILoginViewModel? = null
     @Inject
     lateinit var iRxAuthentication: IRxAuthentication
-
+    @Inject
+    lateinit var iSharedPrefService: ISharedPrefService
     private val compositeDisposable = CompositeDisposable()
     private val firebaseAuth = FirebaseAuth.getInstance()
 
@@ -95,5 +102,15 @@ class LoginViewModel @Inject constructor() : ViewModel() {
 
     fun getLoginSuccessLiveData(): LiveData<Boolean> {
         return loginSuccessLiveData
+    }
+
+    fun checkIfEmailVerified() {
+        val deCryptor = DeCryptor()
+        val encryptedIdToken: String = this.iSharedPrefService.getIdToken()
+        val encryptIv: String = this.iSharedPrefService.getEncryptIv()
+        val byteArrayIdToken = Base64.decode(encryptedIdToken, Base64.DEFAULT)
+        val byteArrayEncryptIv = Base64.decode(encryptIv, Base64.DEFAULT)
+        val idToken = deCryptor.decryptData(Constants.FIREBASE_ID_TOKEN, byteArrayIdToken, byteArrayEncryptIv)
+        Log.i("IdToken: ", idToken)
     }
 }
