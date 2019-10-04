@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
@@ -22,6 +23,7 @@ import com.project.neardoc.utils.validators.PasswordValidator
 import com.project.neardoc.utils.validators.UsernameValidator
 import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.RegistrationViewModel
+import com.project.neardoc.viewmodel.listeners.IRegistrationViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_registration.*
 import org.greenrobot.eventbus.EventBus
@@ -29,7 +31,8 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
-class Registration : Fragment(), Injectable{
+class Registration : Fragment(), Injectable, IRegistrationViewModel{
+
     private var isInternetAvailable: Boolean = false
     private val mobileData = "MOBILE_DATA"
     private val wifiData = "WIFI_DATA"
@@ -37,6 +40,7 @@ class Registration : Fragment(), Injectable{
     private var usernameValidator: UsernameValidator? = null
     private var emailValidator: EmailValidator? = null
     private var passwordValidator: PasswordValidator?= null
+    private var isSent: Boolean = false
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -55,6 +59,7 @@ class Registration : Fragment(), Injectable{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         performNavigationActions()
+        this.registrationViewModel.setListener(this)
         registerInputValidators()
     }
     private fun registerInputValidators() {
@@ -143,6 +148,12 @@ class Registration : Fragment(), Injectable{
         }
     }
 
+    override fun onEmailVerificationSent(isSent: Boolean) {
+        this.isSent = isSent
+        val navigateToLogin = findNavController()
+        navigateToLogin.navigate(R.id.login)
+    }
+
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
@@ -151,5 +162,12 @@ class Registration : Fragment(), Injectable{
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (this.isSent) {
+            this.registrationViewModel.notifyEmailSent()
+        }
     }
 }

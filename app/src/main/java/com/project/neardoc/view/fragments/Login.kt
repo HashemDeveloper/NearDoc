@@ -31,13 +31,18 @@ import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 import android.app.Activity.RESULT_OK
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.google.android.material.snackbar.Snackbar
+import com.project.neardoc.events.EmailVerificationEvent
 import com.project.neardoc.viewmodel.listeners.ILoginViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 class Login : Fragment(), Injectable, ILoginViewModel{
 
@@ -77,7 +82,26 @@ class Login : Fragment(), Injectable, ILoginViewModel{
         performNavigateActions()
         onBackPressed()
         this.loginViewModel.setLoginViewModelListener(this)
+        observerEmailVerificationEvent()
     }
+    private fun observerEmailVerificationEvent() {
+        this.compositeDisposable.add(this.iRxEventBus.observable(EmailVerificationEvent::class.java)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {email ->
+                val message: String =
+                    activity?.resources!!.getString(R.string.verify_email) + " " + email.getEmail()
+                val snackbar: Snackbar = Snackbar.make(view!!, message, Snackbar.LENGTH_INDEFINITE)
+                snackbar.view.setBackgroundColor(ContextCompat.getColor(activity!!, R.color.blue_gray_800))
+                snackbar.show()
+                snackbar.setAction(R.string.email_inbox) {
+                    run {
+                        openEmailInbox(snackbar)
+                    }
+                }
+            })
+    }
+
     private fun onBackPressed() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -127,6 +151,13 @@ class Login : Fragment(), Injectable, ILoginViewModel{
         } else {
             this.isInternetAvailable = false
         }
+    }
+
+    private fun openEmailInbox(snackbar: Snackbar) {
+        val intent = Intent(Intent.ACTION_MAIN)
+        intent.addCategory(Intent.CATEGORY_APP_EMAIL)
+        startActivity(intent)
+        snackbar.dismiss()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

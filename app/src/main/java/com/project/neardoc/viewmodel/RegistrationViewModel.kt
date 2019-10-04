@@ -1,6 +1,7 @@
 package com.project.neardoc.viewmodel
 
 import android.util.Log
+import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,11 +11,15 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.project.neardoc.R
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
+import com.project.neardoc.events.EmailVerificationEvent
+import com.project.neardoc.rxeventbus.IRxEventBus
 import com.project.neardoc.utils.Constants
+import com.project.neardoc.viewmodel.listeners.IRegistrationViewModel
 import com.project.neardoc.worker.RegistrationWorker
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 class RegistrationViewModel @Inject constructor(): ViewModel() {
@@ -27,7 +32,10 @@ class RegistrationViewModel @Inject constructor(): ViewModel() {
     private val usernameLiveData: MutableLiveData<String> = MutableLiveData()
     @Inject
     lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
-
+    private var iRegistrationViewModel: IRegistrationViewModel?= null
+    @Inject
+    lateinit var iRxEventBus: IRxEventBus
+    private var verificationEmail: String?= null
     override fun onCleared() {
         super.onCleared()
         this.compositeDisposable.clear()
@@ -40,6 +48,8 @@ class RegistrationViewModel @Inject constructor(): ViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({response ->
                 Log.i("Email: ", response.email)
+                this.verificationEmail = response.email
+                this.iRegistrationViewModel?.onEmailVerificationSent(true)
                 this.loadingLiveData.value = false
             }, {onError ->
                 this.loadingLiveData.value = false
@@ -93,7 +103,9 @@ class RegistrationViewModel @Inject constructor(): ViewModel() {
                 }
             }))
     }
-
+    fun setListener(iRegistrationViewModel: IRegistrationViewModel) {
+        this.iRegistrationViewModel = iRegistrationViewModel
+    }
     fun getLoadingLiveData(): LiveData<Boolean> {
         return this.loadingLiveData
     }
@@ -111,5 +123,11 @@ class RegistrationViewModel @Inject constructor(): ViewModel() {
     }
     fun getUsernameLiveData(): LiveData<String> {
         return usernameLiveData
+    }
+
+    fun notifyEmailSent() {
+        if (this.verificationEmail != null && !this.verificationEmail.isNullOrEmpty()) {
+            this.iRxEventBus.post(EmailVerificationEvent(this.verificationEmail!!))
+        }
     }
 }

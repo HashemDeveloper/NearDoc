@@ -26,4 +26,6 @@
     <string name="name_required">Please enter your name</string>
     <string name="username_exists">This username already exists</string>
     <string name="email_exists">The email address is already in use by another account</string>
+    <string name="verify_email">Verify your email</string>
+    <string name="email_inbox">Open Inbox</string>
 </resources>
