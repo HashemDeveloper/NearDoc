@@ -18,6 +18,9 @@ class Constants {
         val FIREBASE_AUTH_SIGN_UP_ENDPOINT = "https://identitytoolkit.googleapis.com/v1/accounts:signUp"
         val FIREBASE_AUTH_EMAIL_VERIFICATION_ENDPOINT = "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode"
         val FIREBASE_EMAIL_VERFICATION_REQUEST_TYPE = "VERIFY_EMAIL"
+        val SHARED_PREF_ID_TOKEN = "idToken"
+        val SHARED_PREF_ENCRYPT_IV = "encryptIv"
+        val FIREBASE_ID_TOKEN = "ID_TOKEN"
         fun encodeUserEmail(email: String): String {
             return email.replace(".", ",")
         }

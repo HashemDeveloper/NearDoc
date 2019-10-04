@@ -10,10 +10,13 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.project.neardoc.R
+import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
 import com.project.neardoc.events.EmailVerificationEvent
 import com.project.neardoc.rxeventbus.IRxEventBus
 import com.project.neardoc.utils.Constants
+import com.project.neardoc.utils.DeCryptor
+import com.project.neardoc.utils.EnCryptor
 import com.project.neardoc.viewmodel.listeners.IRegistrationViewModel
 import com.project.neardoc.worker.RegistrationWorker
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -35,6 +38,8 @@ class RegistrationViewModel @Inject constructor(): ViewModel() {
     private var iRegistrationViewModel: IRegistrationViewModel?= null
     @Inject
     lateinit var iRxEventBus: IRxEventBus
+    @Inject
+    lateinit var iSharedPrefService: ISharedPrefService
     private var verificationEmail: String?= null
     override fun onCleared() {
         super.onCleared()
@@ -66,6 +71,14 @@ class RegistrationViewModel @Inject constructor(): ViewModel() {
             .subscribe({response ->
                 this.errorLiveData.value = false
                 this.successLiveData.value = response.idToken
+                // just for test
+                val enCryptor = EnCryptor()
+                val deCryptor = DeCryptor()
+                val encryptedIdToken = enCryptor.encryptText(Constants.FIREBASE_ID_TOKEN, response.idToken)
+                val idToken: String = deCryptor.decryptData(Constants.FIREBASE_ID_TOKEN, encryptedIdToken, enCryptor.iv!!)
+                Log.i("IdToken: ", idToken)
+                this.iSharedPrefService.storeIdToken(encryptedIdToken)
+                this.iSharedPrefService.storeEncryptIV(enCryptor.iv!!)
                 val data = Data.Builder()
                     .putString(Constants.WORKER_FULL_NAME, fullName)
                     .putString(Constants.WORKER_DISPLAY_NAME, username)
