@@ -43,9 +43,11 @@ import com.project.neardoc.events.EmailVerificationEvent
 import com.project.neardoc.utils.DeCryptor
 import com.project.neardoc.utils.validators.EmailValidator
 import com.project.neardoc.utils.validators.PasswordValidator
+import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.listeners.ILoginViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_registration.*
 
 class Login : Fragment(), Injectable, ILoginViewModel{
 
@@ -91,7 +93,7 @@ class Login : Fragment(), Injectable, ILoginViewModel{
         registerInputValidators()
     }
     private fun registerInputValidators() {
-        this.emailValidator = EmailValidator(fragment_login_enter_password_input_layout_id)
+        this.emailValidator = EmailValidator(fragment_login_enter_email_input_layout_id)
         this.passwordValidator = PasswordValidator(fragment_login_enter_password_input_layout_id)
     }
     private fun observerEmailVerificationEvent() {
@@ -200,9 +202,9 @@ class Login : Fragment(), Injectable, ILoginViewModel{
     override fun onLoginActionPerformed() {
         this.loginViewModel.getLoadingLiveData().observe(this, Observer {isLoading ->
             if (isLoading) {
-                Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
+                displayLoading(true)
             } else {
-                // turn off loading
+               displayLoading(false)
             }
         })
         this.loginViewModel.getErrorLiveData().observe(this, Observer { isError ->
@@ -218,10 +220,10 @@ class Login : Fragment(), Injectable, ILoginViewModel{
         })
         this.loginViewModel.getIsEmailVerificationRequireLiveData().observe(this, Observer { isRequried ->
             if (isRequried) {
-                val snackbar: Snackbar = Snackbar.make(view!!, "Resend", Snackbar.LENGTH_INDEFINITE)
+                val snackbar: Snackbar = Snackbar.make(view!!, R.string.email_not_verified, Snackbar.LENGTH_INDEFINITE)
                 snackbar.view.setBackgroundColor(ContextCompat.getColor(activity!!, R.color.blue_gray_800))
                 snackbar.show()
-                snackbar.setAction(R.string.email_inbox) {
+                snackbar.setAction(R.string.email_resend) {
                     run {
                         this.loginViewModel.resendEmailEmailVerification(activity)
                     }
@@ -250,5 +252,13 @@ class Login : Fragment(), Injectable, ILoginViewModel{
         super.onDestroyView()
         this.compositeDisposable.clear()
         this.loginViewModel.removeLoginViewModelListener(this)
+    }
+    private fun displayLoading(isLoading: Boolean) {
+        val globalLoadingBar = GlobalLoadingBar(activity!!, fragment_login_progress_bar_id)
+        if (isLoading) {
+            globalLoadingBar.setVisibility(true)
+        } else {
+            globalLoadingBar.setVisibility(false)
+        }
     }
 }

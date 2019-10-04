@@ -28,4 +28,6 @@
     <string name="email_exists">The email address is already in use by another account</string>
     <string name="verify_email">Verify your email</string>
     <string name="email_inbox">Open Inbox</string>
+    <string name="email_not_verified">Email is not verified</string>
+    <string name="email_resend">Resend</string>
 </resources>
