@@ -8,4 +8,5 @@ import io.reactivex.Observable
 
 interface IRxAuthentication {
     fun googleSignIn(activity: FragmentActivity, firebaseAuth: FirebaseAuth, authCredential: AuthCredential) : Observable<FirebaseUser>
+    fun appSignIn(activity: FragmentActivity, firebaseAuth: FirebaseAuth, email: String, password: String): Observable<FirebaseUser>
 }

@@ -47,7 +47,7 @@
             android:layout_below="@+id/fragment_login_logo_text_view"
             >
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/fragment_login_enter_username_input_layout_id"
+                android:id="@+id/fragment_login_enter_email_input_layout_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/email"
@@ -55,7 +55,7 @@
                 android:textColorHint="@android:color/white"
                 >
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/fragment_login_enter_username_edit_text_id"
+                    android:id="@+id/fragment_login_enter_email_edit_text_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_email_black_24dp"
@@ -72,7 +72,7 @@
                 android:id="@+id/fragment_login_enter_password_input_layout_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/fragment_login_enter_username_input_layout_id"
+                android:layout_below="@+id/fragment_login_enter_email_input_layout_id"
                 android:hint="@string/password"
                 app:passwordToggleEnabled="true"
                 app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
@@ -183,6 +183,10 @@
             android:textColor="@android:color/white"
             android:textSize="18sp"
             android:layout_marginBottom="10dp"
+            />
+        <include android:id="@+id/fragment_login_progress_bar_id"
+            layout="@layout/global_progress_bar_layout"
+            android:visibility="gone"
             />
     </RelativeLayout>
 </layout>

@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
+import com.project.neardoc.data.local.remote.INearDocRemoteRepo
 import com.project.neardoc.rxauth.IRxAuthentication
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.DeCryptor
@@ -32,11 +33,14 @@ class LoginViewModel @Inject constructor() : ViewModel() {
     private val loadingLiveData: MutableLiveData<Boolean> = MutableLiveData()
     private val errorLiveData: MutableLiveData<Boolean> = MutableLiveData()
     private val loginSuccessLiveData: MutableLiveData<Boolean> = MutableLiveData()
+    private val emailVerificationRequireLiveData: MutableLiveData<Boolean> = MutableLiveData()
     private var iLoginViewModel: ILoginViewModel? = null
     @Inject
     lateinit var iRxAuthentication: IRxAuthentication
     @Inject
     lateinit var iSharedPrefService: ISharedPrefService
+    @Inject
+    lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
     private val compositeDisposable = CompositeDisposable()
     private val firebaseAuth = FirebaseAuth.getInstance()
 
@@ -103,14 +107,50 @@ class LoginViewModel @Inject constructor() : ViewModel() {
     fun getLoginSuccessLiveData(): LiveData<Boolean> {
         return loginSuccessLiveData
     }
+    fun getIsEmailVerificationRequireLiveData(): LiveData<Boolean> {
+        return this.emailVerificationRequireLiveData
+    }
 
-    fun checkIfEmailVerified() {
+    fun processLoginWithApp(activity: FragmentActivity?, email: String, password: String) {
+        this.iLoginViewModel?.onLoginActionPerformed()
+        this.loadingLiveData.value = true
+        this.compositeDisposable.add(this.iRxAuthentication.appSignIn(activity!!, this.firebaseAuth, email, password)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({firebaseUser ->
+                if (firebaseUser.isEmailVerified) {
+                    this.loginSuccessLiveData.value = true
+                    this.emailVerificationRequireLiveData.value = false
+                    this.errorLiveData.value = false
+                    this.loadingLiveData.value = false
+                } else {
+                    this.emailVerificationRequireLiveData.value = true
+                    this.loadingLiveData.value = false
+                    this.loginSuccessLiveData.value = false
+                    this.firebaseAuth.signOut()
+                }
+            }, {onError ->
+                this.loadingLiveData.value = false
+                this.errorLiveData.value = false
+                Log.i("AppLoginError: ", onError.localizedMessage!!)
+            }))
+    }
+    fun resendEmailEmailVerification(activity: FragmentActivity?) {
         val deCryptor = DeCryptor()
         val encryptedIdToken: String = this.iSharedPrefService.getIdToken()
         val encryptIv: String = this.iSharedPrefService.getEncryptIv()
         val byteArrayIdToken = Base64.decode(encryptedIdToken, Base64.DEFAULT)
         val byteArrayEncryptIv = Base64.decode(encryptIv, Base64.DEFAULT)
         val idToken = deCryptor.decryptData(Constants.FIREBASE_ID_TOKEN, byteArrayIdToken, byteArrayEncryptIv)
-        Log.i("IdToken: ", idToken)
+        this.compositeDisposable.add(this.iNearDocRemoteRepo.sendEmailVerification(Constants.FIREBASE_AUTH_EMAIL_VERIFICATION_ENDPOINT,
+            Constants.FIREBASE_EMAIL_VERFICATION_REQUEST_TYPE, idToken, activity?.resources!!.getString(R.string.firebase_web_key))
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({response ->
+                Log.i("EmailSentTo: ", response.email)
+                this.iLoginViewModel?.onEmailVerificationSent(response.email)
+            }, {onError ->
+                Log.i("ErrorSendingEmail:", onError.localizedMessage!!)
+            }))
     }
 }

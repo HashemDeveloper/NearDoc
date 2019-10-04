@@ -8,7 +8,26 @@ import com.google.firebase.auth.FirebaseUser
 import io.reactivex.Observable
 import javax.inject.Inject
 
-class RxAuthentication @Inject constructor(): IRxAuthentication {
+class RxAuthentication @Inject constructor() : IRxAuthentication {
+    override fun appSignIn(
+        activity: FragmentActivity,
+        firebaseAuth: FirebaseAuth,
+        email: String,
+        password: String
+    ): Observable<FirebaseUser> {
+        return Observable.create { emitter ->
+            firebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(activity) {
+                    if (it.isSuccessful) {
+                        val firebaseUser = firebaseAuth.currentUser
+                        emitter.onNext(firebaseUser!!)
+                    }
+                }.addOnFailureListener {
+                emitter.onError(it)
+            }
+        }
+    }
+
     override fun googleSignIn(
         activity: FragmentActivity,
         firebaseAuth: FirebaseAuth,
@@ -20,7 +39,7 @@ class RxAuthentication @Inject constructor(): IRxAuthentication {
                     val firebaseUser = firebaseAuth.currentUser
                     emitter.onNext(firebaseUser!!)
                 }
-            }.addOnFailureListener{
+            }.addOnFailureListener {
                 emitter.onError(it)
             }
         }

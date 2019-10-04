@@ -41,6 +41,8 @@ import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
 import com.project.neardoc.events.EmailVerificationEvent
 import com.project.neardoc.utils.DeCryptor
+import com.project.neardoc.utils.validators.EmailValidator
+import com.project.neardoc.utils.validators.PasswordValidator
 import com.project.neardoc.viewmodel.listeners.ILoginViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -50,6 +52,8 @@ class Login : Fragment(), Injectable, ILoginViewModel{
     companion object {
         @JvmStatic private val GOOGLE_SIGN_IN_CODE: Int = 0
     }
+    private var emailValidator: EmailValidator?= null
+    private var passwordValidator: PasswordValidator?= null
     private val mobileData = "MOBILE_DATA"
     private val wifiData = "WIFI_DATA"
     private val compositeDisposable = CompositeDisposable()
@@ -84,6 +88,11 @@ class Login : Fragment(), Injectable, ILoginViewModel{
         onBackPressed()
         this.loginViewModel.setLoginViewModelListener(this)
         observerEmailVerificationEvent()
+        registerInputValidators()
+    }
+    private fun registerInputValidators() {
+        this.emailValidator = EmailValidator(fragment_login_enter_password_input_layout_id)
+        this.passwordValidator = PasswordValidator(fragment_login_enter_password_input_layout_id)
     }
     private fun observerEmailVerificationEvent() {
         this.compositeDisposable.add(this.iRxEventBus.observable(EmailVerificationEvent::class.java)
@@ -92,15 +101,18 @@ class Login : Fragment(), Injectable, ILoginViewModel{
             .subscribe {email ->
                 val message: String =
                     activity?.resources!!.getString(R.string.verify_email) + " " + email.getEmail()
-                val snackbar: Snackbar = Snackbar.make(view!!, message, Snackbar.LENGTH_INDEFINITE)
-                snackbar.view.setBackgroundColor(ContextCompat.getColor(activity!!, R.color.blue_gray_800))
-                snackbar.show()
-                snackbar.setAction(R.string.email_inbox) {
-                    run {
-                        openEmailInbox(snackbar)
-                    }
-                }
+               emailInboxSnackBar(message)
             })
+    }
+    private fun emailInboxSnackBar(message: String) {
+        val snackbar: Snackbar = Snackbar.make(view!!, message, Snackbar.LENGTH_INDEFINITE)
+        snackbar.view.setBackgroundColor(ContextCompat.getColor(activity!!, R.color.blue_gray_800))
+        snackbar.show()
+        snackbar.setAction(R.string.email_inbox) {
+            run {
+                openEmailInbox(snackbar)
+            }
+        }
     }
 
     private fun onBackPressed() {
@@ -121,7 +133,7 @@ class Login : Fragment(), Injectable, ILoginViewModel{
         }
         fragment_login_bt_id.setOnClickListener{
             if (this.isInternetAvailable) {
-               this.loginViewModel.checkIfEmailVerified()
+                processLogin()
             } else {
                 displayConnectionSetting()
             }
@@ -133,6 +145,15 @@ class Login : Fragment(), Injectable, ILoginViewModel{
             } else {
                displayConnectionSetting()
             }
+        }
+    }
+    private fun processLogin() {
+        val email: String = fragment_login_enter_email_edit_text_id.text.toString()
+        val password: String = fragment_login_enter_password_edit_text_id.text.toString()
+        val isValidEmail = this.emailValidator?.getIsValidated(email)
+        val isValidPass = this.passwordValidator?.getIsValidated(password)
+        if (isValidEmail!! && isValidPass!!) {
+            this.loginViewModel.processLoginWithApp(activity, email, password)
         }
     }
     private fun displayConnectionSetting() {
@@ -195,6 +216,24 @@ class Login : Fragment(), Injectable, ILoginViewModel{
                 openHomePage.navigate(R.id.homePage)
             }
         })
+        this.loginViewModel.getIsEmailVerificationRequireLiveData().observe(this, Observer { isRequried ->
+            if (isRequried) {
+                val snackbar: Snackbar = Snackbar.make(view!!, "Resend", Snackbar.LENGTH_INDEFINITE)
+                snackbar.view.setBackgroundColor(ContextCompat.getColor(activity!!, R.color.blue_gray_800))
+                snackbar.show()
+                snackbar.setAction(R.string.email_inbox) {
+                    run {
+                        this.loginViewModel.resendEmailEmailVerification(activity)
+                    }
+                }
+            }
+        })
+    }
+
+    override fun onEmailVerificationSent(email: String) {
+        val message: String =
+            activity?.resources!!.getString(R.string.verify_email) + " " + email
+        emailInboxSnackBar(message)
     }
 
     override fun onStart() {
