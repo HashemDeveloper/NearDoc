@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.IntentFilter
 import android.net.*
 import android.os.Build
+import android.os.Handler
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
@@ -73,8 +74,10 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
                 }
                 if (this.connectivityManager!!.getNetworkCapabilities(network)!!.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
                     this.wifiConnectedLiveData.postValue(true)
+                    this.usingMobileDataLiveData.postValue(false)
                 } else if (this.connectivityManager!!.getNetworkCapabilities(network)!!.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)){
                     this.usingMobileDataLiveData.postValue(true)
+                    this.wifiConnectedLiveData.postValue(false)
                 }
             } else {
                 // handle for lower api
@@ -91,6 +94,10 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
 
         override fun onAvailable(network: Network) {
             connectionStateMonitor.postValue(true)
+            val handler = Handler()
+            handler.post {
+                this.connectionStateMonitor.updateConnection()
+            }
         }
 
         override fun onLost(network: Network) {
@@ -99,6 +106,10 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
 
         override fun onUnavailable() {
             connectionStateMonitor.postValue(false)
+            val handler = Handler()
+            handler.post {
+                this.connectionStateMonitor.updateConnection()
+            }
         }
 
         override fun onCapabilitiesChanged(
