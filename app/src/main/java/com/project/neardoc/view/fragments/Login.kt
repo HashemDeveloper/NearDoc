@@ -30,6 +30,8 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 import android.app.Activity.RESULT_OK
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -181,7 +183,16 @@ class Login : Fragment(), Injectable, ILoginViewModel{
     private fun openEmailInbox(snackbar: Snackbar) {
         val intent = Intent(Intent.ACTION_MAIN)
         intent.addCategory(Intent.CATEGORY_APP_EMAIL)
-        startActivity(intent)
+        val activities: List<ResolveInfo> = activity?.packageManager!!.queryIntentActivities(
+            intent,
+            PackageManager.MATCH_DEFAULT_ONLY
+        )
+        val isIntentSafe: Boolean = activities.isNotEmpty()
+        if (isIntentSafe) {
+            startActivity(intent)
+        } else {
+            Toast.makeText(activity, R.string.no_email_app_found, Toast.LENGTH_LONG).show()
+        }
         snackbar.dismiss()
     }
 
@@ -233,11 +244,11 @@ class Login : Fragment(), Injectable, ILoginViewModel{
         })
         this.loginViewModel.getErrorMessageLiveData().observe(this, Observer {errorMessage ->
             if (errorMessage == "The password is invalid or the user does not have a password.") {
-                val snackbar: Snackbar = Snackbar.make(view!!, R.string.login_invalid_password, Snackbar.LENGTH_INDEFINITE)
+                val snackbar: Snackbar = Snackbar.make(view!!, R.string.login_invalid_password, Snackbar.LENGTH_LONG)
                 snackbar.view.setBackgroundColor(ContextCompat.getColor(activity!!, R.color.blue_gray_800))
                 snackbar.show()
             } else if (errorMessage == "There is no user record corresponding to this identifier. The user may have been deleted.") {
-                val snackbar: Snackbar = Snackbar.make(view!!, R.string.email_not_found, Snackbar.LENGTH_INDEFINITE)
+                val snackbar: Snackbar = Snackbar.make(view!!, R.string.email_not_found, Snackbar.LENGTH_LONG)
                 snackbar.view.setBackgroundColor(ContextCompat.getColor(activity!!, R.color.blue_gray_800))
                 snackbar.show()
             }

@@ -7,7 +7,6 @@ import java.util.regex.Pattern
 class Constants {
     companion object {
         val CONNECTIVITY_ACTION = "android.net.conn.CONNECTIVITY_CHANGE"
-        val GLOBAL_SHARED_PREF = "global_shared_pref"
         val SIGN_IN_PROVIDER_GOOGLE = "google"
         val SIGN_IN_PROVIDER_FIREBASE = "firebase"
         val WORKER_FULL_NAME = "fullName"
@@ -17,6 +16,8 @@ class Constants {
         val WORKER_EMAIL = "email"
         val FIREBASE_AUTH_SIGN_UP_ENDPOINT = "https://identitytoolkit.googleapis.com/v1/accounts:signUp"
         val FIREBASE_AUTH_EMAIL_VERIFICATION_ENDPOINT = "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode"
+        val FIREBASE_AUTH_PASSWORD_RESET_ENDPOINT = "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode"
+        val FIREBASE_AUTH_PASSWORD_RESET_REQUEST_TYPE = "PASSWORD_RESET"
         val FIREBASE_EMAIL_VERFICATION_REQUEST_TYPE = "VERIFY_EMAIL"
         val SHARED_PREF_ID_TOKEN = "idToken"
         val SHARED_PREF_ENCRYPT_IV = "encryptIv"

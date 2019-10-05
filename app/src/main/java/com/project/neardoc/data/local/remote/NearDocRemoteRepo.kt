@@ -43,4 +43,12 @@ class NearDocRemoteRepo @Inject constructor(): INearDocRemoteRepo {
     override fun getUsernames(username: String, dbKey: String): Observable<UsernameRes> {
         return this.iNearDocRemoteApi.getUsernames(username, dbKey)
     }
+    override fun sendPasswordResetLink(
+        url: String,
+        apiKey: String,
+        requestType: String,
+        email: String
+    ): Observable<PasswordResetRes> {
+        return this.iNearDocRemoteApi.sendPasswordResetLink(url, apiKey, requestType, email)
+    }
 }

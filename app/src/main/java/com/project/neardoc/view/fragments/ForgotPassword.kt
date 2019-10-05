@@ -1,14 +1,20 @@
 package com.project.neardoc.view.fragments
 
 
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
@@ -18,15 +24,18 @@ import com.project.neardoc.utils.ConnectionSettings
 import com.project.neardoc.utils.Constants.Companion.mobileData
 import com.project.neardoc.utils.Constants.Companion.wifiData
 import com.project.neardoc.utils.validators.EmailValidator
+import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.ForgotPasswordViewModel
+import com.project.neardoc.viewmodel.listeners.IForgotPasswordViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_forgot_password.*
+import kotlinx.android.synthetic.main.fragment_login.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
-class ForgotPassword : Fragment(), Injectable {
+class ForgotPassword : Fragment(), Injectable, IForgotPasswordViewModel {
     private var isInternetAvailable = false
     private var emailValidator: EmailValidator?= null
     @Inject
@@ -44,6 +53,7 @@ class ForgotPassword : Fragment(), Injectable {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        this.forgotPassViewModel.registerListener(this)
         attachValidator()
         performActions()
     }
@@ -67,14 +77,63 @@ class ForgotPassword : Fragment(), Injectable {
         val email: String = fragment_forg_password_email_edit_text_id.text.toString()
         val isValidEmail = this.emailValidator?.getIsValidated(email)
         if (isValidEmail!!) {
-            Toast.makeText(activity, "Valid", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(activity, "Not", Toast.LENGTH_SHORT).show()
+            this.forgotPassViewModel.sendPasswordResetLink(activity!!, email)
         }
     }
     private fun displayConnectionSetting() {
         val connectionSettings = ConnectionSettings(activity!!, view!!)
         connectionSettings.initWifiSetting(false)
+    }
+    override fun onPasswordResetLinkProcessed() {
+        this.forgotPassViewModel.getIsLoadingLiveData().observe(this, Observer {isLoading ->
+            if (isLoading) {
+                displayLoading(true)
+            } else {
+                displayLoading(false)
+            }
+        })
+        this.forgotPassViewModel.getIsErrorLiveData().observe(this, Observer { isError ->
+            if (isError) {
+                val message = activity?.resources!!.getString(R.string.error_sending_password_reset_link) + ": " + activity?.resources!!.getString(R.string.email_not_found)
+                val snackbar: Snackbar = Snackbar.make(view!!, message, Snackbar.LENGTH_LONG)
+                snackbar.view.setBackgroundColor(ContextCompat.getColor(activity!!, R.color.blue_gray_800))
+                snackbar.show()
+            }
+        })
+        this.forgotPassViewModel.getIsSuccessLiveData().observe(this, Observer { isSuccess ->
+            val snackbar: Snackbar = Snackbar.make(view!!, R.string.password_link_sent, Snackbar.LENGTH_INDEFINITE)
+            snackbar.view.setBackgroundColor(ContextCompat.getColor(activity!!, R.color.blue_gray_800))
+            snackbar.show()
+            snackbar.setAction(R.string.email_inbox) {
+                run {
+                    openEmailInbox()
+                }
+            }
+        })
+    }
+    private fun openEmailInbox() {
+        val sendIntent = Intent(Intent.ACTION_SEND)
+        sendIntent.addCategory(Intent.CATEGORY_APP_EMAIL)
+        val title: String = activity?.resources!!.getString(R.string.choose_email_provider)
+        val chooser = Intent.createChooser(sendIntent, title)
+        val activities: List<ResolveInfo> = activity?.packageManager!!.queryIntentActivities(
+            sendIntent,
+            PackageManager.MATCH_DEFAULT_ONLY
+        )
+        val isIntentSafe: Boolean = activities.isNotEmpty()
+        if (isIntentSafe) {
+            startActivity(chooser)
+        } else {
+            Toast.makeText(activity, R.string.no_email_app_found, Toast.LENGTH_LONG).show()
+        }
+    }
+    private fun displayLoading(isLoading: Boolean) {
+        val globalLoadingBar = GlobalLoadingBar(activity!!, fragment_forgot_password_progress_bar_id)
+        if (isLoading) {
+            globalLoadingBar.setVisibility(true)
+        } else {
+            globalLoadingBar.setVisibility(false)
+        }
     }
     @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
     fun onNetworkStateChangedEvent(networkStateEvent: NetworkStateEvent) {
@@ -88,7 +147,6 @@ class ForgotPassword : Fragment(), Injectable {
             this.isInternetAvailable = false
         }
     }
-
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)

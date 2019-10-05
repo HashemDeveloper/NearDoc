@@ -9,4 +9,5 @@ interface INearDocRemoteRepo {
     fun signUpWithEmailAndPassword(url: String, webKey: String, email: String, password: String, returnSecureToken: Boolean): Observable<RegistrationRes>
     fun sendEmailVerification(url: String, requestType: String, idToken: String, webKey: String): Observable<EmailVerificationRes>
     fun getUsernames(username: String, dbKey: String): Observable<UsernameRes>
+    fun sendPasswordResetLink(url: String, apiKey: String, requestType: String, email: String): Observable<PasswordResetRes>
 }

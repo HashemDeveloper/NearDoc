@@ -7,7 +7,7 @@ import retrofit2.http.*
 interface INearDocRemoteApi {
     @Headers("Content-Type: application/json")
     @POST
-    fun signInWithCustomToken(@Query("key") webKey: String, @Query("token") token: String, @Query("returnSecureToken") secureToken: Boolean): Observable<ResponseTokenModel>
+    fun signInWithCustomToken(@Query("auth") apiKey: String, @Query("token") token: String, @Query("returnSecureToken") secureToken: Boolean): Observable<ResponseTokenModel>
 
     @Headers("Content-Type: application/json")
     @PUT("/usernames/{username}/.json")
@@ -20,16 +20,20 @@ interface INearDocRemoteApi {
     @Headers("Content-Type: application/json")
     @POST
     fun signUpWithEmailAndPassword(
-        @Url url: String, @Query("key") webKey: String, @Query("email") email: String, @Query(
+        @Url url: String, @Query("key") apiKey: String, @Query("email") email: String, @Query(
             "password"
         ) password: String, @Query("returnSecureToken") returnSecureToken: Boolean
     ): Observable<RegistrationRes>
 
     @Headers("Content-Type: application/json")
     @POST
-    fun sendEmailVerificationLink(@Url url: String, @Query("requestType") requestType: String, @Query("idToken") idToken: String, @Query("key") webKey: String): Observable<EmailVerificationRes>
+    fun sendEmailVerificationLink(@Url url: String, @Query("requestType") requestType: String, @Query("idToken") idToken: String, @Query("key") apiKey: String): Observable<EmailVerificationRes>
 
     @Headers("Content-Type: application/json")
     @GET("/usernames/{node}/.json")
     fun getUsernames(@Path("node") username: String, @Query("key") dbKey: String): Observable<UsernameRes>
+
+    @Headers("Content-Type: application/json")
+    @POST
+    fun sendPasswordResetLink(@Url url: String, @Query("key") apiKey: String, @Query("requestType") requestType: String, @Query("email") email: String): Observable<PasswordResetRes>
 }

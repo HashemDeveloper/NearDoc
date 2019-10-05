@@ -7,7 +7,6 @@ import androidx.preference.PreferenceManager
 import javax.inject.Inject
 import androidx.core.content.edit
 import com.project.neardoc.utils.Constants
-import com.project.neardoc.utils.Constants.Companion.GLOBAL_SHARED_PREF
 import java.util.*
 
 class SharedPrefService @Inject constructor(): ISharedPrefService {
