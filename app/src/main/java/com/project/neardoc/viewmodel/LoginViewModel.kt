@@ -34,7 +34,9 @@ class LoginViewModel @Inject constructor() : ViewModel() {
     private val errorLiveData: MutableLiveData<Boolean> = MutableLiveData()
     private val loginSuccessLiveData: MutableLiveData<Boolean> = MutableLiveData()
     private val emailVerificationRequireLiveData: MutableLiveData<Boolean> = MutableLiveData()
+    private val errorMessageLiveData: MutableLiveData<String> = MutableLiveData()
     private var iLoginViewModel: ILoginViewModel? = null
+    private val emailVerificationSentLiveData: MutableLiveData<String> = MutableLiveData()
     @Inject
     lateinit var iRxAuthentication: IRxAuthentication
     @Inject
@@ -110,6 +112,9 @@ class LoginViewModel @Inject constructor() : ViewModel() {
     fun getIsEmailVerificationRequireLiveData(): LiveData<Boolean> {
         return this.emailVerificationRequireLiveData
     }
+    fun getErrorMessageLiveData(): LiveData<String> {
+        return this.errorMessageLiveData
+    }
 
     fun processLoginWithApp(activity: FragmentActivity?, email: String, password: String) {
         this.iLoginViewModel?.onLoginActionPerformed()
@@ -132,7 +137,9 @@ class LoginViewModel @Inject constructor() : ViewModel() {
             }, {onError ->
                 this.loadingLiveData.value = false
                 this.errorLiveData.value = false
+                this.errorMessageLiveData.value = onError.localizedMessage!!
                 Log.i("AppLoginError: ", onError.localizedMessage!!)
+                Log.i("Error: ", onError.message!!)
             }))
     }
     fun resendEmailEmailVerification(activity: FragmentActivity?) {
@@ -148,8 +155,9 @@ class LoginViewModel @Inject constructor() : ViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({response ->
                 Log.i("EmailSentTo: ", response.email)
-                this.iLoginViewModel?.onEmailVerificationSent(response.email)
+                this.iLoginViewModel?.onEmailVerificationSent()
             }, {onError ->
+                this.iLoginViewModel?.onEmailVerificationSent()
                 Log.i("ErrorSendingEmail:", onError.localizedMessage!!)
             }))
     }

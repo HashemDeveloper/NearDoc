@@ -32,4 +32,6 @@
     <string name="email_resend">Resend</string>
     <string name="reset_password">RESET PASSWORD</string>
     <string name="request_reset_link">Request reset link</string>
+    <string name="login_invalid_password">The password is invalid or the user does not have a password</string>
+    <string name="email_not_found">User not found</string>
 </resources>

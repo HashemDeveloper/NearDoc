@@ -19,6 +19,7 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
     private var connectivityManager: ConnectivityManager?= null
     private val wifiConnectedLiveData: MutableLiveData<Boolean> = MutableLiveData()
     private val usingMobileDataLiveData: MutableLiveData<Boolean> = MutableLiveData()
+    private val connectedNoInternetLiveData: MutableLiveData<Boolean> = MutableLiveData()
 
 
     init {
@@ -56,11 +57,13 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
     override fun isUsingWifiLiveData(): LiveData<Boolean> {
        return this.wifiConnectedLiveData
     }
-
     override fun isUsingMobileData(): LiveData<Boolean> {
         return this.usingMobileDataLiveData
     }
 
+    override fun isConnectedNoInternetLiveData(): LiveData<Boolean> {
+        return this.connectedNoInternetLiveData
+    }
     override fun updateConnection() {
         if (connectivityManager != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -99,5 +102,15 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
             connectionStateMonitor.postValue(false)
         }
 
+        override fun onCapabilitiesChanged(
+            network: Network,
+            networkCapabilities: NetworkCapabilities
+        ) {
+            if (networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) {
+                this.connectionStateMonitor.postValue(true)
+            } else {
+                this.connectionStateMonitor.postValue(false)
+            }
+        }
     }
 }
