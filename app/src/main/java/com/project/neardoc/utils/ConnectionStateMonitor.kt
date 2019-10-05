@@ -67,18 +67,17 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
     override fun updateConnection() {
         if (connectivityManager != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                var network: Network?= null
                 for (networks in this.connectivityManager!!.allNetworks) {
-                    if (this.connectivityManager!!.getNetworkCapabilities(networks)!!.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                        this.wifiConnectedLiveData.postValue(true)
-                        break
-                    } else {
-                        if (this.connectivityManager!!.getNetworkCapabilities(networks)!!.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                            this.usingMobileDataLiveData.postValue(true)
-                        }
-                    }
+                    network = networks
+                }
+                if (this.connectivityManager!!.getNetworkCapabilities(network)!!.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                    this.wifiConnectedLiveData.postValue(true)
+                } else if (this.connectivityManager!!.getNetworkCapabilities(network)!!.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)){
+                    this.usingMobileDataLiveData.postValue(true)
                 }
             } else {
-                //
+                // handle for lower api
             }
         }
     }
