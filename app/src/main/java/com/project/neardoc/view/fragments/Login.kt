@@ -183,13 +183,15 @@ class Login : Fragment(), Injectable, ILoginViewModel{
     private fun openEmailInbox(snackbar: Snackbar) {
         val intent = Intent(Intent.ACTION_MAIN)
         intent.addCategory(Intent.CATEGORY_APP_EMAIL)
+        val title: String = activity?.resources!!.getString(R.string.choose_email_provider)
+        val chooser = Intent.createChooser(intent, title)
         val activities: List<ResolveInfo> = activity?.packageManager!!.queryIntentActivities(
             intent,
             PackageManager.MATCH_DEFAULT_ONLY
         )
         val isIntentSafe: Boolean = activities.isNotEmpty()
         if (isIntentSafe) {
-            startActivity(intent)
+            startActivity(chooser)
         } else {
             Toast.makeText(activity, R.string.no_email_app_found, Toast.LENGTH_LONG).show()
         }

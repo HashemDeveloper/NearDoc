@@ -112,12 +112,12 @@ class ForgotPassword : Fragment(), Injectable, IForgotPasswordViewModel {
         })
     }
     private fun openEmailInbox() {
-        val sendIntent = Intent(Intent.ACTION_SEND)
+        val sendIntent = Intent(Intent.ACTION_MAIN)
         sendIntent.addCategory(Intent.CATEGORY_APP_EMAIL)
         val title: String = activity?.resources!!.getString(R.string.choose_email_provider)
         val chooser = Intent.createChooser(sendIntent, title)
         val activities: List<ResolveInfo> = activity?.packageManager!!.queryIntentActivities(
-            sendIntent,
+            chooser,
             PackageManager.MATCH_DEFAULT_ONLY
         )
         val isIntentSafe: Boolean = activities.isNotEmpty()
