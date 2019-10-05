@@ -57,6 +57,9 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
     private fun monitorConnectionSetting() {
         this.iConnectionStateMonitor.getObserver().observe(this, Observer {isNetAvailable ->
            if (isNetAvailable) {
+               this.iConnectionStateMonitor.isConnectedNoInternetLiveData().observe(this, Observer { noInternet ->
+
+               })
                this.iConnectionStateMonitor.isUsingWifiLiveData().observe(this, Observer {isWifi ->
                    if (isWifi) {
                        this.isWifiConnected = true

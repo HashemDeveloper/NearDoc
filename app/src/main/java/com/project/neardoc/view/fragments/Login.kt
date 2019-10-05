@@ -58,6 +58,7 @@ class Login : Fragment(), Injectable, ILoginViewModel{
     private var passwordValidator: PasswordValidator?= null
     private val mobileData = "MOBILE_DATA"
     private val wifiData = "WIFI_DATA"
+    private var email: String = ""
     private val compositeDisposable = CompositeDisposable()
     @Inject
     lateinit var googleSignInClient: GoogleSignInClient
@@ -150,7 +151,7 @@ class Login : Fragment(), Injectable, ILoginViewModel{
         }
     }
     private fun processLogin() {
-        val email: String = fragment_login_enter_email_edit_text_id.text.toString()
+        this.email = fragment_login_enter_email_edit_text_id.text.toString()
         val password: String = fragment_login_enter_password_edit_text_id.text.toString()
         val isValidEmail = this.emailValidator?.getIsValidated(email)
         val isValidPass = this.passwordValidator?.getIsValidated(password)
@@ -230,9 +231,20 @@ class Login : Fragment(), Injectable, ILoginViewModel{
                 }
             }
         })
+        this.loginViewModel.getErrorMessageLiveData().observe(this, Observer {errorMessage ->
+            if (errorMessage == "The password is invalid or the user does not have a password.") {
+                val snackbar: Snackbar = Snackbar.make(view!!, R.string.login_invalid_password, Snackbar.LENGTH_INDEFINITE)
+                snackbar.view.setBackgroundColor(ContextCompat.getColor(activity!!, R.color.blue_gray_800))
+                snackbar.show()
+            } else if (errorMessage == "There is no user record corresponding to this identifier. The user may have been deleted.") {
+                val snackbar: Snackbar = Snackbar.make(view!!, R.string.email_not_found, Snackbar.LENGTH_INDEFINITE)
+                snackbar.view.setBackgroundColor(ContextCompat.getColor(activity!!, R.color.blue_gray_800))
+                snackbar.show()
+            }
+        })
     }
 
-    override fun onEmailVerificationSent(email: String) {
+    override fun onEmailVerificationSent() {
         val message: String =
             activity?.resources!!.getString(R.string.verify_email) + " " + email
         emailInboxSnackBar(message)
