@@ -40,6 +40,9 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
 import com.project.neardoc.events.EmailVerificationEvent
+import com.project.neardoc.utils.Constants
+import com.project.neardoc.utils.Constants.Companion.mobileData
+import com.project.neardoc.utils.Constants.Companion.wifiData
 import com.project.neardoc.utils.DeCryptor
 import com.project.neardoc.utils.validators.EmailValidator
 import com.project.neardoc.utils.validators.PasswordValidator
@@ -56,8 +59,6 @@ class Login : Fragment(), Injectable, ILoginViewModel{
     }
     private var emailValidator: EmailValidator?= null
     private var passwordValidator: PasswordValidator?= null
-    private val mobileData = "MOBILE_DATA"
-    private val wifiData = "WIFI_DATA"
     private var email: String = ""
     private val compositeDisposable = CompositeDisposable()
     @Inject
