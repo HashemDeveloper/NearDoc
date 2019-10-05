@@ -30,4 +30,6 @@
     <string name="email_inbox">Open Inbox</string>
     <string name="email_not_verified">Email is not verified</string>
     <string name="email_resend">Resend</string>
+    <string name="reset_password">RESET PASSWORD</string>
+    <string name="request_reset_link">Request reset link</string>
 </resources>
