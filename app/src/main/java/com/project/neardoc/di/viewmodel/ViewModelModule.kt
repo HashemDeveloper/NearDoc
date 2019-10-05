@@ -3,6 +3,7 @@ package com.project.neardoc.di.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.project.neardoc.di.scopes.ViewModelKey
+import com.project.neardoc.viewmodel.ForgotPasswordViewModel
 import com.project.neardoc.viewmodel.LoginViewModel
 import com.project.neardoc.viewmodel.RegistrationViewModel
 import dagger.Binds
@@ -21,4 +22,8 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(RegistrationViewModel::class)
     internal abstract fun provideViewModelForRegistration(registrationViewModel: RegistrationViewModel): ViewModel
+    @Binds
+    @IntoMap
+    @ViewModelKey(ForgotPasswordViewModel::class)
+    internal abstract fun provideViewModelForForgotPassword(forgotPasswordViewModel: ForgotPasswordViewModel): ViewModel
 }
