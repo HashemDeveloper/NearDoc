@@ -103,25 +103,25 @@
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
                 />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/fragment_login_bt_id"
+                style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/fragment_login_forgot_pass_bt_id"
-                style="@style/Widget.MaterialComponents.Button"
-                app:cornerRadius="4dp"
-                app:backgroundTint="@android:color/white"
-                android:text="@string/log_in"
-                android:textStyle="bold"
-                android:textColor="@color/blue_gray_700"
-                android:fontFamily="@font/chonburi"
-                android:layout_marginTop="30dp"
-                android:layout_marginLeft="12dp"
                 android:layout_marginStart="12dp"
-                android:layout_marginRight="12dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="12dp"
-                app:rippleColor="@color/blue_gray_400"
-                />
+                android:layout_marginRight="12dp"
+                android:fontFamily="@font/chonburi"
+                android:text="@string/log_in"
+                android:textColor="@color/blue_gray_700"
+                android:textStyle="bold"
+                app:backgroundTint="@android:color/white"
+                app:cornerRadius="4dp"
+                app:rippleColor="@color/blue_gray_400" />
 
             <RelativeLayout
                 android:id="@+id/fragment_login_divider_id"
