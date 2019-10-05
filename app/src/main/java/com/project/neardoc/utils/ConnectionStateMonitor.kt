@@ -6,9 +6,11 @@ import android.net.*
 import android.os.Build
 import android.os.Handler
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.project.neardoc.R
 import com.project.neardoc.broadcast.ConnectionBroadcastReceiver
 import javax.inject.Inject
 
@@ -75,9 +77,11 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
                 if (this.connectivityManager!!.getNetworkCapabilities(network)!!.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
                     this.wifiConnectedLiveData.postValue(true)
                     this.usingMobileDataLiveData.postValue(false)
+                    Toast.makeText(context, R.string.using_wifi, Toast.LENGTH_SHORT).show()
                 } else if (this.connectivityManager!!.getNetworkCapabilities(network)!!.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)){
                     this.usingMobileDataLiveData.postValue(true)
                     this.wifiConnectedLiveData.postValue(false)
+                    Toast.makeText(context, R.string.using_mobile_data, Toast.LENGTH_SHORT).show()
                 }
             } else {
                 // handle for lower api

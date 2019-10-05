@@ -164,15 +164,13 @@ class Login : Fragment(), Injectable, ILoginViewModel{
         connectionSettings.initWifiSetting(false)
     }
 
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
     fun onNetworkStateChangedEvent(networkStateEvent: NetworkStateEvent) {
         if (networkStateEvent.getIsNetworkAvailable()) {
             if (networkStateEvent.getNetworkType()!!.name == wifiData) {
                 this.isInternetAvailable = true
-                Toast.makeText(activity, R.string.using_wifi, Toast.LENGTH_SHORT).show()
             } else if (networkStateEvent.getNetworkType()!!.name == mobileData) {
                 this.isInternetAvailable = true
-                Toast.makeText(activity, R.string.using_mobile_data, Toast.LENGTH_SHORT).show()
             }
         } else {
             this.isInternetAvailable = false
