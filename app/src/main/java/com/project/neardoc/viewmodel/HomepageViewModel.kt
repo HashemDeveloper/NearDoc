@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import com.project.neardoc.R
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
-import com.project.neardoc.model.Datum
+import com.project.neardoc.model.SearchByDiseaseData
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.viewmodel.listeners.IHomepageViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -47,7 +47,7 @@ class HomepageViewModel @Inject constructor(): ViewModel() {
            .subscribeOn(Schedulers.io())
            .observeOn(AndroidSchedulers.mainThread())
            .subscribe({response ->
-               val dataList: List<Datum> = response.data
+               val dataList: List<SearchByDiseaseData> = response.searchByDiseaseData
                for (data in dataList) {
                    Log.i("UID: ", data.uid)
                }

@@ -66,4 +66,11 @@ class NearDocRemoteRepo @Inject constructor(): INearDocRemoteRepo {
     ): Observable<BetterDocSearchByDiseaseRes> {
         return this.iNearDocRemoteApi.searchDocByDisease(url, userKey, limit, location, disease)
     }
+    override fun getKnownConditions(
+        url: String,
+        userKey: String,
+        limit: Int
+    ): Observable<KnownConditionRes> {
+       return this.iNearDocRemoteApi.retrieveKnownConditions(url, userKey, limit)
+    }
 }

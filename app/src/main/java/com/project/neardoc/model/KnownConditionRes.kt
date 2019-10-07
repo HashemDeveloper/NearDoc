@@ -6,11 +6,11 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class BetterDocSearchByDiseaseRes(
+data class KnownConditionRes(
     @SerializedName("meta")
     @Expose
     var meta: Meta,
-    @SerializedName("searchByDiseaseData")
+    @SerializedName("data")
     @Expose
-    var searchByDiseaseData: List<SearchByDiseaseData>
+    var dataList: List<KnownConditionData>
 ): Parcelable

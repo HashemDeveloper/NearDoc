@@ -12,4 +12,5 @@ interface INearDocRemoteRepo {
     fun sendPasswordResetLink(url: String, apiKey: String, requestType: String, email: String): Observable<PasswordResetRes>
     fun checkBetterDocApiHealth(url: String, userKey: String): Observable<BetterDocApiHealthRes>
     fun searchDocByDisease(url: String, userKey: String, limit: Int, location: String, disease: String): Observable<BetterDocSearchByDiseaseRes>
+    fun getKnownConditions(url: String, userKey: String, limit: Int): Observable<KnownConditionRes>
 }

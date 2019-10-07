@@ -13,6 +13,7 @@ import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.NetworkStateEvent
+import com.project.neardoc.utils.ConnectionSettings
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.viewmodel.HomepageViewModel
 import com.project.neardoc.viewmodel.listeners.IHomepageViewModel
@@ -61,6 +62,15 @@ class HomePage: Fragment(), Injectable, IHomepageViewModel {
         } else {
             this.isInternetAvailable = false
         }
+        if (this.isInternetAvailable) {
+            this.homePageViewModel.checkBetterDocApiHealth(activity)
+        } else {
+            displayConnectionSetting()
+        }
+    }
+    private fun displayConnectionSetting() {
+        val connectionSettings = ConnectionSettings(activity!!, view!!)
+        connectionSettings.initWifiSetting(false)
     }
 
     override fun onStart() {
@@ -74,16 +84,5 @@ class HomePage: Fragment(), Injectable, IHomepageViewModel {
     }
     override fun fetchData() {
        this.homePageViewModel.fetchDocByDisease(activity, "toothache")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (this.isInternetAvailable) {
-            this.homePageViewModel.checkBetterDocApiHealth(activity)
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
     }
 }
