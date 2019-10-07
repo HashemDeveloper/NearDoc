@@ -12,5 +12,5 @@ data class InsurancePlan(
     var uid: String,
     @SerializedName("category")
     @Expose
-    var category: String
+    var category: List<String>
 ): Parcelable
