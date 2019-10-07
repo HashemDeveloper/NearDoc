@@ -1,6 +1,7 @@
 package com.project.neardoc.view.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +13,10 @@ import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.NetworkStateEvent
+import com.project.neardoc.utils.ConnectionSettings
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.viewmodel.HomepageViewModel
+import com.project.neardoc.viewmodel.listeners.IHomepageViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_home_page.*
 import org.greenrobot.eventbus.EventBus
@@ -21,7 +24,8 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
-class HomePage: Fragment(), Injectable {
+class HomePage: Fragment(), Injectable, IHomepageViewModel {
+
     private var isInternetAvailable = false
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -45,6 +49,7 @@ class HomePage: Fragment(), Injectable {
             val navigateToWelcome = findNavController()
             navigateToWelcome.navigate(R.id.welcome)
         }
+        this.homePageViewModel.setListener(this)
     }
     @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
     fun onNetworkStateChangedEvent(networkStateEvent: NetworkStateEvent) {
@@ -57,6 +62,15 @@ class HomePage: Fragment(), Injectable {
         } else {
             this.isInternetAvailable = false
         }
+        if (this.isInternetAvailable) {
+            this.homePageViewModel.checkBetterDocApiHealth(activity)
+        } else {
+            displayConnectionSetting()
+        }
+    }
+    private fun displayConnectionSetting() {
+        val connectionSettings = ConnectionSettings(activity!!, view!!)
+        connectionSettings.initWifiSetting(false)
     }
 
     override fun onStart() {
@@ -67,5 +81,8 @@ class HomePage: Fragment(), Injectable {
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
+    }
+    override fun fetchData() {
+       this.homePageViewModel.fetchDocByDisease(activity, "toothache")
     }
 }

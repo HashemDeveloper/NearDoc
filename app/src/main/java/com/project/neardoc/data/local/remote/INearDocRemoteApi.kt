@@ -27,7 +27,11 @@ interface INearDocRemoteApi {
 
     @Headers("Content-Type: application/json")
     @POST
-    fun sendEmailVerificationLink(@Url url: String, @Query("requestType") requestType: String, @Query("idToken") idToken: String, @Query("key") apiKey: String): Observable<EmailVerificationRes>
+    fun sendEmailVerificationLink(
+        @Url url: String, @Query("requestType") requestType: String, @Query(
+            "idToken"
+        ) idToken: String, @Query("key") apiKey: String
+    ): Observable<EmailVerificationRes>
 
     @Headers("Content-Type: application/json")
     @GET("/usernames/{node}/.json")
@@ -35,12 +39,25 @@ interface INearDocRemoteApi {
 
     @Headers("Content-Type: application/json")
     @POST
-    fun sendPasswordResetLink(@Url url: String, @Query("key") apiKey: String, @Query("requestType") requestType: String, @Query("email") email: String): Observable<PasswordResetRes>
+    fun sendPasswordResetLink(
+        @Url url: String, @Query("key") apiKey: String, @Query("requestType") requestType: String, @Query(
+            "email"
+        ) email: String
+    ): Observable<PasswordResetRes>
 
     @Headers("Content-Type: application/json")
     @GET
     fun getBetterDocApiHealth(@Url url: String, @Query("user_key") userKey: String): Observable<BetterDocApiHealthRes>
+
     @Headers("Content-Type: application/json")
     @GET
-    fun searchDocByDisease(@Url url: String, @Query("user_key") userKey: String, @Query("limit") limit: Int, @Query("location") location: String, @Query("query") disease: String): Observable<BetterDocSearchByDiseaseRes>
+    fun searchDocByDisease(
+        @Url url: String, @Query("user_key") userKey: String, @Query("limit") limit: Int, @Query(
+            "location"
+        ) location: String, @Query("query") disease: String
+    ): Observable<BetterDocSearchByDiseaseRes>
+
+    @Headers("Content-Type: application/json")
+    @GET
+    fun retrieveKnownConditions(@Url url: String, @Query("user_key") userKey: String, @Query("limit") limit: Int): Observable<KnownConditionRes>
 }

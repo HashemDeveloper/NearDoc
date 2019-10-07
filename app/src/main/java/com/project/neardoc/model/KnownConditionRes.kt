@@ -6,11 +6,11 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class InsurancePlan(
-    @SerializedName("uid")
+data class KnownConditionRes(
+    @SerializedName("meta")
     @Expose
-    var uid: String,
-    @SerializedName("category")
+    var meta: Meta,
+    @SerializedName("data")
     @Expose
-    var category: List<String>
+    var dataList: List<KnownConditionData>
 ): Parcelable

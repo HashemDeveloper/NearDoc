@@ -74,15 +74,20 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
                 for (networks in this.connectivityManager!!.allNetworks) {
                     network = networks
                 }
-                if (this.connectivityManager!!.getNetworkCapabilities(network)!!.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                    this.wifiConnectedLiveData.postValue(true)
-                    this.usingMobileDataLiveData.postValue(false)
-                    Toast.makeText(context, R.string.using_wifi, Toast.LENGTH_SHORT).show()
-                } else if (this.connectivityManager!!.getNetworkCapabilities(network)!!.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)){
-                    this.usingMobileDataLiveData.postValue(true)
-                    this.wifiConnectedLiveData.postValue(false)
-                    Toast.makeText(context, R.string.using_mobile_data, Toast.LENGTH_SHORT).show()
+                if (this.connectivityManager!!.getNetworkCapabilities(network) != null) {
+                    if (this.connectivityManager!!.getNetworkCapabilities(network)!!.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                        this.wifiConnectedLiveData.postValue(true)
+                        this.usingMobileDataLiveData.postValue(false)
+                        Toast.makeText(context, R.string.using_wifi, Toast.LENGTH_SHORT).show()
+                    } else if (this.connectivityManager!!.getNetworkCapabilities(network)!!.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)){
+                        this.usingMobileDataLiveData.postValue(true)
+                        this.wifiConnectedLiveData.postValue(false)
+                        Toast.makeText(context, R.string.using_mobile_data, Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    postValue(false)
                 }
+
             } else {
                 // handle for lower api
             }

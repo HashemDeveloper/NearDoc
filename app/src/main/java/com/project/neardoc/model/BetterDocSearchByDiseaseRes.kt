@@ -10,7 +10,7 @@ data class BetterDocSearchByDiseaseRes(
     @SerializedName("meta")
     @Expose
     var meta: Meta,
-    @SerializedName("data")
+    @SerializedName("searchByDiseaseData")
     @Expose
-    var data: List<Datum>
+    var searchByDiseaseData: List<SearchByDiseaseData>
 ): Parcelable
