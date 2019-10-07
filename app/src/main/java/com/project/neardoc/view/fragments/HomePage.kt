@@ -11,12 +11,18 @@ import com.google.firebase.auth.FirebaseAuth
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
+import com.project.neardoc.events.NetworkStateEvent
+import com.project.neardoc.utils.Constants
 import com.project.neardoc.viewmodel.HomepageViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_home_page.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 class HomePage: Fragment(), Injectable {
+    private var isInternetAvailable = false
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val homePageViewModel: HomepageViewModel by viewModels {
@@ -39,5 +45,27 @@ class HomePage: Fragment(), Injectable {
             val navigateToWelcome = findNavController()
             navigateToWelcome.navigate(R.id.welcome)
         }
+    }
+    @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
+    fun onNetworkStateChangedEvent(networkStateEvent: NetworkStateEvent) {
+        if (networkStateEvent.getIsNetworkAvailable()) {
+            if (networkStateEvent.getNetworkType()!!.name == Constants.wifiData) {
+                this.isInternetAvailable = true
+            } else if (networkStateEvent.getNetworkType()!!.name == Constants.mobileData) {
+                this.isInternetAvailable = true
+            }
+        } else {
+            this.isInternetAvailable = false
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
     }
 }
