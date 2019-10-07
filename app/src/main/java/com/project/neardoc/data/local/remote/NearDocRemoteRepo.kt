@@ -51,4 +51,19 @@ class NearDocRemoteRepo @Inject constructor(): INearDocRemoteRepo {
     ): Observable<PasswordResetRes> {
         return this.iNearDocRemoteApi.sendPasswordResetLink(url, apiKey, requestType, email)
     }
+    override fun checkBetterDocApiHealth(
+        url: String,
+        userKey: String
+    ): Observable<BetterDocApiHealthRes> {
+        return this.iNearDocRemoteApi.getBetterDocApiHealth(url, userKey)
+    }
+    override fun searchDocByDisease(
+        url: String,
+        userKey: String,
+        limit: Int,
+        location: String,
+        disease: String
+    ): Observable<BetterDocSearchByDiseaseRes> {
+        return this.iNearDocRemoteApi.searchDocByDisease(url, userKey, limit, location, disease)
+    }
 }

@@ -8,7 +8,6 @@ import com.project.neardoc.di.workermanager.NearDocWorkerInjectionModule
 import com.project.neardoc.di.workermanager.WorkerModule
 import dagger.BindsInstance
 import dagger.Component
-import dagger.Subcomponent
 import dagger.android.support.AndroidSupportInjectionModule
 import javax.inject.Singleton
 

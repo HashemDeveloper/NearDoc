@@ -2,6 +2,7 @@ package com.project.neardoc.view.fragments
 
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,8 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
@@ -17,6 +20,15 @@ import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_welcome.*
 
 class Welcome : Fragment(), Injectable{
+    private var firebaseUser: FirebaseUser?= null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        this.firebaseUser = FirebaseAuth.getInstance().currentUser
+        if (this.firebaseUser != null) {
+            val navigateToHomePage = findNavController()
+            navigateToHomePage.navigate(R.id.homePage)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
