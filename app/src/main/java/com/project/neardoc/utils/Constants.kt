@@ -7,6 +7,7 @@ import java.util.regex.Pattern
 class Constants {
     companion object {
         val CONNECTIVITY_ACTION = "android.net.conn.CONNECTIVITY_CHANGE"
+        val LOCATION_SERVICE_ACTION = "ACTION_LOCATION_SERVICE"
         val SIGN_IN_PROVIDER_GOOGLE = "google"
         val SIGN_IN_PROVIDER_FIREBASE = "firebase"
         val WORKER_FULL_NAME = "fullName"
