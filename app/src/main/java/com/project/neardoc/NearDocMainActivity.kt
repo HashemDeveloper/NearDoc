@@ -15,6 +15,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.rxeventbus.IRxEventBus
@@ -126,13 +128,15 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, IPe
           if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
               && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
               requestLowApiPermission()
+          } else {
+              this.iLocationService.registerBroadcastListener(true)
           }
       }
     }
     private fun requestLowApiPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION) ||
                 ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-            // show a message
+            emailInboxSnackBar(resources.getString(R.string.location_permission_denied))
         } else {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), ACCESS_COARSE_AND_FINE_LOCATION_CODE)
         }
@@ -154,7 +158,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, IPe
                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                        this.iLocationService.registerBroadcastListener(true)
                    } else {
-                       // show a message
+                      emailInboxSnackBar(resources.getString(R.string.location_permission_denied))
                    }
                }
            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -162,7 +166,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, IPe
                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                        this.iLocationService.registerBroadcastListener(true)
                    } else {
-                       // show a message
+                       emailInboxSnackBar(resources.getString(R.string.location_permission_denied))
                    }
                }
            } else {
@@ -170,10 +174,20 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, IPe
                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                        this.iLocationService.registerBroadcastListener(true)
                    } else {
-                       // show a message
+                       emailInboxSnackBar(resources.getString(R.string.location_permission_denied))
                    }
                }
            }
        }
+    }
+    private fun emailInboxSnackBar(message: String) {
+        val snackbar: Snackbar = Snackbar.make(view!!, message, Snackbar.LENGTH_INDEFINITE)
+        snackbar.view.setBackgroundColor(ContextCompat.getColor(this, R.color.blue_gray_800))
+        snackbar.show()
+        snackbar.setAction(R.string.enable_location_permission) {
+            run {
+                requestPermission()
+            }
+        }
     }
 }

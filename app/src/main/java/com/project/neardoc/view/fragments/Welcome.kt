@@ -40,10 +40,6 @@ class Welcome : Fragment(), Injectable{
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        welcome_page_create_account_bt_id.setOnClickListener{
-//            val navToRegistration = WelcomeDirections.actionRegistrationFragment()
-//            Navigation.findNavController(it).navigate(navToRegistration)
-//        }
         val holdAnimation: Animation = AnimationUtils.loadAnimation(context, R.anim.anim_hold)
         val translateScale = AnimationUtils.loadAnimation(context, R.anim.anim_translate_scale)
         translateScale.setAnimationListener(object : Animation.AnimationListener{

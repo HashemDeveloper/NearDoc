@@ -46,7 +46,6 @@ class HomePage: Fragment(), Injectable, IHomepageViewModel {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         this.homePageViewModel.setListener(this)
-
         searchId.setSearchViewListener(object : MultiSearchView.MultiSearchViewListener{
             override fun onItemSelected(index: Int, s: CharSequence) {
                 val message = "$s selected at index $index"

@@ -40,4 +40,6 @@
     <string name="no_email_app_found">No apps found to perform this action</string>
     <string name="server_error">Server is under maintenance. We\'re Sorry for the inconvenience. Please try again later.</string>
     <string name="no_internet">No internet connectivity. Please connect to internet.</string>
+    <string name="location_permission_denied">NearDoc depends on location permission. Disabling access to device location will cause unexpected behavior.</string>
+    <string name="enable_location_permission">Enable</string>
 </resources>
