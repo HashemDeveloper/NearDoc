@@ -54,7 +54,7 @@ interface INearDocRemoteApi {
     fun searchDocByDisease(
         @Url url: String, @Query("user_key") userKey: String, @Query("limit") limit: Int, @Query(
             "location"
-        ) location: String, @Query("query") disease: String
+        ) location: String, @Query("query") disease: String, @Query("sort") sort: String
     ): Observable<BetterDocSearchByDiseaseRes>
 
     @Headers("Content-Type: application/json")

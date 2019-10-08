@@ -16,6 +16,9 @@ data class Rating(
     @SerializedName("provider_uid")
     @Expose
     var providerUid: String,
+    @SerializedName("provider_url")
+    @Expose
+    var providerUrl: String,
     @SerializedName("rating")
     @Expose
     var rating: Double,

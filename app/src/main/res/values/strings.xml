@@ -38,4 +38,6 @@
     <string name="password_link_sent">Password link sent to</string>
     <string name="choose_email_provider">Choose your email provider</string>
     <string name="no_email_app_found">No apps found to perform this action</string>
+    <string name="server_error">Server is under maintenance. We\'re Sorry for the inconvenience. Please try again later.</string>
+    <string name="no_internet">No internet connectivity. Please connect to internet.</string>
 </resources>

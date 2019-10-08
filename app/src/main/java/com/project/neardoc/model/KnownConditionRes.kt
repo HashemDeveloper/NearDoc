@@ -9,7 +9,7 @@ import kotlinx.android.parcel.Parcelize
 data class KnownConditionRes(
     @SerializedName("meta")
     @Expose
-    var meta: Meta,
+    var metaData: MetaData,
     @SerializedName("data")
     @Expose
     var dataList: List<KnownConditionData>

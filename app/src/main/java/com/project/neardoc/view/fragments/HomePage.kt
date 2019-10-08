@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.iammert.library.ui.multisearchviewlib.MultiSearchView
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
@@ -44,12 +45,29 @@ class HomePage: Fragment(), Injectable, IHomepageViewModel {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fragment_home_page_sign_out_id.setOnClickListener {
-            FirebaseAuth.getInstance().signOut()
-            val navigateToWelcome = findNavController()
-            navigateToWelcome.navigate(R.id.welcome)
-        }
         this.homePageViewModel.setListener(this)
+
+        searchId.setSearchViewListener(object : MultiSearchView.MultiSearchViewListener{
+            override fun onItemSelected(index: Int, s: CharSequence) {
+                val message = "$s selected at index $index"
+                Log.i("ItemSelected: ", message)
+            }
+
+            override fun onSearchComplete(index: Int, s: CharSequence) {
+                val message = "$s completed at index $index"
+                Log.i("OnSearchComplete: ", message)
+            }
+
+            override fun onSearchItemRemoved(index: Int) {
+                val message = "Removed at index $index"
+                Log.i("onSearchRemoved: ", message)
+            }
+
+            override fun onTextChanged(index: Int, s: CharSequence) {
+                val message = "$s text changed at index $index"
+                Log.i("onTextChanged: ", message)
+            }
+        })
     }
     @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
     fun onNetworkStateChangedEvent(networkStateEvent: NetworkStateEvent) {
@@ -83,6 +101,9 @@ class HomePage: Fragment(), Injectable, IHomepageViewModel {
         EventBus.getDefault().unregister(this)
     }
     override fun fetchData() {
-       this.homePageViewModel.fetchDocByDisease(activity, "toothache")
+       this.homePageViewModel.fetchDocByDisease(activity, "arthritis")
+    }
+    override fun onServerError() {
+
     }
 }

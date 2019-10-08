@@ -46,5 +46,36 @@ data class Practice(
     var phoneList: List<Phone>,
     @SerializedName("languages")
     @Expose
-    var listOfLanguage: List<Language>
+    var listOfLanguage: List<Language>,
+    @SerializedName("image_urls")
+    @Expose
+    var listOfImages: List<String>,
+    @SerializedName("website")
+    @Expose
+    var website: String,
+    @SerializedName("email")
+    @Expose
+    var email: String,
+    @SerializedName("npi")
+    @Expose
+    var npi: String,
+    @SerializedName("slug")
+    @Expose
+    var slug: String,
+    @SerializedName("description")
+    @Expose
+    var description: String,
+    @SerializedName("media")
+    @Expose
+    var mediaAssetUrls: List<Media>,
+    @SerializedName("total_doctors")
+    @Expose
+    var totalDocInPractice: Int,
+    @SerializedName("doctors_pagination_url")
+    @Expose
+    var paginationUrlForDoc: String,
+    @SerializedName("doctors")
+    @Expose
+    var practiceDoctors: PracticeDoctor
+
 ): Parcelable
