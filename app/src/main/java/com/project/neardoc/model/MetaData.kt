@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class Meta(
+data class MetaData(
     @SerializedName("data_type")
     @Expose
     var dataType: String,

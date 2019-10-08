@@ -9,8 +9,8 @@ import kotlinx.android.parcel.Parcelize
 data class BetterDocSearchByDiseaseRes(
     @SerializedName("meta")
     @Expose
-    var meta: Meta,
-    @SerializedName("searchByDiseaseData")
+    var metaData: MetaData,
+    @SerializedName("data")
     @Expose
-    var searchByDiseaseData: List<SearchByDiseaseData>
+    var searchByDiseaseData: List<Doctor>
 ): Parcelable

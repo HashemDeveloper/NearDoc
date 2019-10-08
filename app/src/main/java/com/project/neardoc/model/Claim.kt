@@ -15,17 +15,17 @@ data class Claim(
     var hcpcsDescription: String,
     @SerializedName("service_cnt")
     @Expose
-    var serviceCount: Int,
+    var numberOfOperationPerformed: Int,
     @SerializedName("bene_uniq_cnt")
     @Expose
-    var benefitUniqueCount: Int,
+    var numberOfUniquePatientTreated: Int,
     @SerializedName("avg_allowed_amt")
     @Expose
-    var averageAllowedAmount: Double,
+    var contractedAmountAllowed: Double,
     @SerializedName("avg_charge_amt")
     @Expose
-    var averageChargeAmount: Int,
+    var amountBilled: Double,
     @SerializedName("avg_payment_amt")
     @Expose
-    var averagePaymentAmount: Double
+    var amountPaid: Double
 ): Parcelable

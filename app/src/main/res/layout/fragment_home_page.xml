@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-    <LinearLayout
-        android:orientation="vertical" android:layout_width="match_parent"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/fragment_home_page_sign_out_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+        <include
+            android:id="@+id/fragment_home_page_server_error_layout_id"
+            layout="@layout/server_error_layout"
+            android:visibility="gone"
             />
-    </LinearLayout>
+        <com.iammert.library.ui.multisearchviewlib.MultiSearchView
+            android:id="@+id/searchId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/SearchTextStyle"
+            android:layout_marginTop="10dp"
+            />
+    </RelativeLayout>
 </layout>
