@@ -1,6 +1,7 @@
 package com.project.neardoc
 
 import android.Manifest
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -31,6 +32,7 @@ import javax.inject.Inject
 class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, IPermissionListener{
     companion object {
         private val LOCATION_UPDATE_REQUEST_CODE = 34
+        private val ACCESS_COARSE_AND_FINE_LOCATION_CODE = 1
     }
     private val compositeDisposable = CompositeDisposable()
     @Inject
@@ -107,39 +109,71 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, IPe
     }
 
     override fun requestPermission() {
-        val isForeGroundCoarseLocationApproved = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        val isForeGroundFineLocationApproved = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-
-        var isBackgroundLocationApproved = false
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            isBackgroundLocationApproved = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
-        }
-
-        if (isForeGroundCoarseLocationApproved || isForeGroundFineLocationApproved) {
-            if (isBackgroundLocationApproved) {
-                this.iLocationService.registerBroadcastListener(true)
-            } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION), LOCATION_UPDATE_REQUEST_CODE)
-                }
-            }
-            this.iLocationService.registerBroadcastListener(true)
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+          if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+              && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+              ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION), LOCATION_UPDATE_REQUEST_CODE)
+          } else {
+              this.iLocationService.registerBroadcastListener(true)
+          }
+      } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+          if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+              ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), LOCATION_UPDATE_REQUEST_CODE)
+          } else {
+              this.iLocationService.registerBroadcastListener(true)
+          }
+      } else {
+          if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+              && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+              requestLowApiPermission()
+          }
+      }
+    }
+    private fun requestLowApiPermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION) ||
+                ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            // show a message
         } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION), LOCATION_UPDATE_REQUEST_CODE)
-            } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), LOCATION_UPDATE_REQUEST_CODE)
-                } else {
-                   ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), LOCATION_UPDATE_REQUEST_CODE)
-                }
-            }
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), ACCESS_COARSE_AND_FINE_LOCATION_CODE)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         this.compositeDisposable.clear()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+       if (requestCode == LOCATION_UPDATE_REQUEST_CODE) {
+           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+               if (grantResults.isNotEmpty()) {
+                   if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                       this.iLocationService.registerBroadcastListener(true)
+                   } else {
+                       // show a message
+                   }
+               }
+           } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+               if (grantResults.isNotEmpty()) {
+                   if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                       this.iLocationService.registerBroadcastListener(true)
+                   } else {
+                       // show a message
+                   }
+               }
+           } else {
+               if (grantResults.isNotEmpty()) {
+                   if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                       this.iLocationService.registerBroadcastListener(true)
+                   } else {
+                       // show a message
+                   }
+               }
+           }
+       }
     }
 }

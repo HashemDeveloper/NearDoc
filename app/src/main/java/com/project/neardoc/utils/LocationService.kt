@@ -21,6 +21,7 @@ class LocationService @Inject constructor(private val context: Context): LiveDat
     lateinit var connectionBroadcastReceiver: ConnectionBroadcastReceiver
     private var locationManager: LocationManager?= null
     private var iPermissionListener: IPermissionListener?= null
+    private var isRegister = false
 
     init {
        this.locationManager = this.context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -33,12 +34,15 @@ class LocationService @Inject constructor(private val context: Context): LiveDat
         } else {
             this.locationManager?.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, this)
             this.context.registerReceiver(this.connectionBroadcastReceiver, IntentFilter(Constants.LOCATION_SERVICE_ACTION))
+            this.isRegister = true
         }
     }
 
     override fun onInactive() {
         super.onInactive()
-        this.context.unregisterReceiver(this.connectionBroadcastReceiver)
+        if (this.isRegister) {
+            this.context.unregisterReceiver(this.connectionBroadcastReceiver)
+        }
     }
 
     override fun getObserver(): LocationService {
