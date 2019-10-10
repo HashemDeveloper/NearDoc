@@ -1,12 +1,10 @@
 package com.project.neardoc
 
 import android.Manifest
-import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -16,8 +14,8 @@ import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
 import com.project.neardoc.data.local.ISharedPrefService
+import com.project.neardoc.events.LocationUpdateEvent
 import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.rxeventbus.IRxEventBus
 import com.project.neardoc.utils.IConnectionStateMonitor
@@ -77,8 +75,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, IPe
             if (location != null) {
                 val lat: String = location.latitude.toString()
                 val lon: String = location.longitude.toString()
-                Log.i("Latitude: ", lat)
-                Log.i("Longitude: ", lon)
+                EventBus.getDefault().postSticky(LocationUpdateEvent(lat, lon))
             }
         })
     }

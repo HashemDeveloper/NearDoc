@@ -41,18 +41,23 @@ class Registration : Fragment(), Injectable, IRegistrationViewModel{
     private var emailValidator: EmailValidator? = null
     private var passwordValidator: PasswordValidator?= null
     private var isSent: Boolean = false
-
+    private var webKey: String = ""
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val registrationViewModel: RegistrationViewModel by viewModels {
         this.viewModelFactory
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        AndroidSupportInjection.inject(this)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        AndroidSupportInjection.inject(this)
+        this.webKey = resources.getString(R.string.firebase_web_key)
         return inflater.inflate(R.layout.fragment_registration, container, false)
     }
 
@@ -94,12 +99,12 @@ class Registration : Fragment(), Injectable, IRegistrationViewModel{
         val isPasswordValidated: Boolean = this.passwordValidator!!.getIsValidated(password)
 
         if (isNameValidated && isUsernameValidated && isEmailValidated && isPasswordValidated) {
-            this.registrationViewModel.checkIfUsernameExists(activity, username)
+            this.registrationViewModel.checkIfUsernameExists(username, webKey)
             this.registrationViewModel.getUsernameExistsLiveData().observe(this, Observer {isExists ->
                 if (isExists) {
                     fragment_register_username_input_layout_id.error = activity?.resources!!.getString(R.string.username_exists)
                 } else {
-                    this.registrationViewModel.processRegistration(activity, fullName, username, email, password)
+                    this.registrationViewModel.processRegistration(fullName, username, email, password, this.webKey)
                 }
             })
             this.registrationViewModel.getLoadingLiveData().observe(this, Observer { isLoading ->
@@ -111,7 +116,7 @@ class Registration : Fragment(), Injectable, IRegistrationViewModel{
             })
             this.registrationViewModel.getSuccessLiveData().observe(this, Observer { idToken ->
                 if (idToken != null) {
-                    this.registrationViewModel.sendEmailVerificationLink(activity, idToken)
+                    this.registrationViewModel.sendEmailVerificationLink(idToken)
                 }
             })
             this.registrationViewModel.getErrorMessageLiveData().observe(this, Observer { errorMessage ->

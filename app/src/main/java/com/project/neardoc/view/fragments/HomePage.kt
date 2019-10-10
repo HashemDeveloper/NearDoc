@@ -13,6 +13,7 @@ import com.iammert.library.ui.multisearchviewlib.MultiSearchView
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
+import com.project.neardoc.events.LocationUpdateEvent
 import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.utils.ConnectionSettings
 import com.project.neardoc.utils.Constants
@@ -28,6 +29,8 @@ import javax.inject.Inject
 class HomePage: Fragment(), Injectable, IHomepageViewModel {
 
     private var isInternetAvailable = false
+    private var latitude: String = ""
+    private var longitude: String = ""
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val homePageViewModel: HomepageViewModel by viewModels {
@@ -45,6 +48,11 @@ class HomePage: Fragment(), Injectable, IHomepageViewModel {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        signoutBtId.setOnClickListener{
+            FirebaseAuth.getInstance().signOut()
+            val n = findNavController()
+            n.navigate(R.id.welcome)
+        }
         this.homePageViewModel.setListener(this)
         searchId.setSearchViewListener(object : MultiSearchView.MultiSearchViewListener{
             override fun onItemSelected(index: Int, s: CharSequence) {
@@ -67,6 +75,11 @@ class HomePage: Fragment(), Injectable, IHomepageViewModel {
                 Log.i("onTextChanged: ", message)
             }
         })
+    }
+    @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
+    fun onLocationUpdate(locationUpdateEvent: LocationUpdateEvent) {
+        this.latitude = locationUpdateEvent.getLatitude()
+        this.longitude = locationUpdateEvent.getLongitude()
     }
     @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
     fun onNetworkStateChangedEvent(networkStateEvent: NetworkStateEvent) {
@@ -100,7 +113,7 @@ class HomePage: Fragment(), Injectable, IHomepageViewModel {
         EventBus.getDefault().unregister(this)
     }
     override fun fetchData() {
-       this.homePageViewModel.fetchDocByDisease(activity, "arthritis")
+        this.homePageViewModel.fetchDocByDisease(activity, this.latitude, this.longitude, "arthritis")
     }
     override fun onServerError() {
 

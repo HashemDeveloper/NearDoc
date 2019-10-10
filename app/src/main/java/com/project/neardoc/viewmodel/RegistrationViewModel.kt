@@ -1,5 +1,6 @@
 package com.project.neardoc.viewmodel
 
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
@@ -26,7 +27,7 @@ import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 class RegistrationViewModel @Inject constructor(): ViewModel() {
-    private val compositeDisposable = CompositeDisposable()
+    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val loadingLiveData: MutableLiveData<Boolean> = MutableLiveData()
     private val errorLiveData: MutableLiveData<Boolean> = MutableLiveData()
     private val errorMessageLiveData: MutableLiveData<String> = MutableLiveData()
@@ -41,14 +42,16 @@ class RegistrationViewModel @Inject constructor(): ViewModel() {
     @Inject
     lateinit var iSharedPrefService: ISharedPrefService
     private var verificationEmail: String?= null
+    @Inject
+    lateinit var context: Context
     override fun onCleared() {
         super.onCleared()
         this.compositeDisposable.clear()
     }
 
-    fun sendEmailVerificationLink(activity: FragmentActivity?, idToken: String?) {
+    fun sendEmailVerificationLink(idToken: String?) {
         this.compositeDisposable.add(this.iNearDocRemoteRepo.sendEmailVerification(Constants.FIREBASE_AUTH_EMAIL_VERIFICATION_ENDPOINT, Constants.FIREBASE_EMAIL_VERFICATION_REQUEST_TYPE,
-            idToken!!, activity?.resources!!.getString(R.string.firebase_web_key))
+            idToken!!, this.context.resources!!.getString(R.string.firebase_web_key))
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({response ->
@@ -63,8 +66,11 @@ class RegistrationViewModel @Inject constructor(): ViewModel() {
             }))
     }
 
-    fun processRegistration(activity: FragmentActivity?, fullName: String, username: String, email: String, password: String) {
-        this.compositeDisposable.add(this.iNearDocRemoteRepo.signUpWithEmailAndPassword(Constants.FIREBASE_AUTH_SIGN_UP_ENDPOINT, activity?.resources!!.getString(R.string.firebase_web_key),
+    fun processRegistration(fullName: String, username: String, email: String, password: String, webKey: String) {
+       register(fullName, username, email, password, webKey)
+    }
+    private fun register(fullName: String, username: String, email: String, password: String, webKey: String) {
+        this.compositeDisposable.add(this.iNearDocRemoteRepo.signUpWithEmailAndPassword(Constants.FIREBASE_AUTH_SIGN_UP_ENDPOINT, webKey,
             email, password, true)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -83,12 +89,12 @@ class RegistrationViewModel @Inject constructor(): ViewModel() {
                     .putString(Constants.WORKER_FULL_NAME, fullName)
                     .putString(Constants.WORKER_DISPLAY_NAME, username)
                     .putString(Constants.WORKER_EMAIL, email)
-                    .putString(Constants.WORKER_DB_AUTH_KEY, activity.resources.getString(R.string.firebase_db_secret))
+                    .putString(Constants.WORKER_DB_AUTH_KEY, this.context.resources.getString(R.string.firebase_db_secret))
                     .build()
                 val oneTimeWorkRequest = OneTimeWorkRequest.Builder(RegistrationWorker::class.java)
                     .setInputData(data)
                     .build()
-                val workerManager = WorkManager.getInstance(activity)
+                val workerManager = WorkManager.getInstance(this.context)
                 workerManager.beginWith(oneTimeWorkRequest).enqueue()
             }, {onError ->
                 Log.i("RegistrationError: ", onError.localizedMessage!!)
@@ -98,9 +104,12 @@ class RegistrationViewModel @Inject constructor(): ViewModel() {
             }))
     }
 
-    fun checkIfUsernameExists(activity: FragmentActivity?, username: String) {
+    fun checkIfUsernameExists(username: String, webKey: String) {
+        getUsername(username, webKey)
+    }
+    private fun getUsername(username: String, webKey: String) {
         this.loadingLiveData.value = true
-        this.compositeDisposable.add(this.iNearDocRemoteRepo.getUsernames(username, activity?.resources!!.getString(R.string.firebase_db_secret))
+        this.compositeDisposable.add(this.iNearDocRemoteRepo.getUsernames(username, webKey)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({response ->
@@ -110,9 +119,11 @@ class RegistrationViewModel @Inject constructor(): ViewModel() {
                     this.usernameLiveData.value = response.username
                 }
             }, {onError ->
-                Log.i("GetUsernameErr: ", onError.localizedMessage!!)
-                if (onError.localizedMessage!! == "Null is not a valid element") {
-                    this.usernameExistsLiveData.value = false
+                if (onError != null && onError.localizedMessage != null) {
+                    Log.i("GetUsernameErr: ", onError.localizedMessage!!)
+                    if (onError.localizedMessage!! == "Null is not a valid element") {
+                        this.usernameExistsLiveData.value = false
+                    }
                 }
             }))
     }

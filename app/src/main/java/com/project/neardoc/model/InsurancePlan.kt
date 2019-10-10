@@ -10,6 +10,9 @@ data class InsurancePlan(
     @SerializedName("uid")
     @Expose
     var uid: String,
+    @SerializedName("name")
+    @Expose
+    var name: String,
     @SerializedName("category")
     @Expose
     var category: List<String>

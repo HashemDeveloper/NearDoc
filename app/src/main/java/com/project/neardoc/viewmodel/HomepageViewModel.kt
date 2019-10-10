@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import com.project.neardoc.R
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
-import com.project.neardoc.model.Doctor
+import com.project.neardoc.model.*
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.viewmodel.listeners.IHomepageViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -41,15 +41,22 @@ class HomepageViewModel @Inject constructor(): ViewModel() {
         this.iHomepageViewModel = iHomepageViewModel
     }
 
-    fun fetchDocByDisease(activity: FragmentActivity?, s: String) {
+    fun fetchDocByDisease(activity: FragmentActivity?, latitude: String, longitude: String,  s: String) {
+        val distance = "$latitude,$longitude,10"
        this.compositeDisposable.add(this.iNearDocRemoteRepo.searchDocByDisease(Constants.SEARCH_DOC_BY_DISEASE_ENDPOINT, activity?.resources!!.getString(R.string.better_doc_api_key),
-           10, "40.7128,-74.0060,10", s, "distance-asc")
+           10, distance, s, "distance-asc")
            .subscribeOn(Schedulers.io())
            .observeOn(AndroidSchedulers.mainThread())
            .subscribe({response ->
                val dataList: List<Doctor> = response.searchByDiseaseData
                for (data in dataList) {
-                   Log.i("UID: ", data.uid)
+                   val profile = data.profile
+                   val insuranceList: List<Insurance> = data.insuranceList
+                   val practiceList: List<Practice> = data.practiceList
+                   val specialityList: List<Specialty> = data.specialityList
+                   for (insurance in insuranceList) {
+                       val insurancePlan: InsurancePlan = insurance.insurancePlan
+                   }
                }
            }, {onError ->
                Log.i("Error: ", onError.localizedMessage!!)
