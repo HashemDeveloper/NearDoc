@@ -2,7 +2,6 @@ package com.project.neardoc.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
-import com.project.neardoc.model.RegistrationRes
 import com.project.neardoc.model.UsernameRes
 import io.reactivex.Observable
 import io.reactivex.Scheduler

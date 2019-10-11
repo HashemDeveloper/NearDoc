@@ -1,7 +1,11 @@
 package com.project.neardoc.viewmodel
 
+import android.content.Context
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.project.neardoc.R
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
@@ -16,24 +20,29 @@ import javax.inject.Inject
 class HomepageViewModel @Inject constructor(): ViewModel() {
     private val compositeDisposable = CompositeDisposable()
     private var iHomepageViewModel: IHomepageViewModel?= null
+    @VisibleForTesting
+    private val statusOkLiveData: MutableLiveData<Boolean> = MutableLiveData()
     @Inject
     lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
+    @Inject
+    lateinit var context: Context
 
     override fun onCleared() {
         super.onCleared()
         this.compositeDisposable.clear()
     }
 
-    fun checkBetterDocApiHealth(activity: FragmentActivity?) {
-        this.compositeDisposable.add(this.iNearDocRemoteRepo.checkBetterDocApiHealth(Constants.BETTER_DOC_API_HEALTH_ENDPOINT, activity?.resources!!.getString(
-            R.string.better_doc_api_key))
+    fun checkBetterDocApiHealth(apiKey: String) {
+        this.compositeDisposable.add(this.iNearDocRemoteRepo.checkBetterDocApiHealth(Constants.BETTER_DOC_API_HEALTH_ENDPOINT, apiKey)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({res ->
                 if (res.status == "OK") {
+                    this.statusOkLiveData.value = true
                     this.iHomepageViewModel?.fetchData()
                 }
             }, {onError ->
+                this.statusOkLiveData.value = false
                 this.iHomepageViewModel?.onServerError()
             }))
     }
@@ -41,9 +50,9 @@ class HomepageViewModel @Inject constructor(): ViewModel() {
         this.iHomepageViewModel = iHomepageViewModel
     }
 
-    fun fetchDocByDisease(activity: FragmentActivity?, latitude: String, longitude: String,  s: String) {
+    fun fetchDocByDisease(apiKey: String, latitude: String, longitude: String,  s: String) {
         val distance = "$latitude,$longitude,10"
-       this.compositeDisposable.add(this.iNearDocRemoteRepo.searchDocByDisease(Constants.SEARCH_DOC_BY_DISEASE_ENDPOINT, activity?.resources!!.getString(R.string.better_doc_api_key),
+       this.compositeDisposable.add(this.iNearDocRemoteRepo.searchDocByDisease(Constants.SEARCH_DOC_BY_DISEASE_ENDPOINT, apiKey,
            10, distance, s, "distance-asc")
            .subscribeOn(Schedulers.io())
            .observeOn(AndroidSchedulers.mainThread())
@@ -61,5 +70,8 @@ class HomepageViewModel @Inject constructor(): ViewModel() {
            }, {onError ->
                Log.i("Error: ", onError.localizedMessage!!)
            }))
+    }
+    fun getStatusOkLiveData(): LiveData<Boolean> {
+        return this.statusOkLiveData
     }
 }

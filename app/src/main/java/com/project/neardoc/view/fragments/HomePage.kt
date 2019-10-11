@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.iammert.library.ui.multisearchviewlib.MultiSearchView
@@ -31,6 +32,7 @@ class HomePage: Fragment(), Injectable, IHomepageViewModel {
     private var isInternetAvailable = false
     private var latitude: String = ""
     private var longitude: String = ""
+    private var betterDocApiKey = ""
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val homePageViewModel: HomepageViewModel by viewModels {
@@ -43,17 +45,18 @@ class HomePage: Fragment(), Injectable, IHomepageViewModel {
         savedInstanceState: Bundle?
     ): View? {
         AndroidSupportInjection.inject(this)
+        this.homePageViewModel.setListener(this)
         return inflater.inflate(R.layout.fragment_home_page, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        this.betterDocApiKey = resources.getString(R.string.better_doc_api_key)
         signoutBtId.setOnClickListener{
             FirebaseAuth.getInstance().signOut()
             val n = findNavController()
             n.navigate(R.id.welcome)
         }
-        this.homePageViewModel.setListener(this)
         searchId.setSearchViewListener(object : MultiSearchView.MultiSearchViewListener{
             override fun onItemSelected(index: Int, s: CharSequence) {
                 val message = "$s selected at index $index"
@@ -93,7 +96,7 @@ class HomePage: Fragment(), Injectable, IHomepageViewModel {
             this.isInternetAvailable = false
         }
         if (this.isInternetAvailable) {
-            this.homePageViewModel.checkBetterDocApiHealth(activity)
+            this.homePageViewModel.checkBetterDocApiHealth(this.betterDocApiKey)
         } else {
             displayConnectionSetting()
         }
@@ -113,7 +116,12 @@ class HomePage: Fragment(), Injectable, IHomepageViewModel {
         EventBus.getDefault().unregister(this)
     }
     override fun fetchData() {
-        this.homePageViewModel.fetchDocByDisease(activity, this.latitude, this.longitude, "arthritis")
+        this.homePageViewModel.getStatusOkLiveData().observe(this, Observer { isHealthy ->
+            if (isHealthy) {
+                this.homePageViewModel.fetchDocByDisease(this.betterDocApiKey, this.latitude, this.longitude, "arthritis")
+
+            }
+        })
     }
     override fun onServerError() {
 
