@@ -11,13 +11,11 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
-import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.LocationUpdateEvent
 import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.utils.ConnectionSettings
@@ -25,8 +23,6 @@ import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.ILocationService
 import com.project.neardoc.utils.IPermissionListener
 import com.project.neardoc.view.widgets.GlobalLoadingBar
-import com.project.neardoc.viewmodel.SearchPageViewModel
-import com.project.neardoc.viewmodel.listeners.ISearchPageViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_home_page.*
 import org.greenrobot.eventbus.EventBus
@@ -34,23 +30,14 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
-class HomePage: Fragment(), Injectable, ISearchPageViewModel, IPermissionListener {
+class HomePage: Fragment(), Injectable, IPermissionListener {
     companion object {
         private val LOCATION_UPDATE_REQUEST_CODE = 34
         private val ACCESS_COARSE_AND_FINE_LOCATION_CODE = 1
     }
     private var isInternetAvailable = false
-    private var latitude: String = ""
-    private var longitude: String = ""
-    private var betterDocApiKey = ""
-    private var isLocationAskedFirstTime = false
     @Inject
     lateinit var iLocationService: ILocationService
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-    private val homePageViewModel: SearchPageViewModel by viewModels {
-        this.viewModelFactory
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,13 +45,11 @@ class HomePage: Fragment(), Injectable, ISearchPageViewModel, IPermissionListene
         savedInstanceState: Bundle?
     ): View? {
         AndroidSupportInjection.inject(this)
-        this.homePageViewModel.setListener(this)
         return inflater.inflate(R.layout.fragment_home_page, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        this.betterDocApiKey = resources.getString(R.string.better_doc_api_key)
         onBackPressed()
         fragment_home_page_search_layout_id.setOnClickListener{
             val navToSearchPage = findNavController()
@@ -75,11 +60,7 @@ class HomePage: Fragment(), Injectable, ISearchPageViewModel, IPermissionListene
             navToAccountPage.navigate(R.id.accountPage)
         }
     }
-    @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
-    fun onLocationUpdate(locationUpdateEvent: LocationUpdateEvent) {
-        this.latitude = locationUpdateEvent.getLatitude()
-        this.longitude = locationUpdateEvent.getLongitude()
-    }
+
     @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
     fun onNetworkStateChangedEvent(networkStateEvent: NetworkStateEvent) {
         if (networkStateEvent.getIsNetworkAvailable()) {
@@ -91,9 +72,7 @@ class HomePage: Fragment(), Injectable, ISearchPageViewModel, IPermissionListene
         } else {
             this.isInternetAvailable = false
         }
-        if (this.isInternetAvailable) {
-            this.homePageViewModel.checkBetterDocApiHealth(this.betterDocApiKey)
-        } else {
+        if (!this.isInternetAvailable) {
             displayConnectionSetting()
         }
     }
@@ -129,17 +108,6 @@ class HomePage: Fragment(), Injectable, ISearchPageViewModel, IPermissionListene
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
-    }
-    override fun fetchData() {
-        this.homePageViewModel.getStatusOkLiveData().observe(this, Observer { isHealthy ->
-            if (isHealthy) {
-                this.homePageViewModel.fetchDocByDisease(this.betterDocApiKey, this.latitude, this.longitude, "arthritis")
-
-            }
-        })
-    }
-    override fun onServerError() {
-
     }
 
     override fun requestPermission() {
@@ -192,7 +160,6 @@ class HomePage: Fragment(), Injectable, ISearchPageViewModel, IPermissionListene
                 if (grantResults.isNotEmpty()) {
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         this.iLocationService.registerBroadcastListener(true)
-                        this.isLocationAskedFirstTime = true
                     } else {
                         promptToEnableLocationPermission(resources.getString(R.string.location_permission_denied))
                     }
@@ -201,7 +168,6 @@ class HomePage: Fragment(), Injectable, ISearchPageViewModel, IPermissionListene
                 if (grantResults.isNotEmpty()) {
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         this.iLocationService.registerBroadcastListener(true)
-                        this.isLocationAskedFirstTime = true
                     } else {
                         promptToEnableLocationPermission(resources.getString(R.string.location_permission_denied))
                     }
@@ -210,7 +176,6 @@ class HomePage: Fragment(), Injectable, ISearchPageViewModel, IPermissionListene
                 if (grantResults.isNotEmpty()) {
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         this.iLocationService.registerBroadcastListener(true)
-                        this.isLocationAskedFirstTime = true
                     } else {
                         promptToEnableLocationPermission(resources.getString(R.string.location_permission_denied))
                     }

@@ -4,11 +4,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <include
-            android:id="@+id/fragment_home_page_server_error_layout_id"
-            layout="@layout/server_error_layout"
-            android:visibility="gone"
-            />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
