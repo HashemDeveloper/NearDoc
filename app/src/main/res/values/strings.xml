@@ -42,4 +42,6 @@
     <string name="no_internet">No internet connectivity. Please connect to internet.</string>
     <string name="location_permission_denied">NearDoc depends on location permission. Disabling access to device location will cause unexpected behavior.</string>
     <string name="enable_location_permission">Enable</string>
+    <string name="search_doc">DOC</string>
+    <string name="account">ACCOUNT</string>
 </resources>

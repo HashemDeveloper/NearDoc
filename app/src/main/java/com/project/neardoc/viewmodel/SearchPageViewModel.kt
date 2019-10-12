@@ -3,23 +3,21 @@ package com.project.neardoc.viewmodel
 import android.content.Context
 import android.util.Log
 import androidx.annotation.VisibleForTesting
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.project.neardoc.R
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
 import com.project.neardoc.model.*
 import com.project.neardoc.utils.Constants
-import com.project.neardoc.viewmodel.listeners.IHomepageViewModel
+import com.project.neardoc.viewmodel.listeners.ISearchPageViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class HomepageViewModel @Inject constructor(): ViewModel() {
+class SearchPageViewModel @Inject constructor(): ViewModel() {
     private val compositeDisposable = CompositeDisposable()
-    private var iHomepageViewModel: IHomepageViewModel?= null
+    private var iSearchPageViewModel: ISearchPageViewModel?= null
     @VisibleForTesting
     private val statusOkLiveData: MutableLiveData<Boolean> = MutableLiveData()
     @Inject
@@ -39,15 +37,15 @@ class HomepageViewModel @Inject constructor(): ViewModel() {
             .subscribe({res ->
                 if (res.status == "OK") {
                     this.statusOkLiveData.value = true
-                    this.iHomepageViewModel?.fetchData()
+                    this.iSearchPageViewModel?.fetchData()
                 }
             }, {onError ->
                 this.statusOkLiveData.value = false
-                this.iHomepageViewModel?.onServerError()
+                this.iSearchPageViewModel?.onServerError()
             }))
     }
-    fun setListener(iHomepageViewModel: IHomepageViewModel) {
-        this.iHomepageViewModel = iHomepageViewModel
+    fun setListener(iSearchPageViewModel: ISearchPageViewModel) {
+        this.iSearchPageViewModel = iSearchPageViewModel
     }
 
     fun fetchDocByDisease(apiKey: String, latitude: String, longitude: String,  s: String) {

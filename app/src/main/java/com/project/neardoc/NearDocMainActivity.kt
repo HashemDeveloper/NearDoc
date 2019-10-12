@@ -29,12 +29,7 @@ import io.reactivex.disposables.CompositeDisposable
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
-class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, IPermissionListener{
-    companion object {
-        private val LOCATION_UPDATE_REQUEST_CODE = 34
-        private val ACCESS_COARSE_AND_FINE_LOCATION_CODE = 1
-    }
-    private val compositeDisposable = CompositeDisposable()
+class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
     @Inject
     lateinit var iRxEventBus: IRxEventBus
     @Inject
@@ -43,8 +38,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, IPe
     lateinit var iSharedPrefService: ISharedPrefService
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
-    @Inject
-    lateinit var iLocationService: ILocationService
+
     private lateinit var navController: NavController
     private var isWifiConnected = false
     private var view: View? = null
@@ -62,23 +56,9 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, IPe
 
     override fun onStart() {
         super.onStart()
-        this.iLocationService.setPermissionListener(this)
         monitorConnectionSetting()
-        observeNetworkUpdates()
     }
 
-    override fun onStop() {
-        super.onStop()
-    }
-    private fun observeNetworkUpdates() {
-        this.iLocationService.getObserver().observe(this, Observer {location ->
-            if (location != null) {
-                val lat: String = location.latitude.toString()
-                val lon: String = location.longitude.toString()
-                EventBus.getDefault().postSticky(LocationUpdateEvent(lat, lon))
-            }
-        })
-    }
     private fun monitorConnectionSetting() {
         this.iConnectionStateMonitor.getObserver().observe(this, Observer {isNetAvailable ->
            if (isNetAvailable) {
@@ -105,86 +85,5 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, IPe
                Toast.makeText(this, "Connection lost", Toast.LENGTH_SHORT).show()
            }
         })
-    }
-
-    override fun requestPermission() {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-          if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-              && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-              ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION), LOCATION_UPDATE_REQUEST_CODE)
-          } else {
-              this.iLocationService.registerBroadcastListener(true)
-          }
-      } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-          if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-              ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), LOCATION_UPDATE_REQUEST_CODE)
-          } else {
-              this.iLocationService.registerBroadcastListener(true)
-          }
-      } else {
-          if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-              && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-              requestLowApiPermission()
-          } else {
-              this.iLocationService.registerBroadcastListener(true)
-          }
-      }
-    }
-    private fun requestLowApiPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION) ||
-                ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-            emailInboxSnackBar(resources.getString(R.string.location_permission_denied))
-        } else {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), ACCESS_COARSE_AND_FINE_LOCATION_CODE)
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        this.compositeDisposable.clear()
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-       if (requestCode == LOCATION_UPDATE_REQUEST_CODE) {
-           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-               if (grantResults.isNotEmpty()) {
-                   if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                       this.iLocationService.registerBroadcastListener(true)
-                   } else {
-                      emailInboxSnackBar(resources.getString(R.string.location_permission_denied))
-                   }
-               }
-           } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-               if (grantResults.isNotEmpty()) {
-                   if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                       this.iLocationService.registerBroadcastListener(true)
-                   } else {
-                       emailInboxSnackBar(resources.getString(R.string.location_permission_denied))
-                   }
-               }
-           } else {
-               if (grantResults.isNotEmpty()) {
-                   if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                       this.iLocationService.registerBroadcastListener(true)
-                   } else {
-                       emailInboxSnackBar(resources.getString(R.string.location_permission_denied))
-                   }
-               }
-           }
-       }
-    }
-    private fun emailInboxSnackBar(message: String) {
-        val snackbar: Snackbar = Snackbar.make(view!!, message, Snackbar.LENGTH_INDEFINITE)
-        snackbar.view.setBackgroundColor(ContextCompat.getColor(this, R.color.blue_gray_800))
-        snackbar.show()
-        snackbar.setAction(R.string.enable_location_permission) {
-            run {
-                requestPermission()
-            }
-        }
     }
 }

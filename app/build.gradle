@@ -132,4 +132,6 @@ dependencies {
     implementation "androidx.work:work-rxjava2:$work_version"
     androidTestImplementation "androidx.work:work-testing:$work_version"
     implementation 'com.github.iammert:MultiSearchView:0.1'
+    // circular image
+    implementation "de.hdodenhof:circleimageview:$circularImage"
 }

@@ -3,9 +3,6 @@ package com.project.neardoc.viewmodel
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
 import com.project.neardoc.model.BetterDocApiHealthRes
-import com.project.neardoc.model.BetterDocSearchByDiseaseRes
-import com.project.neardoc.model.Doctor
-import com.project.neardoc.model.MetaData
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.android.plugins.RxAndroidPlugins
@@ -25,16 +22,15 @@ import org.mockito.MockitoAnnotations
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 
-class HomepageViewModelTest {
+class SearchPageViewModelTest {
     @get:Rule
     var rule = InstantTaskExecutorRule()
     @Mock
     lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
 
     @InjectMocks
-    var sut = HomepageViewModel()
+    var sut = SearchPageViewModel()
     private var testApiHealthObservable: Observable<BetterDocApiHealthRes>?= null
-    private var testSearchObservable: Observable<BetterDocSearchByDiseaseRes>?= null
     @Before
     fun setup() {
         MockitoAnnotations.initMocks(this)

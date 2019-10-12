@@ -16,4 +16,8 @@ abstract class FragmentBuilderModule {
     abstract fun contributeForgotPasswordFragment(): ForgotPassword
     @ContributesAndroidInjector
     abstract fun contributeHomePageFragment(): HomePage
+    @ContributesAndroidInjector
+    abstract fun contributeSearchPageFragment(): SearchPage
+    @ContributesAndroidInjector
+    abstract fun contributeAccountPageFragment(): AccountPage
 }
