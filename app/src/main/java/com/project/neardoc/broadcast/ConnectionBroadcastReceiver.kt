@@ -19,6 +19,9 @@ class ConnectionBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
             Constants.LOCATION_SERVICE_ACTION ->{
                 Log.i("Good: ", "Yes")
             }
+            Constants.USER_STATE_ACTION -> {
+                Log.i("Good: ", "Yes")
+            }
         }
     }
 }

@@ -2,15 +2,27 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".view.fragments.SearchPage">
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
         <include
-            android:id="@+id/fragment_home_page_server_error_layout_id"
+            android:id="@+id/fragment_search_page_server_error_layout_id"
             layout="@layout/server_error_layout"
             android:visibility="gone"
             />
-
-    </FrameLayout>
+        <com.iammert.library.ui.multisearchviewlib.MultiSearchView
+            android:id="@+id/fragment_search_page_search_container_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/SearchTextStyle"
+            android:background="@drawable/dr_search_view_border"
+            />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/fragment_search_recycler_view_id"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/fragment_search_page_search_container_id"
+            />
+    </RelativeLayout>
 </layout>

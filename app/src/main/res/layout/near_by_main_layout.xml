@@ -5,13 +5,60 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".NearDocMainActivity">
-
-    <fragment
-        android:id="@+id/container"
-        android:name="androidx.navigation.fragment.NavHostFragment"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/nearby_doc_navigation"/>
+        android:layout_height="match_parent">
+        <fragment
+            android:id="@+id/container"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/nearby_doc_navigation"
+            android:layout_above="@+id/fragment_main_bottom_bar_id"
+            />
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/fragment_main_bottom_bar_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/dr_background"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                >
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/fragment_home_page_profile_image_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_account_circle_white_24dp"
+                    android:layout_centerVertical="true"
+                    />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/fragment_home_page_username_view_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/fragment_home_page_profile_image_id"
+                    android:text="@string/username"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/baloo_bhai"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/fragment_home_page_profile_image_id" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_settings_white_42dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_alignParentRight="true" />
+            </RelativeLayout>
+        </com.google.android.material.bottomnavigation.BottomNavigationView>
+    </RelativeLayout>
 
 </FrameLayout>
