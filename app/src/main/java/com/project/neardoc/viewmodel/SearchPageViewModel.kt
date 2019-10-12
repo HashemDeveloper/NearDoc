@@ -17,7 +17,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class HomepageViewModel @Inject constructor(): ViewModel() {
+class SearchPageViewModel @Inject constructor(): ViewModel() {
     private val compositeDisposable = CompositeDisposable()
     private var iHomepageViewModel: IHomepageViewModel?= null
     @VisibleForTesting

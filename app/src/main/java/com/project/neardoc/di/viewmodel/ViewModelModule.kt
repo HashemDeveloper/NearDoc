@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.project.neardoc.di.scopes.ViewModelKey
 import com.project.neardoc.viewmodel.ForgotPasswordViewModel
-import com.project.neardoc.viewmodel.HomepageViewModel
+import com.project.neardoc.viewmodel.SearchPageViewModel
 import com.project.neardoc.viewmodel.LoginViewModel
 import com.project.neardoc.viewmodel.RegistrationViewModel
 import dagger.Binds
@@ -29,6 +29,6 @@ abstract class ViewModelModule {
     internal abstract fun provideViewModelForForgotPassword(forgotPasswordViewModel: ForgotPasswordViewModel): ViewModel
     @Binds
     @IntoMap
-    @ViewModelKey(HomepageViewModel::class)
-    internal abstract fun provideViewModelForHomepage(homepageViewModel: HomepageViewModel): ViewModel
+    @ViewModelKey(SearchPageViewModel::class)
+    internal abstract fun provideViewModelForHomepage(searchPageViewModel: SearchPageViewModel): ViewModel
 }

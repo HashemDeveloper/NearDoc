@@ -25,26 +25,26 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 app:cardUseCompatPadding="true"
                 >
-               <LinearLayout
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:orientation="vertical"
-                   android:layout_gravity="center"
-                   >
-                   <androidx.appcompat.widget.AppCompatImageView
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:src="@drawable/ic_search_gray_72dp"
-                       android:layout_gravity="center"
-                       />
-                   <androidx.appcompat.widget.AppCompatTextView
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:text="@string/search_doc"
-                       android:textSize="42sp"
-                       android:textColor="@color/blue_gray_300"
-                       />
-               </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_gravity="center"
+                    >
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_search_gray_72dp"
+                        android:layout_gravity="center"
+                        />
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/search_doc"
+                        android:textSize="42sp"
+                        android:textColor="@color/blue_gray_300"
+                        />
+                </LinearLayout>
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
                 android:id="@+id/fragment_home_page_account_layout_id"
@@ -102,7 +102,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@+id/fragment_home_page_profile_image_id"
-                    android:layout_toRightOf="@+id/fragment_home_page_profile_image_id"
                     android:text="@string/username"
                     android:textColor="@color/white"
                     android:fontFamily="@font/baloo_bhai"
@@ -112,10 +111,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_settings_white_42dp"
-                    android:background="?android:attr/selectableItemBackground"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true"
                     />

@@ -54,6 +54,7 @@ ext {
     firebaseAuth = "19.0.0"
     event_bus_v = "3.1.1"
     work_version = "2.3.0-alpha01"
+    circularImage = "2.2.0"
 }
 task clean(type: Delete) {
     delete rootProject.buildDir
