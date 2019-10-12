@@ -10,10 +10,7 @@ import com.project.neardoc.rxauth.IRxAuthentication
 import com.project.neardoc.rxauth.RxAuthentication
 import com.project.neardoc.rxeventbus.IRxEventBus
 import com.project.neardoc.rxeventbus.RxEventBus
-import com.project.neardoc.utils.ConnectionStateMonitor
-import com.project.neardoc.utils.IConnectionStateMonitor
-import com.project.neardoc.utils.ILocationService
-import com.project.neardoc.utils.LocationService
+import com.project.neardoc.utils.*
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -59,5 +56,10 @@ class ApplicationModule {
     @Provides
     fun provideLocationService(locationService: LocationService): ILocationService {
         return locationService
+    }
+    @Singleton
+    @Provides
+    fun provideUserStateService(userStateService: UserStateService): IUserStateService {
+        return userStateService
     }
 }

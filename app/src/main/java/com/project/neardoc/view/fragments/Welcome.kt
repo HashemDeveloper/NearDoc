@@ -18,6 +18,7 @@ import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_welcome.*
+import kotlinx.android.synthetic.main.near_by_main_layout.*
 
 class Welcome : Fragment(), Injectable{
     private var firebaseUser: FirebaseUser?= null

@@ -13,23 +13,25 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.events.LocationUpdateEvent
 import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.rxeventbus.IRxEventBus
-import com.project.neardoc.utils.IConnectionStateMonitor
-import com.project.neardoc.utils.ILocationService
-import com.project.neardoc.utils.IPermissionListener
-import com.project.neardoc.utils.NearDocNetworkType
+import com.project.neardoc.utils.*
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.android.synthetic.main.near_by_main_layout.*
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
+    private var firebaseUser: FirebaseUser?= null
     @Inject
     lateinit var iRxEventBus: IRxEventBus
     @Inject
@@ -38,6 +40,8 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
     lateinit var iSharedPrefService: ISharedPrefService
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
+    @Inject
+    lateinit var iUserStateService: IUserStateService
 
     private lateinit var navController: NavController
     private var isWifiConnected = false
@@ -46,6 +50,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.near_by_main_layout)
+        this.firebaseUser = FirebaseAuth.getInstance().currentUser
         this.view = findViewById(R.id.container)
         this.navController = Navigation.findNavController(this, R.id.container)
     }
@@ -57,8 +62,24 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
     override fun onStart() {
         super.onStart()
         monitorConnectionSetting()
+        monitorUserState()
     }
-
+    private fun monitorUserState() {
+        this.iUserStateService.getObserver().observe(this, Observer {currentUser ->
+            if (currentUser.currentUser != null) {
+                enableBottomBar(true)
+            } else {
+                enableBottomBar(false)
+            }
+        })
+    }
+    private fun enableBottomBar(isLoggedIn: Boolean) {
+        if (isLoggedIn) {
+            fragment_main_bottom_bar_id.visibility = View.VISIBLE
+        } else {
+            fragment_main_bottom_bar_id.visibility = View.GONE
+        }
+    }
     private fun monitorConnectionSetting() {
         this.iConnectionStateMonitor.getObserver().observe(this, Observer {isNetAvailable ->
            if (isNetAvailable) {
