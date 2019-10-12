@@ -78,6 +78,10 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </LinearLayout>
+        <include android:id="@+id/fragment_home_page_loading_bar_id"
+            layout="@layout/global_progress_bar_layout"
+            android:visibility="gone"
+            />
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/fragment_home_page_bottom_bar_id"
             android:layout_width="match_parent"

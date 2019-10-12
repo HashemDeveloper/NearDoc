@@ -1,6 +1,6 @@
 package com.project.neardoc.viewmodel.listeners
 
-interface IHomepageViewModel {
+interface ISearchPageViewModel {
     fun fetchData()
     fun onServerError()
 }

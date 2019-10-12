@@ -7,14 +7,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
-import com.project.neardoc.NearDocMainActivity
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
@@ -24,8 +24,9 @@ import com.project.neardoc.utils.ConnectionSettings
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.ILocationService
 import com.project.neardoc.utils.IPermissionListener
+import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.SearchPageViewModel
-import com.project.neardoc.viewmodel.listeners.IHomepageViewModel
+import com.project.neardoc.viewmodel.listeners.ISearchPageViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_home_page.*
 import org.greenrobot.eventbus.EventBus
@@ -33,7 +34,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
-class HomePage: Fragment(), Injectable, IHomepageViewModel, IPermissionListener {
+class HomePage: Fragment(), Injectable, ISearchPageViewModel, IPermissionListener {
     companion object {
         private val LOCATION_UPDATE_REQUEST_CODE = 34
         private val ACCESS_COARSE_AND_FINE_LOCATION_CODE = 1
@@ -64,8 +65,14 @@ class HomePage: Fragment(), Injectable, IHomepageViewModel, IPermissionListener 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         this.betterDocApiKey = resources.getString(R.string.better_doc_api_key)
+        onBackPressed()
         fragment_home_page_search_layout_id.setOnClickListener{
-//            FirebaseAuth.getInstance().signOut()
+            val navToSearchPage = findNavController()
+            navToSearchPage.navigate(R.id.searchPage)
+        }
+        fragment_home_page_account_layout_id.setOnClickListener{
+            val navToAccountPage = findNavController()
+            navToAccountPage.navigate(R.id.accountPage)
         }
     }
     @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
@@ -94,7 +101,14 @@ class HomePage: Fragment(), Injectable, IHomepageViewModel, IPermissionListener 
         val connectionSettings = ConnectionSettings(activity!!, view!!)
         connectionSettings.initWifiSetting(false)
     }
-
+    private fun displayLoading(isLoading: Boolean) {
+        val globalLoadingBar = GlobalLoadingBar(activity!!, fragment_home_page_loading_bar_id)
+        if (isLoading) {
+            globalLoadingBar.setVisibility(true)
+        } else {
+            globalLoadingBar.setVisibility(false)
+        }
+    }
     override fun onStart() {
         super.onStart()
         this.iLocationService.setPermissionListener(this)
@@ -104,6 +118,7 @@ class HomePage: Fragment(), Injectable, IHomepageViewModel, IPermissionListener 
     private fun observeLocationUpdates() {
         this.iLocationService.getObserver().observe(this, Observer {location ->
             if (location != null) {
+                displayLoading(false)
                 val lat: String = location.latitude.toString()
                 val lon: String = location.longitude.toString()
                 EventBus.getDefault().postSticky(LocationUpdateEvent(lat, lon))
@@ -131,6 +146,7 @@ class HomePage: Fragment(), Injectable, IHomepageViewModel, IPermissionListener 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             if (ActivityCompat.checkSelfPermission(activity!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(activity!!, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                displayLoading(true)
                 requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION),
                     LOCATION_UPDATE_REQUEST_CODE
                 )
@@ -139,6 +155,7 @@ class HomePage: Fragment(), Injectable, IHomepageViewModel, IPermissionListener 
             }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(activity!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                displayLoading(true)
                 requestPermissions( arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
                     LOCATION_UPDATE_REQUEST_CODE
                 )
@@ -210,5 +227,12 @@ class HomePage: Fragment(), Injectable, IHomepageViewModel, IPermissionListener 
                 requestPermission()
             }
         }
+    }
+    private fun onBackPressed() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                requireActivity().finish()
+            }
+        })
     }
 }
