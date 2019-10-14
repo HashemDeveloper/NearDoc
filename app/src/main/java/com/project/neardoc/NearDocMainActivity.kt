@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -20,6 +21,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.events.LocationUpdateEvent
 import com.project.neardoc.events.NetworkStateEvent
+import com.project.neardoc.events.UserStateEvent
 import com.project.neardoc.rxeventbus.IRxEventBus
 import com.project.neardoc.utils.*
 import dagger.android.AndroidInjector
@@ -68,6 +70,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
         this.iUserStateService.getObserver().observe(this, Observer {currentUser ->
             if (currentUser.currentUser != null) {
                 enableBottomBar(true)
+                EventBus.getDefault().postSticky(UserStateEvent(true))
             } else {
                 enableBottomBar(false)
             }

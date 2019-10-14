@@ -16,19 +16,18 @@ import com.google.firebase.auth.FirebaseUser
 
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
+import com.project.neardoc.events.UserStateEvent
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_welcome.*
 import kotlinx.android.synthetic.main.near_by_main_layout.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 class Welcome : Fragment(), Injectable{
-    private var firebaseUser: FirebaseUser?= null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        this.firebaseUser = FirebaseAuth.getInstance().currentUser
-        if (this.firebaseUser != null) {
-            val navigateToHomePage = findNavController()
-            navigateToHomePage.navigate(R.id.homePage)
-        }
+        EventBus.getDefault().register(this)
     }
 
     override fun onCreateView(
@@ -72,5 +71,17 @@ class Welcome : Fragment(), Injectable{
             }
         })
         fragment_welcome_splash_image_view_id.startAnimation(holdAnimation)
+    }
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun onUserStateEvent(userStateEvent: UserStateEvent) {
+        if (userStateEvent.isLoggedIn) {
+            val navigateToHomePage = findNavController()
+            navigateToHomePage.navigate(R.id.homePage)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        EventBus.getDefault().unregister(this)
     }
 }
