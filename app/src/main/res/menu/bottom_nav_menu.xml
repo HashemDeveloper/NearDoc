@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menuId"
+        android:title="Menu"
+        android:icon="@drawable/ic_home_gray_72dp"
+        />
+    <item
+        android:id="@+id/menuId1"
+        android:title="whates"
+        android:icon="@drawable/ic_search_gray_72dp"
+        />
+</menu>

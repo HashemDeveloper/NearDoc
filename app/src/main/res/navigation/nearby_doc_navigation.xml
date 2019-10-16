@@ -102,4 +102,8 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
+    <fragment
+        android:id="@+id/popUpMenu"
+        android:name="com.project.neardoc.view.fragments.PopUpMenu"
+        android:label="PopUpMenu" />
 </navigation>

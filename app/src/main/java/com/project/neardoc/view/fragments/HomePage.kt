@@ -77,7 +77,7 @@ class HomePage: Fragment(), Injectable, IPermissionListener {
         }
     }
     private fun displayConnectionSetting() {
-        val connectionSettings = ConnectionSettings(activity!!, view!!)
+        val connectionSettings = ConnectionSettings(activity!!, fragment_home_page_snackbar_id)
         connectionSettings.initWifiSetting(false)
     }
     private fun displayLoading(isLoading: Boolean) {

@@ -44,4 +44,6 @@
     <string name="enable_location_permission">Enable</string>
     <string name="search_doc">DOC</string>
     <string name="account">ACCOUNT</string>
+    <string name="sign_out">SIGN OUT</string>
+    <string name="menu">MENU</string>
 </resources>

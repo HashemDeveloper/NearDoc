@@ -1,25 +1,14 @@
 package com.project.neardoc
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
-import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.project.neardoc.data.local.ISharedPrefService
-import com.project.neardoc.events.LocationUpdateEvent
 import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.events.UserStateEvent
 import com.project.neardoc.rxeventbus.IRxEventBus
@@ -27,13 +16,11 @@ import com.project.neardoc.utils.*
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.near_by_main_layout.*
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
-    private var firebaseUser: FirebaseUser?= null
     @Inject
     lateinit var iRxEventBus: IRxEventBus
     @Inject
@@ -52,9 +39,11 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.near_by_main_layout)
-        this.firebaseUser = FirebaseAuth.getInstance().currentUser
         this.view = findViewById(R.id.container)
         this.navController = Navigation.findNavController(this, R.id.container)
+        main_layout_menu_bar_id.setOnClickListener{
+            this.navController.navigate(R.id.popUpMenu)
+        }
     }
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> {

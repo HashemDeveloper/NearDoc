@@ -24,6 +24,7 @@
             android:background="@drawable/dr_background"
             android:layout_alignParentBottom="true"
             android:visibility="visible"
+            style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
             >
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -45,8 +46,7 @@
                     android:text="@string/username"
                     android:textColor="@color/white"
                     android:fontFamily="@font/baloo_bhai"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/fragment_home_page_profile_image_id" />
+                    android:layout_centerVertical="true"/>
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/main_layout_menu_bar_id"
                     android:layout_width="wrap_content"
@@ -54,10 +54,9 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_menu_white_42dp"
-                    android:background="?android:attr/selectableItemBackground"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
-                    android:focusable="true"
-                    android:layout_alignParentRight="true" />
+                    android:focusable="true"/>
             </RelativeLayout>
         </com.google.android.material.bottomnavigation.BottomNavigationView>
     </RelativeLayout>
