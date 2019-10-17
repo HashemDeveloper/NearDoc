@@ -69,6 +69,23 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
         } catch (e: Exception) {
             Log.i("PopupError: ", e.localizedMessage!!)
         }
+        popup.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.menuSettingId -> {
+                    Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show()
+                }
+                R.id.menuFeedbackId -> {
+                    Toast.makeText(this, "Feedback", Toast.LENGTH_SHORT).show()
+                }
+                R.id.menuHelpId -> {
+                    Toast.makeText(this, "Help", Toast.LENGTH_SHORT).show()
+                }
+                R.id.menuSignOutId -> {
+                    Toast.makeText(this, "Sign out", Toast.LENGTH_SHORT).show()
+                }
+            }
+            true
+        }
         popup.show()
     }
 
