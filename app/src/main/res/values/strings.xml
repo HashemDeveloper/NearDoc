@@ -46,4 +46,6 @@
     <string name="account">ACCOUNT</string>
     <string name="sign_out">SIGN OUT</string>
     <string name="menu">MENU</string>
+    <string name="feedback">Feedback</string>
+    <string name="help">Help</string>
 </resources>

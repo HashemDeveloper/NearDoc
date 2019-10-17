@@ -1,8 +1,11 @@
 package com.project.neardoc
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
+import android.util.Log
+import android.view.*
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -19,6 +22,8 @@ import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.near_by_main_layout.*
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
+import android.view.WindowManager
+
 
 class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
     @Inject
@@ -41,6 +46,47 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
         setContentView(R.layout.near_by_main_layout)
         this.view = findViewById(R.id.container)
         this.navController = Navigation.findNavController(this, R.id.container)
+        main_layout_menu_bar_id.setOnClickListener{
+            showPopupMenu(it)
+        }
+    }
+
+    private fun showPopupMenu(view: View) {
+        val context = ContextThemeWrapper(this, R.style.PopUpMenuStyle)
+        val popup = PopupMenu(context, view)
+        val inflater = popup.menuInflater
+        inflater.inflate(R.menu.bottom_nav_menu, popup.menu)
+
+        val menuHelper: Any
+        val argTypes: Array<Class<*>>
+        try {
+            val fMenuHelper = PopupMenu::class.java.getDeclaredField("mPopup")
+            fMenuHelper.isAccessible = true
+            menuHelper = fMenuHelper.get(popup)!!
+            argTypes = arrayOf(Boolean::class.javaPrimitiveType!!)
+            menuHelper.javaClass.getDeclaredMethod("setForceShowIcon", *argTypes)
+                .invoke(menuHelper, true)
+        } catch (e: Exception) {
+            Log.i("PopupError: ", e.localizedMessage!!)
+        }
+        popup.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.menuSettingId -> {
+                    Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show()
+                }
+                R.id.menuFeedbackId -> {
+                    Toast.makeText(this, "Feedback", Toast.LENGTH_SHORT).show()
+                }
+                R.id.menuHelpId -> {
+                    Toast.makeText(this, "Help", Toast.LENGTH_SHORT).show()
+                }
+                R.id.menuSignOutId -> {
+                    Toast.makeText(this, "Sign out", Toast.LENGTH_SHORT).show()
+                }
+            }
+            true
+        }
+        popup.show()
     }
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> {
