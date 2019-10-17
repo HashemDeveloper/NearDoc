@@ -33,6 +33,8 @@ import android.app.Activity.RESULT_OK
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.util.Log
+import android.view.Gravity
+import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -59,6 +61,7 @@ class Login : Fragment(), Injectable, ILoginViewModel{
     companion object {
         @JvmStatic private val GOOGLE_SIGN_IN_CODE: Int = 0
     }
+    private var connectionSettings: ConnectionSettings?= null
     private var emailValidator: EmailValidator?= null
     private var passwordValidator: PasswordValidator?= null
     private var email: String = ""
@@ -163,8 +166,15 @@ class Login : Fragment(), Injectable, ILoginViewModel{
         }
     }
     private fun displayConnectionSetting() {
-        val connectionSettings = ConnectionSettings(activity!!, view!!)
-        connectionSettings.initWifiSetting(false)
+        this.connectionSettings = ConnectionSettings(activity!!, view!!)
+        connectionSettings?.initWifiSetting(false)
+        viewSnackbarOnTop(connectionSettings!!)
+    }
+    private fun viewSnackbarOnTop(connectionSettings: ConnectionSettings) {
+        val view: View = connectionSettings.getSnackBar().view
+        val params: FrameLayout.LayoutParams = view.layoutParams as FrameLayout.LayoutParams
+        params.gravity = Gravity.TOP
+        view.layoutParams = params
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
@@ -177,6 +187,11 @@ class Login : Fragment(), Injectable, ILoginViewModel{
             }
         } else {
             this.isInternetAvailable = false
+        }
+        if (this.isInternetAvailable) {
+            if (this.connectionSettings != null && this.connectionSettings?.getSnackBar() != null) {
+                this.connectionSettings?.getSnackBar()!!.dismiss()
+            }
         }
     }
 

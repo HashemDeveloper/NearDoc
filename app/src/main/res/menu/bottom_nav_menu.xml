@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group>
+        <item
+            android:id="@+id/menuId"
+            android:title="Menu"
+            android:icon="@drawable/ic_email_black_24dp"
+            />
+        <item
+            android:id="@+id/menuId1"
+            android:title="whates"
+            android:icon="@drawable/ic_search_gray_72dp"
+            />
+    </group>
+
+</menu>

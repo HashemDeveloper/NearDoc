@@ -35,6 +35,7 @@ class HomePage: Fragment(), Injectable, IPermissionListener {
         private val LOCATION_UPDATE_REQUEST_CODE = 34
         private val ACCESS_COARSE_AND_FINE_LOCATION_CODE = 1
     }
+    private var connectionSettings: ConnectionSettings?= null
     private var isInternetAvailable = false
     @Inject
     lateinit var iLocationService: ILocationService
@@ -74,11 +75,15 @@ class HomePage: Fragment(), Injectable, IPermissionListener {
         }
         if (!this.isInternetAvailable) {
             displayConnectionSetting()
+        } else {
+            if (this.connectionSettings != null && this.connectionSettings?.getSnackBar() != null) {
+                this.connectionSettings?.getSnackBar()!!.dismiss()
+            }
         }
     }
     private fun displayConnectionSetting() {
-        val connectionSettings = ConnectionSettings(activity!!, view!!)
-        connectionSettings.initWifiSetting(false)
+        this.connectionSettings = ConnectionSettings(activity!!, fragment_home_page_snackbar_id)
+        connectionSettings?.initWifiSetting(false)
     }
     private fun displayLoading(isLoading: Boolean) {
         val globalLoadingBar = GlobalLoadingBar(activity!!, fragment_home_page_loading_bar_id)

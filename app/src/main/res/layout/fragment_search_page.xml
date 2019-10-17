@@ -24,5 +24,9 @@
             android:layout_height="match_parent"
             android:layout_below="@+id/fragment_search_page_search_container_id"
             />
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/fragment_search_page_snackbar_id"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </RelativeLayout>
 </layout>
