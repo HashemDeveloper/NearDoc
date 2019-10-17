@@ -86,7 +86,13 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
             }
             true
         }
+        popup.setOnDismissListener {
+            this.view!!.alpha = 1.0f
+            window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        }
         popup.show()
+        this.view!!.alpha = 0.3f
+        window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> {
