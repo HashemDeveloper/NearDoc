@@ -19,12 +19,14 @@ import com.project.neardoc.utils.Constants
 import com.project.neardoc.viewmodel.SearchPageViewModel
 import com.project.neardoc.viewmodel.listeners.ISearchPageViewModel
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.synthetic.main.fragment_search_page.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 class SearchPage : Fragment(), Injectable, ISearchPageViewModel {
+    private var connectionSettings: ConnectionSettings?= null
     private var isInternetAvailable = false
     private var latitude: String = ""
     private var longitude: String = ""
@@ -67,13 +69,16 @@ class SearchPage : Fragment(), Injectable, ISearchPageViewModel {
         }
         if (this.isInternetAvailable) {
             this.homePageViewModel.checkBetterDocApiHealth(this.betterDocApiKey)
+            if (this.connectionSettings != null && this.connectionSettings?.getSnackBar() != null) {
+                this.connectionSettings?.getSnackBar()!!.dismiss()
+            }
         } else {
             displayConnectionSetting()
         }
     }
     private fun displayConnectionSetting() {
-        val connectionSettings = ConnectionSettings(activity!!, view!!)
-        connectionSettings.initWifiSetting(false)
+        this.connectionSettings = ConnectionSettings(activity!!, fragment_search_page_snackbar_id)
+        connectionSettings?.initWifiSetting(false)
     }
 
     override fun fetchData() {

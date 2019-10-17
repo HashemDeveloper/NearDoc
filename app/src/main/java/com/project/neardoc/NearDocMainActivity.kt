@@ -41,9 +41,6 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
         setContentView(R.layout.near_by_main_layout)
         this.view = findViewById(R.id.container)
         this.navController = Navigation.findNavController(this, R.id.container)
-        main_layout_menu_bar_id.setOnClickListener{
-            this.navController.navigate(R.id.popUpMenu)
-        }
     }
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> {
