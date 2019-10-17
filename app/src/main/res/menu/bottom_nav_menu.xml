@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <group>
-        <item
-            android:id="@+id/menuId"
-            android:title="Menu"
-            android:icon="@drawable/ic_email_black_24dp"
-            />
-        <item
-            android:id="@+id/menuId1"
-            android:title="whates"
-            android:icon="@drawable/ic_search_gray_72dp"
-            />
-    </group>
-
+    <item
+        android:id="@+id/menuSettingId"
+        android:title="@string/settings"
+        android:icon="@drawable/ic_settings_blue_gray600_24dp"
+        />
+    <item
+        android:id="@+id/menuFeedbackId"
+        android:title="@string/feedback"
+        android:icon="@drawable/ic_feedback_gray_blue600_24dp"
+        />
+    <item
+        android:id="@+id/menuHelpId"
+        android:title="@string/help"
+        android:icon="@drawable/ic_help_blue_gray600_24dp"
+        />
+    <item
+        android:id="@+id/menuSignOutId"
+        android:title="@string/sign_out"
+        android:icon="@drawable/ic_sign_out_blue_gray600_24dp"
+        />
 </menu>
