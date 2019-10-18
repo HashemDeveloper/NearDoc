@@ -1,6 +1,7 @@
 package com.project.neardoc
 
 import android.content.Context
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -23,6 +24,7 @@ import kotlinx.android.synthetic.main.near_by_main_layout.*
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 import android.view.WindowManager
+import androidx.appcompat.view.menu.MenuPopupHelper
 
 
 class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
@@ -59,16 +61,23 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
 
         val menuHelper: Any
         val argTypes: Array<Class<*>>
+        val intTypes: Array<Class<*>>
+        val viewTypes: Array<Class<*>>
         try {
             val fMenuHelper = PopupMenu::class.java.getDeclaredField("mPopup")
             fMenuHelper.isAccessible = true
             menuHelper = fMenuHelper.get(popup)!!
             argTypes = arrayOf(Boolean::class.javaPrimitiveType!!)
+            intTypes = arrayOf(Int::class.javaPrimitiveType!!)
+            viewTypes = arrayOf(View::class.javaObjectType)
             menuHelper.javaClass.getDeclaredMethod("setForceShowIcon", *argTypes)
                 .invoke(menuHelper, true)
+            menuHelper.javaClass.getDeclaredMethod("setGravity", *intTypes).invoke(menuHelper, Gravity.END)
+            menuHelper.javaClass.getDeclaredMethod("setAnchorView", *viewTypes).invoke(menuHelper, view)
         } catch (e: Exception) {
             Log.i("PopupError: ", e.localizedMessage!!)
         }
+
         popup.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menuSettingId -> {
@@ -80,8 +89,8 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
                 R.id.menuHelpId -> {
                     Toast.makeText(this, "Help", Toast.LENGTH_SHORT).show()
                 }
-                R.id.menuSignOutId -> {
-                    Toast.makeText(this, "Sign out", Toast.LENGTH_SHORT).show()
+                R.id.menuInfoId -> {
+                    Toast.makeText(this, "About", Toast.LENGTH_SHORT).show()
                 }
             }
             true

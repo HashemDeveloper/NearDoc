@@ -33,10 +33,11 @@
         <item name="android:textColorHint">@color/blue_gray_300</item>
         <item name="android:textColor">@color/blue_gray_700</item>
     </style>
-    <style name="PopUpMenuStyle" >
+    <style name="PopUpMenuStyle">
         <item name="android:textColor">@color/blue_gray_600</item>
         <item name="android:itemBackground">@color/blue_gray_100</item>
         <item name="android:divider">@color/blue_gray_300</item>
         <item name="android:dividerHeight">1dp</item>
+        <item name="android:padding">2dp</item>
     </style>
 </resources>
