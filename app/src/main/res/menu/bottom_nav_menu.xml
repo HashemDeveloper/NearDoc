@@ -17,8 +17,8 @@
         android:icon="@drawable/ic_help_blue_gray600_24dp"
         />
     <item
-        android:id="@+id/menuSignOutId"
-        android:title="@string/sign_out"
-        android:icon="@drawable/ic_sign_out_blue_gray600_24dp"
+        android:id="@+id/menuInfoId"
+        android:title="@string/about"
+        android:icon="@drawable/ic_info_outline_gray600_24dp"
         />
 </menu>
