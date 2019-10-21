@@ -59,21 +59,6 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
             onBackPressed()
         }
     }
-    private fun setSettingBar(isSetting: Boolean) {
-        if (isSetting) {
-            fragment_main_bottom_bar_profile_image_id.visibility = View.GONE
-            fragment_main_bottom_bar_username_view_id.visibility = View.GONE
-            fragment_main_bottom_bar_title_view_id.visibility = View.VISIBLE
-            fragment_main_bottom_bar_back_bt_id.visibility = View.VISIBLE
-            main_layout_menu_bar_id.visibility = View.GONE
-        } else {
-            fragment_main_bottom_bar_profile_image_id.visibility = View.VISIBLE
-            fragment_main_bottom_bar_username_view_id.visibility = View.VISIBLE
-            fragment_main_bottom_bar_title_view_id.visibility = View.GONE
-            fragment_main_bottom_bar_back_bt_id.visibility = View.GONE
-            main_layout_menu_bar_id.visibility = View.VISIBLE
-        }
-    }
 
     private fun showPopupMenu(view: View) {
         val context = ContextThemeWrapper(this, R.style.PopUpMenuStyle)
@@ -179,6 +164,57 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
            }
         })
     }
+    private fun setSettingBar(
+        isSetting: Boolean,
+        currentPage: PageType
+    ) {
+        if (isSetting) {
+            toggleBottomBar(currentPage)
+        } else {
+            toggleBottomBar(currentPage)
+        }
+    }
+    private fun toggleBottomBar(currentPage: PageType) {
+        when (currentPage) {
+            PageType.SIGN_IN_SECURITY -> {
+                setupSettingFragment(resources.getString(R.string.sign_in_security))
+            }
+            PageType.SETTINGS_FRAGMENT -> {
+                setupSettingFragment(resources.getString(R.string.settings))
+            }
+
+            PageType.CONTACT_US -> {
+                setupSettingFragment(resources.getString(R.string.contact_us))
+            }
+            PageType.SEND_FEEDBACK -> {
+                setupSettingFragment(resources.getString(R.string.send_feedback))
+            }
+            PageType.TERMS_AND_CONDITION -> {
+                setupSettingFragment(resources.getString(R.string.terms_condition))
+            }
+            PageType.PRIVACY_POLICY -> {
+                setupSettingFragment(resources.getString(R.string.privacy_policy))
+            }
+            PageType.MAIN_PAGE -> {
+                mainPageBottomBar()
+            }
+        }
+    }
+    private fun setupSettingFragment(title: String) {
+        fragment_main_bottom_bar_profile_image_id.visibility = View.GONE
+        fragment_main_bottom_bar_username_view_id.visibility = View.GONE
+        fragment_main_bottom_bar_title_view_id.visibility = View.VISIBLE
+        fragment_main_bottom_bar_title_view_id.text = title
+        fragment_main_bottom_bar_back_bt_id.visibility = View.VISIBLE
+        main_layout_menu_bar_id.visibility = View.GONE
+    }
+    private fun mainPageBottomBar() {
+        fragment_main_bottom_bar_profile_image_id.visibility = View.VISIBLE
+        fragment_main_bottom_bar_username_view_id.visibility = View.VISIBLE
+        fragment_main_bottom_bar_title_view_id.visibility = View.GONE
+        fragment_main_bottom_bar_back_bt_id.visibility = View.GONE
+        main_layout_menu_bar_id.visibility = View.VISIBLE
+    }
 
     override fun onBackPressed() {
         super.onBackPressed()
@@ -196,9 +232,17 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onLandInSettingPageEvent(event: LandInSettingPageEvent) {
         if (event.getIsOnSettingPage()) {
-            setSettingBar(event.getIsOnSettingPage())
+            when (event.getCurrentPage()) {
+                PageType.SETTINGS_FRAGMENT -> setSettingBar(event.getIsOnSettingPage(), event.getCurrentPage())
+                PageType.SIGN_IN_SECURITY -> setSettingBar(event.getIsOnSettingPage(), event.getCurrentPage())
+                PageType.CONTACT_US -> setSettingBar(event.getIsOnSettingPage(), event.getCurrentPage())
+                PageType.SEND_FEEDBACK -> setSettingBar(event.getIsOnSettingPage(), event.getCurrentPage())
+                PageType.TERMS_AND_CONDITION -> setSettingBar(event.getIsOnSettingPage(), event.getCurrentPage())
+                PageType.PRIVACY_POLICY -> setSettingBar(event.getIsOnSettingPage(), event.getCurrentPage())
+                PageType.MAIN_PAGE -> mainPageBottomBar()
+            }
         } else {
-            setSettingBar(false)
+            setSettingBar(false, event.getCurrentPage())
         }
     }
 }
