@@ -43,10 +43,19 @@
     <string name="location_permission_denied">NearDoc depends on location permission. Disabling access to device location will cause unexpected behavior.</string>
     <string name="enable_location_permission">Enable</string>
     <string name="search_doc">DOC</string>
-    <string name="account">ACCOUNT</string>
+    <string name="account">Account</string>
     <string name="sign_out">SIGN OUT</string>
     <string name="menu">MENU</string>
     <string name="feedback">Feedback</string>
     <string name="help">Help</string>
     <string name="about">About</string>
+    <string name="general">GENERAL</string>
+    <string name="sign_in_security"><![CDATA[Sign in & security]]></string>
+    <string name="set_distance">Set Distance</string>
+    <string name="limit">Limit</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="send_feedback">Send Feedback</string>
+    <string name="rate_neardoc">Rate NearDoc</string>
+    <string name="terms_condition"><![CDATA[Terms & Conditioin]]></string>
+    <string name="privacy_policy">Privacy Policy</string>
 </resources>

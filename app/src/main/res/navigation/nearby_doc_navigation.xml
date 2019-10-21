@@ -102,4 +102,8 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.project.neardoc.view.fragments.SettingsFragment"
+        android:label="SettingsFragment" />
 </navigation>
