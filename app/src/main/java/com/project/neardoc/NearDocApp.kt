@@ -3,7 +3,9 @@ package com.project.neardoc
 import android.app.Activity
 import android.app.Application
 import android.content.BroadcastReceiver
+import android.content.Context
 import android.util.Log
+import androidx.multidex.MultiDex
 import androidx.work.Configuration
 import androidx.work.Worker
 import com.project.neardoc.di.ApplicationInjector
@@ -43,5 +45,10 @@ class NearDocApp: Application(), HasActivityInjector, HasBroadcastReceiverInject
 
     override fun workerInjector(): AndroidInjector<Worker> {
         return this.dispatchingWorkerInjector
+    }
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        MultiDex.install(this)
     }
 }
