@@ -9,12 +9,15 @@ import android.view.ViewGroup
 
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
+import com.project.neardoc.events.LandInSettingPageEvent
 import dagger.android.support.AndroidSupportInjection
+import org.greenrobot.eventbus.EventBus
 
 class TermsAndCondition : Fragment(), Injectable {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
+        EventBus.getDefault().postSticky(LandInSettingPageEvent(true))
     }
 
     override fun onCreateView(

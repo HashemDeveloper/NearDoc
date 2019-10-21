@@ -1,7 +1,5 @@
 package com.project.neardoc
 
-import android.content.Context
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -24,8 +22,10 @@ import kotlinx.android.synthetic.main.near_by_main_layout.*
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 import android.view.WindowManager
-import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.navigation.findNavController
+import com.project.neardoc.events.LandInSettingPageEvent
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 
 class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
@@ -43,19 +43,17 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
     private lateinit var navController: NavController
     private var isWifiConnected = false
     private var view: View? = null
-    private var isSettingClicked = false
 
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.near_by_main_layout)
+        EventBus.getDefault().register(this)
         this.view = findViewById(R.id.container)
         this.navController = Navigation.findNavController(this, R.id.container)
         main_layout_menu_bar_id.setOnClickListener{
-            this.isSettingClicked = true
             val navigateToSettingPage = findNavController(R.id.container)
             navigateToSettingPage.navigate(R.id.settingsFragment)
-            setSettingBar(true)
         }
         fragment_main_bottom_bar_back_bt_id.setOnClickListener {
             onBackPressed()
@@ -188,7 +186,19 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        setSettingBar(false)
         return true
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
+    }
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun onLandInSettingPageEvent(event: LandInSettingPageEvent) {
+        if (event.getIsOnSettingPage()) {
+            setSettingBar(event.getIsOnSettingPage())
+        } else {
+            setSettingBar(false)
+        }
     }
 }

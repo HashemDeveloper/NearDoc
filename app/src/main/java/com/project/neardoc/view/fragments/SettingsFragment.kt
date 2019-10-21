@@ -7,14 +7,17 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
+import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.view.widgets.CustomPreference
 import dagger.android.support.AndroidSupportInjection
+import org.greenrobot.eventbus.EventBus
 
 class SettingsFragment: PreferenceFragmentCompat(), Injectable {
     private var list: List<String>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
+        EventBus.getDefault().postSticky(LandInSettingPageEvent(true))
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -65,5 +68,10 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
                 true
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().postSticky(LandInSettingPageEvent(false))
     }
 }
