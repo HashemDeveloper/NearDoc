@@ -45,6 +45,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
     private var view: View? = null
     private var isSettingClicked = false
 
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.near_by_main_layout)
