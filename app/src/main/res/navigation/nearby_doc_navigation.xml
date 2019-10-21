@@ -105,5 +105,66 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.project.neardoc.view.fragments.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:label="SettingsFragment" >
+        <action
+            android:id="@+id/actionSignInSecurity"
+            app:destination="@id/signInSecurity" />
+        <action
+            android:id="@+id/actionContactUs"
+            app:destination="@id/contactUs" />
+        <action
+            android:id="@+id/actionSendFeedback"
+            app:destination="@id/sendFeedback" />
+        <action
+            android:id="@+id/actionTermsAndCon"
+            app:destination="@id/termsAndCondition" />
+        <action
+            android:id="@+id/actionPrivacyPolicy"
+            app:destination="@id/privacyPolicy" />
+    </fragment>
+    <fragment
+        android:id="@+id/signInSecurity"
+        android:name="com.project.neardoc.view.settings.SignInSecurity"
+        android:label="fragment_sing_in_and_security"
+        tools:layout="@layout/fragment_sing_in_and_security" >
+        <action
+            android:id="@+id/actionSettingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/contactUs"
+        android:name="com.project.neardoc.view.settings.ContactUs"
+        android:label="fragment_contact_us"
+        tools:layout="@layout/fragment_contact_us" >
+        <action
+            android:id="@+id/actionSettingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/sendFeedback"
+        android:name="com.project.neardoc.view.settings.SendFeedback"
+        android:label="fragment_send_feedback"
+        tools:layout="@layout/fragment_send_feedback" >
+        <action
+            android:id="@+id/actionSettingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/termsAndCondition"
+        android:name="com.project.neardoc.view.settings.TermsAndCondition"
+        android:label="fragment_terms_and_condition"
+        tools:layout="@layout/fragment_terms_and_condition" >
+        <action
+            android:id="@+id/actionSettingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/privacyPolicy"
+        android:name="com.project.neardoc.view.settings.PrivacyPolicy"
+        android:label="fragment_privacy_policy"
+        tools:layout="@layout/fragment_privacy_policy" >
+        <action
+            android:id="@+id/actionSettingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
 </navigation>

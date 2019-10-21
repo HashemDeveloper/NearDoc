@@ -1,6 +1,7 @@
 package com.project.neardoc.di
 
 import com.project.neardoc.view.fragments.*
+import com.project.neardoc.view.settings.*
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -22,4 +23,14 @@ abstract class FragmentBuilderModule {
     abstract fun contributeAccountPageFragment(): AccountPage
     @ContributesAndroidInjector
     abstract fun contributeSettingPageFragment(): SettingsFragment
+    @ContributesAndroidInjector
+    abstract fun contributeSignInAndSecurityFragment(): SignInSecurity
+    @ContributesAndroidInjector
+    abstract fun contributeContactUsFragment(): ContactUs
+    @ContributesAndroidInjector
+    abstract fun contributeSendFeedbackFragment(): SendFeedback
+    @ContributesAndroidInjector
+    abstract fun contributeTermsAndConditionPage(): TermsAndCondition
+    @ContributesAndroidInjector
+    abstract fun contributePrivacyPolicyPage(): PrivacyPolicy
 }

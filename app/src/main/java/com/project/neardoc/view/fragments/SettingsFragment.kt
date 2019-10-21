@@ -2,6 +2,7 @@ package com.project.neardoc.view.fragments
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.project.neardoc.R
@@ -37,14 +38,29 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
             val prefSignAndSec: CustomPreference = findPreference<CustomPreference>(keys) as CustomPreference
             prefSignAndSec.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 when {
-                    it.key == "prefSignInSecKey" -> Toast.makeText(context, "SignInKey", Toast.LENGTH_SHORT).show()
+                    it.key == "prefSignInSecKey" -> {
+                        val signInSecFragment = findNavController()
+                        signInSecFragment.navigate(R.id.signInSecurity)
+                    }
                     it.key == "prefDistanceKey" -> Toast.makeText(context, "SetDistance", Toast.LENGTH_SHORT).show()
                     it.key == "prefSetLimitKey" -> Toast.makeText(context, "SetLimit", Toast.LENGTH_SHORT).show()
-                    it.key == "prefContactUsKey" -> Toast.makeText(context, "ContactUs", Toast.LENGTH_SHORT).show()
+                    it.key == "prefContactUsKey" -> {
+                        val contactUsFragment = findNavController()
+                        contactUsFragment.navigate(R.id.contactUs)
+                    }
                     it.key == "prefRateKey" -> Toast.makeText(context, "RateUs", Toast.LENGTH_SHORT).show()
-                    it.key == "prefSendFeedbackKey" -> Toast.makeText(context, "SendFeedback", Toast.LENGTH_SHORT).show()
-                    it.key == "prefTermsAndConditionKey" -> Toast.makeText(context, "TermsAndCond", Toast.LENGTH_SHORT).show()
-                    it.key == "prefPrivacyPolicyKey" -> Toast.makeText(context, "PrivacyPol", Toast.LENGTH_SHORT).show()
+                    it.key == "prefSendFeedbackKey" -> {
+                        val sendFeedbackPage = findNavController()
+                        sendFeedbackPage.navigate(R.id.sendFeedback)
+                    }
+                    it.key == "prefTermsAndConditionKey" -> {
+                        val termsAndConditionPage = findNavController()
+                        termsAndConditionPage.navigate(R.id.termsAndCondition)
+                    }
+                    it.key == "prefPrivacyPolicyKey" -> {
+                        val privacyPolicyPage = findNavController()
+                        privacyPolicyPage.navigate(R.id.privacyPolicy)
+                    }
                 }
                 true
             }
