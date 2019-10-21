@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">@color/blue_gray_700</color>
     <color name="colorPrimaryDark">@color/blue_gray_700</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorAccent">@color/blue_gray_400</color>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="red_900">#B71C1C</color>

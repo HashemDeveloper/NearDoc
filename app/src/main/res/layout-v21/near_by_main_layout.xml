@@ -24,25 +24,44 @@
             android:background="@drawable/dr_background"
             android:layout_alignParentBottom="true"
             android:visibility="visible"
-            style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
             >
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 >
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/fragment_main_bottom_bar_back_bt_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_arrow_back_white_42dp"
+                    android:layout_centerVertical="true"
+                    android:visibility="gone"
+                    />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/fragment_main_bottom_bar_title_view_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/settings"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:fontFamily="@font/chonburi"
+                    android:visibility="gone"
+                    />
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/fragment_home_page_profile_image_id"
+                    android:id="@+id/fragment_main_bottom_bar_profile_image_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_account_circle_white_24dp"
                     android:layout_centerVertical="true"
+                    android:visibility="visible"
                     />
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/fragment_home_page_username_view_id"
+                    android:id="@+id/fragment_main_bottom_bar_username_view_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@+id/fragment_home_page_profile_image_id"
+                    android:layout_toEndOf="@+id/fragment_main_bottom_bar_profile_image_id"
                     android:text="@string/username"
                     android:textColor="@color/white"
                     android:fontFamily="@font/baloo_bhai"
@@ -53,12 +72,15 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/ic_menu_white_42dp"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_settings_white_42dp"
+                    android:background="?android:attr/selectableItemBackground"
                     android:clickable="true"
-                    android:focusable="true"/>
+                    android:focusable="true"
+                    android:visibility="visible"
+                    />
             </RelativeLayout>
         </com.google.android.material.bottomnavigation.BottomNavigationView>
+
     </RelativeLayout>
 
 </FrameLayout>

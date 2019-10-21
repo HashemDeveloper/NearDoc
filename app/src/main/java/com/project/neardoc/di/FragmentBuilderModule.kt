@@ -20,4 +20,6 @@ abstract class FragmentBuilderModule {
     abstract fun contributeSearchPageFragment(): SearchPage
     @ContributesAndroidInjector
     abstract fun contributeAccountPageFragment(): AccountPage
+    @ContributesAndroidInjector
+    abstract fun contributeSettingPageFragment(): SettingsFragment
 }

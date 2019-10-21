@@ -25,6 +25,7 @@ import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 import android.view.WindowManager
 import androidx.appcompat.view.menu.MenuPopupHelper
+import androidx.navigation.findNavController
 
 
 class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
@@ -42,6 +43,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
     private lateinit var navController: NavController
     private var isWifiConnected = false
     private var view: View? = null
+    private var isSettingClicked = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +51,28 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
         this.view = findViewById(R.id.container)
         this.navController = Navigation.findNavController(this, R.id.container)
         main_layout_menu_bar_id.setOnClickListener{
-            showPopupMenu(it)
+            this.isSettingClicked = true
+            val navigateToSettingPage = findNavController(R.id.container)
+            navigateToSettingPage.navigate(R.id.settingsFragment)
+            setSettingBar(true)
+        }
+        fragment_main_bottom_bar_back_bt_id.setOnClickListener {
+            onBackPressed()
+        }
+    }
+    private fun setSettingBar(isSetting: Boolean) {
+        if (isSetting) {
+            fragment_main_bottom_bar_profile_image_id.visibility = View.GONE
+            fragment_main_bottom_bar_username_view_id.visibility = View.GONE
+            fragment_main_bottom_bar_title_view_id.visibility = View.VISIBLE
+            fragment_main_bottom_bar_back_bt_id.visibility = View.VISIBLE
+            main_layout_menu_bar_id.visibility = View.GONE
+        } else {
+            fragment_main_bottom_bar_profile_image_id.visibility = View.VISIBLE
+            fragment_main_bottom_bar_username_view_id.visibility = View.VISIBLE
+            fragment_main_bottom_bar_title_view_id.visibility = View.GONE
+            fragment_main_bottom_bar_back_bt_id.visibility = View.GONE
+            main_layout_menu_bar_id.visibility = View.VISIBLE
         }
     }
 
@@ -156,5 +179,15 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
                Toast.makeText(this, "Connection lost", Toast.LENGTH_SHORT).show()
            }
         })
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        onSupportNavigateUp()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        setSettingBar(false)
+        return true
     }
 }
