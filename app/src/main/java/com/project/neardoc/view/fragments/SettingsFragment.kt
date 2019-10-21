@@ -26,32 +26,25 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
             "prefContactUsKey", "prefRateKey", "prefSendFeedbackKey", "prefTermsAndConditionKey", "prefPrivacyPolicyKey")
     }
     private fun getPrefKeys(): List<String>? {
-        if (this.list != null) {
-            return this.list!!
+        return if (this.list != null) {
+            this.list!!
         } else {
-            return null
+            null
         }
     }
     private fun setupPreferenceListeners() {
         for (keys in this.getPrefKeys()!!) {
             val prefSignAndSec: CustomPreference = findPreference<CustomPreference>(keys) as CustomPreference
             prefSignAndSec.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                if (it.key == "prefSignInSecKey") {
-                    Toast.makeText(context, "SignInKey", Toast.LENGTH_SHORT).show()
-                } else if (it.key == "prefDistanceKey") {
-                    Toast.makeText(context, "SetDistance", Toast.LENGTH_SHORT).show()
-                } else if (it.key == "prefSetLimitKey") {
-                    Toast.makeText(context, "SetLimit", Toast.LENGTH_SHORT).show()
-                } else if (it.key == "prefContactUsKey") {
-                    Toast.makeText(context, "ContactUs", Toast.LENGTH_SHORT).show()
-                } else if (it.key == "prefRateKey") {
-                    Toast.makeText(context, "RateUs", Toast.LENGTH_SHORT).show()
-                } else if (it.key == "prefSendFeedbackKey") {
-                    Toast.makeText(context, "SendFeedback", Toast.LENGTH_SHORT).show()
-                } else if (it.key == "prefTermsAndConditionKey") {
-                    Toast.makeText(context, "TermsAndCond", Toast.LENGTH_SHORT).show()
-                } else if (it.key == "prefPrivacyPolicyKey") {
-                    Toast.makeText(context, "PrivacyPol", Toast.LENGTH_SHORT).show()
+                when {
+                    it.key == "prefSignInSecKey" -> Toast.makeText(context, "SignInKey", Toast.LENGTH_SHORT).show()
+                    it.key == "prefDistanceKey" -> Toast.makeText(context, "SetDistance", Toast.LENGTH_SHORT).show()
+                    it.key == "prefSetLimitKey" -> Toast.makeText(context, "SetLimit", Toast.LENGTH_SHORT).show()
+                    it.key == "prefContactUsKey" -> Toast.makeText(context, "ContactUs", Toast.LENGTH_SHORT).show()
+                    it.key == "prefRateKey" -> Toast.makeText(context, "RateUs", Toast.LENGTH_SHORT).show()
+                    it.key == "prefSendFeedbackKey" -> Toast.makeText(context, "SendFeedback", Toast.LENGTH_SHORT).show()
+                    it.key == "prefTermsAndConditionKey" -> Toast.makeText(context, "TermsAndCond", Toast.LENGTH_SHORT).show()
+                    it.key == "prefPrivacyPolicyKey" -> Toast.makeText(context, "PrivacyPol", Toast.LENGTH_SHORT).show()
                 }
                 true
             }
