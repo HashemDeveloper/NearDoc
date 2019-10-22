@@ -1,5 +1,6 @@
 package com.project.neardoc.di
 
+import android.view.View
 import com.project.neardoc.view.fragments.*
 import com.project.neardoc.view.settings.*
 import dagger.Module

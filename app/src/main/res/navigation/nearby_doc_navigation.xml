@@ -126,7 +126,7 @@
         android:id="@+id/signInSecurity"
         android:name="com.project.neardoc.view.settings.SignInSecurity"
         android:label="fragment_sing_in_and_security"
-        tools:layout="@layout/fragment_sing_in_and_security" >
+        tools:layout="@layout/fragment_sign_in_and_security" >
         <action
             android:id="@+id/actionSettingsFragment"
             app:destination="@id/settingsFragment" />

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="4dp"
+        app:cardUseCompatPadding="true"
+        app:cardElevation="8dp"
+        >
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/fragment_sign_in_security_holder_header_view_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/header"
+            android:textSize="24sp"
+            android:padding="@dimen/padding_16dp"
+            android:textColor="@color/blue_gray_800"
+            android:shadowRadius="4"
+            android:shadowDy="4"
+            android:shadowColor="@color/black"
+            android:fontFamily="@font/baloo_bhai"
+            />
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

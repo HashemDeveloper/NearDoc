@@ -1,6 +1,7 @@
 package com.project.neardoc.di
 
 import android.content.Context
+import android.view.View
 import com.project.neardoc.NearDocApp
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.SharedPrefService
