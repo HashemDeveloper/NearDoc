@@ -58,4 +58,9 @@
     <string name="rate_neardoc">Rate NearDoc</string>
     <string name="terms_condition"><![CDATA[Terms & Conditioin]]></string>
     <string name="privacy_policy">Privacy Policy</string>
+    <string name="update_login_information">Update Login Information</string>
+    <string name="name_of_user">Name</string>
+    <string name="header">Header</string>
+    <string name="masking">*********</string>
+    <string name="delete">Delete</string>
 </resources>

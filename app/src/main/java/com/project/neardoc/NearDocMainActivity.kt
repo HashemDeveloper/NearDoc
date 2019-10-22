@@ -59,7 +59,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
             onBackPressed()
         }
     }
-
+    @Deprecated("unused")
     private fun showPopupMenu(view: View) {
         val context = ContextThemeWrapper(this, R.style.PopUpMenuStyle)
         val popup = PopupMenu(context, view)
@@ -220,6 +220,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
         super.onBackPressed()
         onSupportNavigateUp()
     }
+
 
     override fun onSupportNavigateUp(): Boolean {
         return true
