@@ -29,6 +29,9 @@ class Constants {
         val FIREBASE_ID_TOKEN = "ID_TOKEN"
         val mobileData = "MOBILE_DATA"
         val wifiData = "WIFI_DATA"
+        val SHARED_PREF_USER_IMAGE = "userImage"
+        val SHARED_PREF_USER_NAME = "userName"
+        val SHARED_PREF_USER_EMAIL = "userEmail"
         fun encodeUserEmail(email: String): String {
             return email.replace(".", ",")
         }

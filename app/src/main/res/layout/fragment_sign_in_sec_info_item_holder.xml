@@ -8,9 +8,8 @@
         android:id="@+id/fragment_sign_in_security_item_container_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardUseCompatPadding="true"
-        app:cardCornerRadius="8dp"
         app:cardElevation="8dp"
+        android:layout_marginBottom="8dp"
         >
         <LinearLayout
             android:layout_width="match_parent"
@@ -23,7 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/full_name"
-                android:textSize="24sp"
+                android:textSize="18sp"
                 android:textColor="@color/blue_gray_400"
                 />
             <androidx.appcompat.widget.AppCompatTextView
@@ -40,9 +39,8 @@
         android:id="@+id/fragment_sign_in_sec_item_sub_container_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardUseCompatPadding="true"
-        app:cardCornerRadius="8dp"
         app:cardElevation="8dp"
+        android:layout_marginBottom="8dp"
         >
         <LinearLayout
             android:layout_width="match_parent"
@@ -59,7 +57,7 @@
                     android:id="@+id/fragment_sign_in_sec_item_username_title_view_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/username"
+                    android:text="@string/email"
                     android:textSize="18sp"
                     android:textColor="@color/blue_gray_400"
                     android:layout_alignParentStart="true"

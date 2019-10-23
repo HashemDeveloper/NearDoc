@@ -10,4 +10,10 @@ interface ISharedPrefService {
     fun storeEncryptIV(iv: ByteArray)
     fun getIdToken(): String
     fun getEncryptIv(): String
+    fun storeUserImage(image: String)
+    fun storeUserName(name: String)
+    fun storeUserEmail(email: String)
+    fun getUserName(): String
+    fun getUserEmail(): String
+    fun getUserImage(): String
 }

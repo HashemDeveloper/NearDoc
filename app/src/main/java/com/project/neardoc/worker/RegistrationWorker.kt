@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
 import com.project.neardoc.di.workermanager.NearDocWorkerInjection
 import com.project.neardoc.model.Username
@@ -14,7 +15,8 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class RegistrationWorker @Inject constructor(context: Context, workerParameters: WorkerParameters): Worker(context, workerParameters){
-
+    @Inject
+    lateinit var iSharedPrefService: ISharedPrefService
     @Inject
     lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
     private val compositeDisposable = CompositeDisposable()
