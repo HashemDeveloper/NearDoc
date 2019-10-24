@@ -1,5 +1,6 @@
 package com.project.neardoc.viewmodel
 
+import android.content.Context
 import android.util.Base64
 import android.util.Log
 import androidx.fragment.app.FragmentActivity
@@ -10,23 +11,19 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.*
 import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
 import com.project.neardoc.rxauth.IRxAuthentication
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.DeCryptor
-import com.project.neardoc.utils.EnCryptor
 import com.project.neardoc.viewmodel.listeners.ILoginViewModel
+import com.project.neardoc.worker.FetchUserWorker
 import com.project.neardoc.worker.LoginWorker
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.nio.charset.Charset
 import javax.inject.Inject
 
 class LoginViewModel @Inject constructor() : ViewModel() {
@@ -43,6 +40,8 @@ class LoginViewModel @Inject constructor() : ViewModel() {
     lateinit var iSharedPrefService: ISharedPrefService
     @Inject
     lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
+    @Inject
+    lateinit var context: Context
     private val compositeDisposable = CompositeDisposable()
     private val firebaseAuth = FirebaseAuth.getInstance()
 
@@ -68,6 +67,7 @@ class LoginViewModel @Inject constructor() : ViewModel() {
            }, {onError ->
                this.loadingLiveData.value = false
                this.errorLiveData.value = true
+               Log.i("GoogleLoginErr: ", onError.localizedMessage!!)
            }))
     }
     private fun processGoogleLoginData(activity: FragmentActivity?, firebaseUser: FirebaseUser, fullName: String) {
@@ -133,6 +133,8 @@ class LoginViewModel @Inject constructor() : ViewModel() {
                     this.emailVerificationRequireLiveData.value = false
                     this.errorLiveData.value = false
                     this.loadingLiveData.value = false
+                    val userEmail:String = firebaseUser.email!!
+                    fetchUserInfoFromFirebaseDb(userEmail)
                 } else {
                     this.emailVerificationRequireLiveData.value = true
                     this.loadingLiveData.value = false
@@ -165,5 +167,27 @@ class LoginViewModel @Inject constructor() : ViewModel() {
                 this.iLoginViewModel?.onEmailVerificationSent()
                 Log.i("ErrorSendingEmail:", onError.localizedMessage!!)
             }))
+    }
+    fun fetchUserInfoFromFirebaseDb(userEmail: String) {
+        val userImage: String = this.iSharedPrefService.getUserImage()
+        val fullName: String = this.iSharedPrefService.getUserName()
+        val username: String = this.iSharedPrefService.getUserUsername()
+        val email: String = this.iSharedPrefService.getUserEmail()
+        val dbKey: String = this.context.resources!!.getString(R.string.firebase_db_secret)
+        if (userImage.isEmpty() || userImage == ""
+            && fullName.isEmpty() || fullName == ""
+            && username.isEmpty() || username == ""
+            && email.isEmpty() || email == "") {
+
+            val keyData: Data = Data.Builder()
+                .putString(Constants.WORKER_DB_AUTH_KEY, dbKey)
+                .putString(Constants.WORKER_EMAIL, userEmail)
+                .build()
+            val request: OneTimeWorkRequest = OneTimeWorkRequest.Builder(FetchUserWorker::class.java)
+                .setInputData(keyData)
+                .build()
+            val workManager: WorkManager = WorkManager.getInstance(this.context)
+            workManager.beginWith(request).enqueue()
+        }
     }
 }

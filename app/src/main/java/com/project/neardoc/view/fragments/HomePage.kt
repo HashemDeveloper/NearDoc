@@ -11,11 +11,13 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
+import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.LocationUpdateEvent
 import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.utils.ConnectionSettings
@@ -23,6 +25,7 @@ import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.ILocationService
 import com.project.neardoc.utils.IPermissionListener
 import com.project.neardoc.view.widgets.GlobalLoadingBar
+import com.project.neardoc.viewmodel.HomePageViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_home_page.*
 import org.greenrobot.eventbus.EventBus
@@ -39,6 +42,11 @@ class HomePage: Fragment(), Injectable, IPermissionListener {
     private var isInternetAvailable = false
     @Inject
     lateinit var iLocationService: ILocationService
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    private val homePageViewModel: HomePageViewModel by viewModels {
+        this.viewModelFactory
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

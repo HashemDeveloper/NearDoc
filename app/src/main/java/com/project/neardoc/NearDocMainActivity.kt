@@ -141,7 +141,12 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
             fragment_main_bottom_bar_id.visibility = View.VISIBLE
             val userImage: String = this.iSharedPrefService.getUserImage()
             val username: String = this.iSharedPrefService.getUserUsername()
-            Glide.with(this).load(userImage).into(fragment_main_bottom_bar_profile_image_id)
+            if (userImage.isNotEmpty()) {
+                Glide.with(this).load(userImage).into(fragment_main_bottom_bar_profile_image_id)
+            } else {
+                val accountImageResId = getDrawableImage("ic_account_circle_white_24dp")
+                Glide.with(this).load(accountImageResId).into(fragment_main_bottom_bar_profile_image_id)
+            }
             fragment_main_bottom_bar_username_view_id.text = username
         } else {
             fragment_main_bottom_bar_id.visibility = View.GONE
@@ -258,15 +263,27 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
         }
     }
     override fun onSharedPreferenceChanged(pref: SharedPreferences?, key: String?) {
-        when(key) {
-            Constants.SHARED_PREF_USER_IMAGE -> {
-                val userImage: String = pref?.getString(key, "")!!
-                Glide.with(this.view!!).load(userImage).into(fragment_main_bottom_bar_profile_image_id)
-            }
-            Constants.SHARED_PREF_USER_USERNAME -> {
-                val username: String = pref?.getString(key, "")!!
-                fragment_main_bottom_bar_username_view_id.text = username
+        runOnUiThread {
+            when(key) {
+                Constants.SHARED_PREF_USER_IMAGE -> {
+                    val userImage: String = pref?.getString(key, "")!!
+                    if (userImage.isNotEmpty()) {
+                        Glide.with(this).load(userImage).into(fragment_main_bottom_bar_profile_image_id)
+                    } else {
+                        val drawableResourceId = getDrawableImage("ic_account_circle_white_24dp")
+                        Glide.with(this).load(drawableResourceId).into(fragment_main_bottom_bar_profile_image_id)
+                    }
+                }
+                Constants.SHARED_PREF_USER_USERNAME -> {
+                    val username: String = pref?.getString(key, "")!!
+                    fragment_main_bottom_bar_username_view_id.text = username
+                }
             }
         }
+
+    }
+    private fun getDrawableImage(image: String): Int {
+        val drawableResourceId: Int = resources.getIdentifier(image, "drawable", this.packageName)
+        return drawableResourceId
     }
 }

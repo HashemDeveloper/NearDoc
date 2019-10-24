@@ -38,6 +38,10 @@ interface INearDocRemoteApi {
     fun getUsernames(@Path("node") username: String, @Query("key") dbKey: String): Observable<UsernameRes>
 
     @Headers("Content-Type: application/json")
+    @GET("/users/{node}/.json")
+    fun getUsers(@Path("node") email: String, @Query("auth") dbKey: String): Observable<UsersRes>
+
+    @Headers("Content-Type: application/json")
     @POST
     fun sendPasswordResetLink(
         @Url url: String, @Query("key") apiKey: String, @Query("requestType") requestType: String, @Query(
