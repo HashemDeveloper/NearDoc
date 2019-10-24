@@ -197,7 +197,8 @@ class HomePage: Fragment(), Injectable, IPermissionListener {
         }
     }
     private fun promptToEnableLocationPermission(message: String) {
-        val snackbar: Snackbar = Snackbar.make(view!!, message, Snackbar.LENGTH_INDEFINITE)
+        displayLoading(false)
+        val snackbar: Snackbar = Snackbar.make(fragment_home_page_snackbar_id, message, Snackbar.LENGTH_INDEFINITE)
         snackbar.view.setBackgroundColor(ContextCompat.getColor(activity!!, R.color.blue_gray_800))
         snackbar.show()
         snackbar.setAction(R.string.enable_location_permission) {
