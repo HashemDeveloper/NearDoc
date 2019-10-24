@@ -58,4 +58,41 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
     override fun getEncryptIv(): String {
         return pref?.getString(Constants.SHARED_PREF_ENCRYPT_IV, "")!!
     }
+    override fun storeUserName(name: String) {
+       pref?.edit(commit = true) {
+           putString(Constants.SHARED_PREF_USER_NAME, name)
+       }
+    }
+
+    override fun storeUserEmail(email: String) {
+       pref?.edit(commit = true) {
+           putString(Constants.SHARED_PREF_USER_EMAIL, email)
+       }
+    }
+    override fun getUserName(): String {
+        return pref?.getString(Constants.SHARED_PREF_USER_NAME, "")!!
+    }
+
+    override fun getUserEmail(): String {
+        return pref?.getString(Constants.SHARED_PREF_USER_EMAIL, "")!!
+    }
+    override fun storeUserImage(image: String) {
+        pref?.edit(commit = true) {
+            putString(Constants.SHARED_PREF_USER_IMAGE, "")
+        }
+    }
+
+    override fun getUserImage(): String {
+        return pref?.getString(Constants.SHARED_PREF_USER_IMAGE, "")!!
+    }
+
+    override fun storeUserUsername(username: String) {
+       pref?.edit(commit = true) {
+           putString(Constants.SHARED_PREF_USER_USERNAME, username)
+       }
+    }
+
+    override fun getUserUsername(): String {
+        return pref?.getString(Constants.SHARED_PREF_USER_USERNAME, "")!!
+    }
 }

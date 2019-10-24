@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
 import com.project.neardoc.di.workermanager.NearDocWorkerInjection
 import com.project.neardoc.model.Username
@@ -14,7 +15,8 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class RegistrationWorker @Inject constructor(context: Context, workerParameters: WorkerParameters): Worker(context, workerParameters){
-
+    @Inject
+    lateinit var iSharedPrefService: ISharedPrefService
     @Inject
     lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
     private val compositeDisposable = CompositeDisposable()
@@ -35,6 +37,12 @@ class RegistrationWorker @Inject constructor(context: Context, workerParameters:
                 this.compositeDisposable.add(this.iNearDocRemoteRepo.storeUsersInfo(encodedEmail, dbKey, users)
                     .subscribeOn(Schedulers.io())
                     .subscribe({userRes ->
+                        this.iSharedPrefService.storeUserName(userRes.fullName)
+                        this.iSharedPrefService.storeUserEmail(userRes.email)
+                        this.iSharedPrefService.storeUserUsername(userRes.username)
+                        if (userRes.image.isNotEmpty()) {
+                            this.iSharedPrefService.storeUserImage(userRes.image)
+                        }
                     }, {onUserErr ->
                         Log.i("OnUserErr: ", onUserErr.localizedMessage!!)
                     }))

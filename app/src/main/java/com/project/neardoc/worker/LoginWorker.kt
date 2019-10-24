@@ -42,6 +42,7 @@ class LoginWorker @Inject constructor(context: Context, workerParams: WorkerPara
                            }
 
                            override fun onNext(t: Users) {
+
                            }
 
                            override fun onError(e: Throwable) {

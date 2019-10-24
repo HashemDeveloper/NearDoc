@@ -75,7 +75,12 @@ class LoginViewModel @Inject constructor() : ViewModel() {
         val displayName: String = firebaseUser.displayName!!
         val email: String = firebaseUser.email!!
         val dbAuthKey: String = activity?.resources!!.getString(R.string.firebase_db_secret)
-
+        this.iSharedPrefService.storeUserUsername(displayName)
+        this.iSharedPrefService.storeUserName(fullName)
+        this.iSharedPrefService.storeUserEmail(email)
+        if (email.isNotEmpty()) {
+            this.iSharedPrefService.storeUserImage(imagePath)
+        }
         val credentialData = Data.Builder()
             .putString(Constants.WORKER_DB_AUTH_KEY, dbAuthKey)
             .putString(Constants.WORKER_FULL_NAME, fullName)

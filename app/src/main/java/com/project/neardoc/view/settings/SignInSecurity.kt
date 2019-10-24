@@ -47,7 +47,7 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
         fragment_sign_in_security_recycler_view_id.adapter = this.signInSecurityAdapter
 
         val headerModel = SignInSecurityHeaderModel("Login Information")
-        val infoModel = SignInSecurityModel("Hashem", "JuniaYulia", "******")
+        val infoModel = SignInSecurityModel("Hashem", "juniayulia@outlook.com", "******")
         val manageHeader = ManageAccountHeader("Manage Account")
         val deleteAccount = ManageAccountModel("juniayulia@outlook.com")
 
