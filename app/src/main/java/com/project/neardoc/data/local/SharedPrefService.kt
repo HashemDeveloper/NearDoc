@@ -62,12 +62,14 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
        pref?.edit(commit = true) {
            putString(Constants.SHARED_PREF_USER_NAME, name)
        }
+        listener?.onSharedPreferenceChanged(pref, Constants.SHARED_PREF_USER_NAME)
     }
 
     override fun storeUserEmail(email: String) {
        pref?.edit(commit = true) {
            putString(Constants.SHARED_PREF_USER_EMAIL, email)
        }
+        listener?.onSharedPreferenceChanged(pref, Constants.SHARED_PREF_USER_EMAIL)
     }
     override fun getUserName(): String {
         return pref?.getString(Constants.SHARED_PREF_USER_NAME, "")!!
@@ -78,8 +80,9 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
     }
     override fun storeUserImage(image: String) {
         pref?.edit(commit = true) {
-            putString(Constants.SHARED_PREF_USER_IMAGE, "")
+            putString(Constants.SHARED_PREF_USER_IMAGE, image)
         }
+        listener?.onSharedPreferenceChanged(pref, Constants.SHARED_PREF_USER_IMAGE)
     }
 
     override fun getUserImage(): String {
@@ -90,6 +93,7 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
        pref?.edit(commit = true) {
            putString(Constants.SHARED_PREF_USER_USERNAME, username)
        }
+        listener?.onSharedPreferenceChanged(pref, Constants.SHARED_PREF_USER_USERNAME)
     }
 
     override fun getUserUsername(): String {

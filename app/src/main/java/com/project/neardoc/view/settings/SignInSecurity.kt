@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.project.neardoc.R
+import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.model.ManageAccountHeader
@@ -23,10 +24,12 @@ import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_sign_in_and_security.*
 import kotlinx.android.synthetic.main.near_by_main_layout.*
 import org.greenrobot.eventbus.EventBus
+import javax.inject.Inject
 
 class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
     private var signInSecurityAdapter: SignInSecurityAdapter?= null
-
+    @Inject
+    lateinit var iSharedPrefService: ISharedPrefService
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
@@ -45,11 +48,12 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
         this.signInSecurityAdapter = SignInSecurityAdapter(context!!, this)
         fragment_sign_in_security_recycler_view_id.layoutManager = LinearLayoutManager(context)
         fragment_sign_in_security_recycler_view_id.adapter = this.signInSecurityAdapter
-
+        val fullName: String = this.iSharedPrefService.getUserName()
+        val email: String = this.iSharedPrefService.getUserEmail()
         val headerModel = SignInSecurityHeaderModel("Login Information")
-        val infoModel = SignInSecurityModel("Hashem", "juniayulia@outlook.com", "******")
+        val infoModel = SignInSecurityModel(fullName, email, "******")
         val manageHeader = ManageAccountHeader("Manage Account")
-        val deleteAccount = ManageAccountModel("juniayulia@outlook.com")
+        val deleteAccount = ManageAccountModel(email)
 
         val dataList: List<Any> = arrayListOf(headerModel, infoModel, manageHeader, deleteAccount)
         this.signInSecurityAdapter?.setData(dataList)

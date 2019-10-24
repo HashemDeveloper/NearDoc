@@ -1,5 +1,6 @@
 package com.project.neardoc
 
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -23,12 +24,15 @@ import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 import android.view.WindowManager
 import androidx.navigation.findNavController
+import com.bumptech.glide.Glide
 import com.project.neardoc.events.LandInSettingPageEvent
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import kotlin.math.log
 
 
-class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
+class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, SharedPreferences.OnSharedPreferenceChangeListener{
+
     @Inject
     lateinit var iRxEventBus: IRxEventBus
     @Inject
@@ -59,6 +63,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
             onBackPressed()
         }
     }
+
     @Deprecated("unused")
     private fun showPopupMenu(view: View) {
         val context = ContextThemeWrapper(this, R.style.PopUpMenuStyle)
@@ -117,6 +122,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
 
     override fun onStart() {
         super.onStart()
+        this.iSharedPrefService.registerSharedPrefListener(this)
         monitorConnectionSetting()
         monitorUserState()
     }
@@ -133,6 +139,10 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
     private fun enableBottomBar(isLoggedIn: Boolean) {
         if (isLoggedIn) {
             fragment_main_bottom_bar_id.visibility = View.VISIBLE
+            val userImage: String = this.iSharedPrefService.getUserImage()
+            val username: String = this.iSharedPrefService.getUserUsername()
+            Glide.with(this).load(userImage).into(fragment_main_bottom_bar_profile_image_id)
+            fragment_main_bottom_bar_username_view_id.text = username
         } else {
             fragment_main_bottom_bar_id.visibility = View.GONE
         }
@@ -228,6 +238,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
 
     override fun onDestroy() {
         super.onDestroy()
+        this.iSharedPrefService.unregisterSharedPrefListener(this)
         EventBus.getDefault().unregister(this)
     }
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
@@ -244,6 +255,18 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector{
             }
         } else {
             setSettingBar(false, event.getCurrentPage())
+        }
+    }
+    override fun onSharedPreferenceChanged(pref: SharedPreferences?, key: String?) {
+        when(key) {
+            Constants.SHARED_PREF_USER_IMAGE -> {
+                val userImage: String = pref?.getString(key, "")!!
+                Glide.with(this.view!!).load(userImage).into(fragment_main_bottom_bar_profile_image_id)
+            }
+            Constants.SHARED_PREF_USER_USERNAME -> {
+                val username: String = pref?.getString(key, "")!!
+                fragment_main_bottom_bar_username_view_id.text = username
+            }
         }
     }
 }
