@@ -16,8 +16,6 @@ import javax.inject.Inject
 
 class RegistrationWorker @Inject constructor(context: Context, workerParameters: WorkerParameters): Worker(context, workerParameters){
     @Inject
-    lateinit var iSharedPrefService: ISharedPrefService
-    @Inject
     lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
     private val compositeDisposable = CompositeDisposable()
 
@@ -37,12 +35,6 @@ class RegistrationWorker @Inject constructor(context: Context, workerParameters:
                 this.compositeDisposable.add(this.iNearDocRemoteRepo.storeUsersInfo(encodedEmail, dbKey, users)
                     .subscribeOn(Schedulers.io())
                     .subscribe({userRes ->
-                        this.iSharedPrefService.storeUserName(userRes.fullName)
-                        this.iSharedPrefService.storeUserEmail(userRes.email)
-                        this.iSharedPrefService.storeUserUsername(userRes.username)
-                        if (userRes.image.isNotEmpty()) {
-                            this.iSharedPrefService.storeUserImage(userRes.image)
-                        }
                     }, {onUserErr ->
                         Log.i("OnUserErr: ", onUserErr.localizedMessage!!)
                     }))

@@ -74,4 +74,7 @@ class NearDocRemoteRepo @Inject constructor(): INearDocRemoteRepo {
     ): Observable<KnownConditionRes> {
        return this.iNearDocRemoteApi.retrieveKnownConditions(url, userKey, limit)
     }
+    override fun getUsers(email: String, dbKey: String): Observable<UsersRes> {
+        return this.iNearDocRemoteApi.getUsers(email, dbKey)
+    }
 }
