@@ -51,22 +51,29 @@
                     />
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/fragment_main_bottom_bar_profile_image_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
                     android:src="@drawable/ic_account_circle_white_24dp"
                     android:layout_centerVertical="true"
                     android:visibility="visible"
-                    />
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp" />
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/fragment_main_bottom_bar_username_view_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@+id/fragment_main_bottom_bar_profile_image_id"
                     android:text="@string/username"
+                    android:layout_marginStart="8dp"
                     android:textColor="@color/white"
                     android:fontFamily="@font/baloo_bhai"
                     android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/fragment_main_bottom_bar_profile_image_id" />
+                    android:layout_toRightOf="@+id/fragment_main_bottom_bar_profile_image_id"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toStartOf="@+id/main_layout_menu_bar_id"
+                    android:layout_toLeftOf="@+id/main_layout_menu_bar_id"
+                    android:gravity="start"
+                    />
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/main_layout_menu_bar_id"
                     android:layout_width="wrap_content"

@@ -78,7 +78,7 @@ class LoginViewModel @Inject constructor() : ViewModel() {
         this.iSharedPrefService.storeUserUsername(displayName)
         this.iSharedPrefService.storeUserName(fullName)
         this.iSharedPrefService.storeUserEmail(email)
-        if (email.isNotEmpty()) {
+        if (imagePath.isNotEmpty()) {
             this.iSharedPrefService.storeUserImage(imagePath)
         }
         val credentialData = Data.Builder()
