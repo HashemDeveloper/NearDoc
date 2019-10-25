@@ -14,4 +14,6 @@ interface INearDocRemoteRepo {
     fun searchDocByDisease(url: String, userKey: String, limit: Int, location: String, disease: String, sort: String): Observable<BetterDocSearchByDiseaseRes>
     fun getKnownConditions(url: String, userKey: String, limit: Int): Observable<KnownConditionRes>
     fun getUsers(email: String, dbKey: String): Observable<UsersRes>
+    fun updateEmail(url: String, idToken: String, email: String, returnSecureToken: Boolean): Observable<UpdateLoginInfoRes>
+    fun updatePassword(url: String, idToken: String, password: String, returnSecureToken: Boolean): Observable<UpdateLoginInfoRes>
 }

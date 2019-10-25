@@ -1,6 +1,7 @@
 package com.project.neardoc.data.local.remote
 
 import com.project.neardoc.model.*
+import com.project.neardoc.view.settings.UpdateEmail
 import io.reactivex.Observable
 import retrofit2.http.*
 
@@ -64,4 +65,20 @@ interface INearDocRemoteApi {
     @Headers("Content-Type: application/json")
     @GET
     fun retrieveKnownConditions(@Url url: String, @Query("user_key") userKey: String, @Query("limit") limit: Int): Observable<KnownConditionRes>
+
+    @Headers("Content-Type: application/json")
+    @POST
+    fun updateUserEmail(
+        @Url url: String, @Query("idToken") idToken: String, @Query("email") email: String, @Query(
+            "returnSecureToken"
+        ) returnSecureToken: Boolean
+    ): Observable<UpdateLoginInfoRes>
+
+    @Headers("Content-Type: application/json")
+    @POST
+    fun updateUserPassword(
+        @Url url: String, @Query("idToken") idToken: String, @Query("password") password: String, @Query(
+            "returnSecureToken"
+        ) returnSecureToken: Boolean
+    ): Observable<UpdateLoginInfoRes>
 }
