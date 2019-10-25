@@ -26,7 +26,6 @@ class FetchUserWorker @Inject constructor(context: Context, workerParams: Worker
         val email: String = inputData.getString(Constants.WORKER_EMAIL)!!
         this.compositeDisposable.add(this.iNearDocRemoteRepo.getUsers(Constants.encodeUserEmail(email), dbKey)
             .subscribeOn(Schedulers.io())
-            .subscribeOn(AndroidSchedulers.mainThread())
             .subscribe({users ->
                 if (users != null) {
                     val fullName: String = users.fullName

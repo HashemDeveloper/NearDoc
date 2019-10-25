@@ -36,7 +36,7 @@ class SignInSecurityAdapter constructor(private val context: Context, private va
                 val infoViewHolder = InfoViewHolder(view)
                 infoViewHolder.getUsernameHolder()?.setOnClickListener {
                     val signInSecurityModel = infoViewHolder.itemView.tag as SignInSecurityModel
-                    this.clickListener.onClick(signInSecurityModel, signInSecurityModel.username)
+                    this.clickListener.onClick(signInSecurityModel, signInSecurityModel.email)
                 }
                 infoViewHolder.getPasswordHolder()?.setOnClickListener {
                     val signInSecurityModel = infoViewHolder.itemView.tag as SignInSecurityModel
@@ -127,7 +127,7 @@ class SignInSecurityAdapter constructor(private val context: Context, private va
                 this.nameView?.text = item.fullName
             }
             if (this.usernameView != null) {
-                this.usernameView?.text = item.username
+                this.usernameView?.text = item.email
             }
             if (this.passwordView != null) {
                 this.passwordView?.text = item.password

@@ -32,7 +32,7 @@ class Constants {
         val SHARED_PREF_USER_IMAGE = "userImage"
         val SHARED_PREF_USER_NAME = "userName"
         val SHARED_PREF_USER_EMAIL = "userEmail"
-        val SHARED_PREF_USER_USERNAME = "username"
+        val SHARED_PREF_USER_USERNAME = "email"
         fun encodeUserEmail(email: String): String {
             return email.replace(".", ",")
         }

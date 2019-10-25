@@ -1,6 +1,5 @@
 package com.project.neardoc.di
 
-import android.view.View
 import com.project.neardoc.view.fragments.*
 import com.project.neardoc.view.settings.*
 import dagger.Module
@@ -34,4 +33,8 @@ abstract class FragmentBuilderModule {
     abstract fun contributeTermsAndConditionPage(): TermsAndCondition
     @ContributesAndroidInjector
     abstract fun contributePrivacyPolicyPage(): PrivacyPolicy
+    @ContributesAndroidInjector
+    abstract fun contributeUpdateEmail(): UpdateEmail
+    @ContributesAndroidInjector
+    abstract fun contributeUpdatePassword(): UpdatePassword
 }

@@ -210,6 +210,12 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
             PageType.PRIVACY_POLICY -> {
                 setupSettingFragment(resources.getString(R.string.privacy_policy))
             }
+            PageType.CHANGE_EMAIL -> {
+                setupSettingFragment(getString(R.string.change_email))
+            }
+            PageType.CHANGE_PASSWORD -> {
+                setupSettingFragment(getString(R.string.change_password))
+            }
             PageType.MAIN_PAGE -> {
                 mainPageBottomBar()
             }
@@ -256,6 +262,8 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
                 PageType.SEND_FEEDBACK -> setSettingBar(event.getIsOnSettingPage(), event.getCurrentPage())
                 PageType.TERMS_AND_CONDITION -> setSettingBar(event.getIsOnSettingPage(), event.getCurrentPage())
                 PageType.PRIVACY_POLICY -> setSettingBar(event.getIsOnSettingPage(), event.getCurrentPage())
+                PageType.CHANGE_EMAIL -> setSettingBar(event.getIsOnSettingPage(), event.getCurrentPage())
+                PageType.CHANGE_PASSWORD -> setSettingBar(event.getIsOnSettingPage(), event.getCurrentPage())
                 PageType.MAIN_PAGE -> mainPageBottomBar()
             }
         } else {

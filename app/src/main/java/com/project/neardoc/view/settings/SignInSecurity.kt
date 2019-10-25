@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.project.neardoc.R
@@ -17,12 +18,12 @@ import com.project.neardoc.model.ManageAccountHeader
 import com.project.neardoc.model.ManageAccountModel
 import com.project.neardoc.model.SignInSecurityHeaderModel
 import com.project.neardoc.model.SignInSecurityModel
+import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.PageType
 import com.project.neardoc.view.adapters.SignInSecClickListener
 import com.project.neardoc.view.adapters.SignInSecurityAdapter
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_sign_in_and_security.*
-import kotlinx.android.synthetic.main.near_by_main_layout.*
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
@@ -67,10 +68,14 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
     override fun <T> onClick(items: T, model: String) {
         when (items) {
             is SignInSecurityModel -> {
-                if (items.username == model) {
-                    Toast.makeText(context, "Username: " + items.username, Toast.LENGTH_SHORT).show()
+                if (items.email == model) {
+                    val updateEmailAction = findNavController()
+                    val bundle = Bundle()
+                    bundle.putString(Constants.WORKER_EMAIL, items.email)
+                    updateEmailAction.navigate(R.id.updateEmail, bundle)
                 } else {
-                    Toast.makeText(context, "PASSWORD", Toast.LENGTH_SHORT).show()
+                   val updatePasswordAction = findNavController()
+                    updatePasswordAction.navigate(R.id.updatePassword)
                 }
             }
             is ManageAccountModel -> {

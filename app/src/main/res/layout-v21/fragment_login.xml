@@ -36,7 +36,6 @@
             android:id="@+id/fragment_login_container_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
@@ -58,7 +57,6 @@
                     android:id="@+id/fragment_login_enter_email_edit_text_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_email_black_24dp"
                     android:drawableStart="@drawable/ic_email_black_24dp"
                     android:drawablePadding="8dp"
                     android:textColorHint="@android:color/white"
@@ -83,7 +81,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
-                    android:drawableLeft="@drawable/ic_password_black_24dp"
                     android:drawableStart="@drawable/ic_password_black_24dp"
                     android:drawablePadding="8dp"
                     android:maxLines="1"
@@ -98,7 +95,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/fragment_login_enter_password_input_layout_id"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:text="@string/forgot_password"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
@@ -135,10 +131,8 @@
                     android:layout_height="2dp"
                     android:layout_centerVertical="true"
                     android:background="@android:color/white"
-                    android:layout_marginRight="16dp"
                     android:layout_marginEnd="16dp"
-                    android:layout_toStartOf="@+id/sign_in_layout_option_or_text_view_id"
-                    android:layout_toLeftOf="@+id/sign_in_layout_option_or_text_view_id" />
+                    android:layout_toStartOf="@+id/sign_in_layout_option_or_text_view_id"/>
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/sign_in_layout_option_or_text_view_id"
                     android:layout_width="wrap_content"
@@ -154,11 +148,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="2dp"
                     android:background="@android:color/white"
-                    android:layout_marginLeft="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_centerVertical="true"
                     android:layout_toEndOf="@+id/sign_in_layout_option_or_text_view_id"
-                    android:layout_toRightOf="@+id/sign_in_layout_option_or_text_view_id"
                     />
             </RelativeLayout>
             <com.shobhitpuri.custombuttons.GoogleSignInButton

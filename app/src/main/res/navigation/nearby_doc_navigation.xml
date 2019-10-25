@@ -130,6 +130,12 @@
         <action
             android:id="@+id/actionSettingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/actionUpdateEmail"
+            app:destination="@id/updateEmail" />
+        <action
+            android:id="@+id/actionUpdatePassword"
+            app:destination="@id/updatePassword" />
     </fragment>
     <fragment
         android:id="@+id/contactUs"
@@ -166,5 +172,22 @@
         <action
             android:id="@+id/actionSettingsFragment"
             app:destination="@id/settingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/updateEmail"
+        android:name="com.project.neardoc.view.settings.UpdateEmail"
+        android:label="UpdateEmail" >
+        <action
+            android:id="@+id/actionSignInSecurity"
+            app:destination="@id/signInSecurity" />
+    </fragment>
+    <fragment
+        android:id="@+id/updatePassword"
+        android:name="com.project.neardoc.view.settings.UpdatePassword"
+        android:label="fragment_update_password"
+        tools:layout="@layout/fragment_update_password" >
+        <action
+            android:id="@+id/actionSignInSecurity"
+            app:destination="@id/signInSecurity" />
     </fragment>
 </navigation>
