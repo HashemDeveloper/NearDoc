@@ -32,4 +32,8 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(HomePageViewModel::class)
     internal abstract fun provideHomePageViewModel(homePageViewModel: HomePageViewModel): ViewModel
+    @Binds
+    @IntoMap
+    @ViewModelKey(UpdateEmailViewModel::class)
+    internal abstract fun provideUpdateEmailViewModel(updateEmailViewModel: UpdateEmailViewModel): ViewModel
 }

@@ -33,7 +33,6 @@ class UpdateEmail : Fragment(), Injectable {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val email: String = arguments!!.getString(Constants.WORKER_EMAIL, "")
     }
 
     override fun onDestroy() {

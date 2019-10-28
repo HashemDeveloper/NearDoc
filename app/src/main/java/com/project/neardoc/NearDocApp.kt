@@ -8,12 +8,11 @@ import android.util.Log
 import androidx.multidex.MultiDex
 import androidx.work.Configuration
 import androidx.work.Worker
+import com.google.firebase.messaging.FirebaseMessagingService
 import com.project.neardoc.di.ApplicationInjector
+import com.project.neardoc.di.firebaseservice.HasFirebaseServiceInjector
 import com.project.neardoc.di.workermanager.HasWorkerInjector
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasActivityInjector
-import dagger.android.HasBroadcastReceiverInjector
+import dagger.android.*
 import javax.inject.Inject
 
 class NearDocApp: Application(), HasActivityInjector, HasBroadcastReceiverInjector, HasWorkerInjector, Configuration.Provider {
@@ -24,6 +23,7 @@ class NearDocApp: Application(), HasActivityInjector, HasBroadcastReceiverInject
     lateinit var receiverInjector: DispatchingAndroidInjector<BroadcastReceiver>
     @Inject
     lateinit var dispatchingWorkerInjector: DispatchingAndroidInjector<Worker>
+    @Inject
 
     override fun onCreate() {
         super.onCreate()

@@ -25,6 +25,9 @@ import javax.inject.Inject
 import android.view.WindowManager
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.iid.FirebaseInstanceId
 import com.project.neardoc.events.LandInSettingPageEvent
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode

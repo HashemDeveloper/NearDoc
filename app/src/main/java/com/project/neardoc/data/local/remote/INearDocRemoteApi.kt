@@ -69,7 +69,7 @@ interface INearDocRemoteApi {
     @Headers("Content-Type: application/json")
     @POST
     fun updateUserEmail(
-        @Url url: String, @Query("idToken") idToken: String, @Query("email") email: String, @Query(
+        @Url url: String, @Query("key") key: String, @Query("idToken") idToken: String, @Query("email") email: String, @Query(
             "returnSecureToken"
         ) returnSecureToken: Boolean
     ): Observable<UpdateLoginInfoRes>
@@ -77,7 +77,7 @@ interface INearDocRemoteApi {
     @Headers("Content-Type: application/json")
     @POST
     fun updateUserPassword(
-        @Url url: String, @Query("idToken") idToken: String, @Query("password") password: String, @Query(
+        @Url url: String, @Query("key") key: String, @Query("idToken") idToken: String, @Query("password") password: String, @Query(
             "returnSecureToken"
         ) returnSecureToken: Boolean
     ): Observable<UpdateLoginInfoRes>
