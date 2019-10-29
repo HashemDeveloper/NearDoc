@@ -26,8 +26,9 @@ class UpdateEmail : Fragment(), Injectable {
     private val updateEmailViewModel: UpdateEmailViewModel by viewModels {
         this.viewModelFactory
     }
-
     private var emailValidator: EmailValidator?= null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
@@ -49,6 +50,7 @@ class UpdateEmail : Fragment(), Injectable {
     private fun processClickListeners() {
         fragment_update_email_update_bt_id.setOnClickListener {
             val email: String = fragment_update_email_edit_text_id.text.toString()
+            val password: String = fragment_update_email_current_password_edit_text_id.text.toString()
             val isValidEmail: Boolean = this.emailValidator?.getIsValidated(email)!!
             if (isValidEmail) {
                 this.updateEmailViewModel.processUpdateEmailRequest(activity!!, email)

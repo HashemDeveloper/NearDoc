@@ -70,7 +70,7 @@ class Registration : Fragment(), Injectable, IRegistrationViewModel{
         registerInputValidators()
     }
     private fun registerInputValidators() {
-        this.emptyFieldValidator = EmptyFieldValidator(fragment_register_full_name_input_layout_id)
+        this.emptyFieldValidator = EmptyFieldValidator(fragment_register_full_name_input_layout_id, resources.getString(R.string.name_required))
         this.usernameValidator = UsernameValidator(fragment_register_username_input_layout_id)
         this.emailValidator = EmailValidator(fragment_register_email_input_layout_id)
         this.passwordValidator = PasswordValidator(fragment_register_password_input_layout_id)
