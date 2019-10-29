@@ -96,4 +96,8 @@ class NearDocRemoteRepo @Inject constructor(): INearDocRemoteRepo {
     ): Observable<UpdateLoginInfoRes> {
        return this.iNearDocRemoteApi.updateUserPassword(url, key, idToken, password, returnSecureToken)
     }
+
+    override fun getFirebaseUserData(url: String, key: String, idToken: String): Observable<CurrentUserRes> {
+        return this.iNearDocRemoteApi.getFirebaseUserData(url, key, idToken)
+    }
 }

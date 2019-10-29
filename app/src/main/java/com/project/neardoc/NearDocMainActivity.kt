@@ -133,11 +133,24 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
         this.iUserStateService.getObserver().observe(this, Observer {currentUser ->
             if (currentUser.currentUser != null) {
                 enableBottomBar(true)
+                getUserIdToken(currentUser.currentUser!!)
                 EventBus.getDefault().postSticky(UserStateEvent(true))
             } else {
                 enableBottomBar(false)
+                this.iSharedPrefService.removeItems(Constants.FIREBASE_ID_TOKEN)
             }
         })
+    }
+    private fun getUserIdToken(user: FirebaseUser) {
+        user.getIdToken(true).addOnSuccessListener {
+            val idToken: String = it.token!!
+            val enCryptor = EnCryptor()
+            val encryptedToken: ByteArray = enCryptor.encryptText(Constants.FIREBASE_ID_TOKEN, idToken)
+            this.iSharedPrefService.storeIdToken(encryptedToken)
+            this.iSharedPrefService.storeEncryptIV(enCryptor.iv!!)
+        }.addOnFailureListener {
+            Log.i("FailedGettingIdToken: ", it.localizedMessage!!)
+        }
     }
     private fun enableBottomBar(isLoggedIn: Boolean) {
         if (isLoggedIn) {

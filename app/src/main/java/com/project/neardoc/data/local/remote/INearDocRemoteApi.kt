@@ -81,4 +81,8 @@ interface INearDocRemoteApi {
             "returnSecureToken"
         ) returnSecureToken: Boolean
     ): Observable<UpdateLoginInfoRes>
+
+    @Headers("Content-Type: application/json")
+    @POST
+    fun getFirebaseUserData(@Url url: String, @Query("key") key: String, @Query("idToken") idToken: String): Observable<CurrentUserRes>
 }

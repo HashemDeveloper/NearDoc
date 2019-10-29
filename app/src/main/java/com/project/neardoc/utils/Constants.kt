@@ -23,6 +23,7 @@ class Constants {
         val FIREBASE_AUTH_EMAIL_VERIFICATION_ENDPOINT = "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode"
         val FIREBASE_AUTH_PASSWORD_RESET_ENDPOINT = "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode"
         val FIREBASE_AUTH_UPDATE_LOGIN_INFO_END_POINT = "https://identitytoolkit.googleapis.com/v1/accounts:update"
+        val FIREBASE_AUTH_FETCH_USER_INFO_END_POINT = "https://identitytoolkit.googleapis.com/v1/accounts:lookup"
         val FIREBASE_AUTH_PASSWORD_RESET_REQUEST_TYPE = "PASSWORD_RESET"
         val FIREBASE_EMAIL_VERFICATION_REQUEST_TYPE = "VERIFY_EMAIL"
         val SHARED_PREF_ID_TOKEN = "idToken"
