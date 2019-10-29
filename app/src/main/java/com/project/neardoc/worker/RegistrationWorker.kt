@@ -44,4 +44,8 @@ class RegistrationWorker @Inject constructor(context: Context, workerParameters:
         return Result.success()
     }
 
+    override fun onStopped() {
+        super.onStopped()
+        this.compositeDisposable.clear()
+    }
 }

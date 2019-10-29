@@ -8,7 +8,8 @@ import dagger.Module
 import dagger.android.AndroidInjector
 import dagger.multibindings.IntoMap
 
-@Module(subcomponents = [LoginWorkerComponent::class, RegistrationWorkerComponent::class, FetchUserWorkerComponent::class])
+@Module(subcomponents = [LoginWorkerComponent::class, RegistrationWorkerComponent::class, FetchUserWorkerComponent::class,
+UpdateEmailWorkerComponent::class])
 abstract class WorkerModule {
     @Binds
     @IntoMap
@@ -22,4 +23,8 @@ abstract class WorkerModule {
     @IntoMap
     @WorkerKey(FetchUserWorker::class)
     abstract fun buildHomepageWorkerFactory(fetchUserWorkerComponent: FetchUserWorkerComponent.Builder): AndroidInjector.Factory<out Worker>
+    @Binds
+    @IntoMap
+    @WorkerKey(UpdateEmailWorker::class)
+    abstract fun buildUpdateEmailWorkerFactory(updateEmailWorkerComponent: UpdateEmailWorkerComponent.Builder): AndroidInjector.Factory<out Worker>
 }

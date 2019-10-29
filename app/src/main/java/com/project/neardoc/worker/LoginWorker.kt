@@ -67,4 +67,9 @@ class LoginWorker @Inject constructor(context: Context, workerParams: WorkerPara
             Result.retry()
         }
     }
+
+    override fun onStopped() {
+        super.onStopped()
+        this.compositeDisposable.clear()
+    }
 }
