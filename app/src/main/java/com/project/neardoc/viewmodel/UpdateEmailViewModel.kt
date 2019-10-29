@@ -1,23 +1,27 @@
 package com.project.neardoc.viewmodel
 
 import android.content.Context
-import android.util.Base64
-import android.util.Log
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FirebaseAuth
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
 import com.project.neardoc.rxauth.IRxAuthentication
 import com.project.neardoc.utils.Constants
-import com.project.neardoc.utils.DeCryptor
+import com.project.neardoc.viewmodel.listeners.UpdateEmailListener
+import com.project.neardoc.worker.UpdateEmailWorker
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class UpdateEmailViewModel @Inject constructor(): ViewModel() {
+
+    private var updateEmailListener: UpdateEmailListener?= null
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val isLoadingLiveData: MutableLiveData<Boolean> = MutableLiveData()
     private val isErrorLiveData: MutableLiveData<Boolean> = MutableLiveData()
@@ -32,28 +36,47 @@ class UpdateEmailViewModel @Inject constructor(): ViewModel() {
 
 
     fun processUpdateEmailRequest(
+        activity: FragmentActivity,
         currentEmail: String,
         newEmail: String,
         password: String
     ) {
-        val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+        this.isLoadingLiveData.value = true
         val key: String = this.context.resources!!.getString(R.string.firebase_web_key)
-        val idToken: String = getIdToken()
-        val authCredential: AuthCredential = EmailAuthProvider.getCredential(currentEmail, password)
-        firebaseAuth.currentUser?.reauthenticate(authCredential)!!.addOnSuccessListener { onSuccess ->
-            Log.i("Success", "Success")
-        }.addOnFailureListener { onFailed ->
-            Log.i("FailedToReAuthenticate", onFailed.localizedMessage!!)
-        }
+        val keyData: Data = Data.Builder()
+            .putString(Constants.WORKER_WEB_KEY, key)
+            .putString(Constants.WORKER_NEW_EMAIL, newEmail)
+            .putString(Constants.WORKER_EMAIL, currentEmail)
+            .putString(Constants.WORKER_PASSWORD, password)
+            .build()
+        val request: OneTimeWorkRequest = OneTimeWorkRequest.Builder(UpdateEmailWorker::class.java)
+            .setInputData(keyData)
+            .build()
+        val workerManager: WorkManager = WorkManager.getInstance(this.context)
+        workerManager.beginWith(request).enqueue()
+
+        workerManager.getWorkInfoByIdLiveData(request.id)
+            .observe(activity, Observer {
+                if (it?.state == null) {
+                    return@Observer
+                } else {
+                    when (it.state) {
+                        WorkInfo.State.SUCCEEDED -> {
+                            this.isLoadingLiveData.value = false
+                            this.isErrorLiveData.value = false
+                        }
+                        WorkInfo.State.FAILED -> {
+                            this.isLoadingLiveData.value = false
+                            this.isErrorLiveData.value = true
+                        }
+                        else ->
+                            return@Observer
+                    }
+                }
+            })
     }
-    private fun getIdToken(): String {
-        val deCryptor = DeCryptor()
-        val encryptedIdToken: String = this.iSharedPreferences.getIdToken()
-        val encryptIv: String = this.iSharedPreferences.getEncryptIv()
-        val byteArrayIdToken = Base64.decode(encryptedIdToken, Base64.DEFAULT)
-        val byteArrayEncryptIv = Base64.decode(encryptIv, Base64.DEFAULT)
-        val idToken = deCryptor.decryptData(Constants.FIREBASE_ID_TOKEN, byteArrayIdToken, byteArrayEncryptIv)
-        return idToken
+    fun setUpdateEmailListener(emailListener: UpdateEmailListener) {
+        this.updateEmailListener = emailListener;
     }
     override fun onCleared() {
         super.onCleared()

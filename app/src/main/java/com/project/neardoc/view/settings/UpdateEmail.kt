@@ -2,27 +2,35 @@ package com.project.neardoc.view.settings
 
 
 import android.os.Bundle
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.fragment.app.viewModels
 
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.LandInSettingPageEvent
+import com.project.neardoc.events.NetworkStateEvent
+import com.project.neardoc.utils.ConnectionSettings
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.PageType
 import com.project.neardoc.utils.validators.EmailValidator
 import com.project.neardoc.utils.validators.EmptyFieldValidator
 import com.project.neardoc.viewmodel.UpdateEmailViewModel
+import com.project.neardoc.viewmodel.listeners.UpdateEmailListener
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_update_email.*
 import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
-class UpdateEmail : Fragment(), Injectable {
+class UpdateEmail : Fragment(), Injectable, UpdateEmailListener{
+
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val updateEmailViewModel: UpdateEmailViewModel by viewModels {
@@ -31,6 +39,9 @@ class UpdateEmail : Fragment(), Injectable {
     private var emailValidator: EmailValidator?= null
     private var emptyFieldValidator: EmptyFieldValidator?= null
     private var currentEmail: String = ""
+    private var isInternetAvailable = false
+    private var connectionSettings: ConnectionSettings?= null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
@@ -47,6 +58,7 @@ class UpdateEmail : Fragment(), Injectable {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val email: String = arguments!!.getString(Constants.WORKER_EMAIL, "")
+        this.updateEmailViewModel.setUpdateEmailListener(this)
         this.currentEmail = email
         this.emailValidator = EmailValidator(fragment_update_email_input_layout_id)
         this.emptyFieldValidator = EmptyFieldValidator(fragment_update_email_current_password_input_layout, "")
@@ -54,18 +66,59 @@ class UpdateEmail : Fragment(), Injectable {
     }
     private fun processClickListeners() {
         fragment_update_email_update_bt_id.setOnClickListener {
-            val newEmail: String = fragment_update_email_edit_text_id.text.toString()
-            val password: String = fragment_update_email_current_password_edit_text_id.text.toString()
-            val isPasswordValid: Boolean = this.emptyFieldValidator?.setEmptyMessage(resources.getString(R.string.passowrd_required))!!.getIsValidated(password)
-            val isValidEmail: Boolean = this.emailValidator?.getIsValidated(newEmail)!!
-            if (isValidEmail && isPasswordValid) {
-                this.updateEmailViewModel.processUpdateEmailRequest(this.currentEmail, newEmail, password)
+            if (this.isInternetAvailable) {
+                processUpdateEmail()
+            } else {
+                displayConnectionSetting()
             }
         }
+    }
+    private fun processUpdateEmail() {
+        val newEmail: String = fragment_update_email_edit_text_id.text.toString()
+        val password: String = fragment_update_email_current_password_edit_text_id.text.toString()
+        val isPasswordValid: Boolean = this.emptyFieldValidator?.setEmptyMessage(resources.getString(R.string.passowrd_required))!!.getIsValidated(password)
+        val isValidEmail: Boolean = this.emailValidator?.getIsValidated(newEmail)!!
+        if (isValidEmail && isPasswordValid) {
+            this.updateEmailViewModel.processUpdateEmailRequest(activity!!, this.currentEmail, newEmail, password)
+        }
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
+    fun onNetworkStateChangedEvent(networkStateEvent: NetworkStateEvent) {
+        if (networkStateEvent.getIsNetworkAvailable()) {
+            if (networkStateEvent.getNetworkType()!!.name == Constants.wifiData) {
+                this.isInternetAvailable = true
+            } else if (networkStateEvent.getNetworkType()!!.name == Constants.mobileData) {
+                this.isInternetAvailable = true
+            }
+        } else {
+            this.isInternetAvailable = false
+        }
+        if (this.isInternetAvailable) {
+            closeSnackbar()
+        }
+    }
+
+    private fun displayConnectionSetting() {
+        this.connectionSettings = ConnectionSettings(activity!!, view!!)
+        connectionSettings?.initWifiSetting(false)
+        viewSnackbarOnTop(connectionSettings!!)
+    }
+    private fun viewSnackbarOnTop(connectionSettings: ConnectionSettings) {
+        val view: View = connectionSettings.getSnackBar().view
+        val params: FrameLayout.LayoutParams = view.layoutParams as FrameLayout.LayoutParams
+        params.gravity = Gravity.TOP
+        view.layoutParams = params
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        closeSnackbar()
         EventBus.getDefault().postSticky(LandInSettingPageEvent(false, PageType.SIGN_IN_SECURITY))
+    }
+    private fun closeSnackbar() {
+        if (this.connectionSettings != null && this.connectionSettings?.getSnackBar() != null) {
+            this.connectionSettings?.getSnackBar()!!.dismiss()
+        }
     }
 }
