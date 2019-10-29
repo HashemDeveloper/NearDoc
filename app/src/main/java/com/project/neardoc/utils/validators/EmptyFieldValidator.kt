@@ -12,4 +12,8 @@ class EmptyFieldValidator(mContainer: TextInputLayout, message: String): BaseInp
         val value = charSequence.toString()
         return value.isNotEmpty()
     }
+    fun setEmptyMessage(message: String): EmptyFieldValidator {
+        this.mEmptyMessage = message
+        return this
+    }
 }
