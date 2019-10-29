@@ -25,6 +25,9 @@ import javax.inject.Inject
 import android.view.WindowManager
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.iid.FirebaseInstanceId
 import com.project.neardoc.events.LandInSettingPageEvent
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -130,11 +133,24 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
         this.iUserStateService.getObserver().observe(this, Observer {currentUser ->
             if (currentUser.currentUser != null) {
                 enableBottomBar(true)
+                getUserIdToken(currentUser.currentUser!!)
                 EventBus.getDefault().postSticky(UserStateEvent(true))
             } else {
                 enableBottomBar(false)
+                this.iSharedPrefService.removeItems(Constants.FIREBASE_ID_TOKEN)
             }
         })
+    }
+    private fun getUserIdToken(user: FirebaseUser) {
+        user.getIdToken(true).addOnSuccessListener {
+            val idToken: String = it.token!!
+            val enCryptor = EnCryptor()
+            val encryptedToken: ByteArray = enCryptor.encryptText(Constants.FIREBASE_ID_TOKEN, idToken)
+            this.iSharedPrefService.storeIdToken(encryptedToken)
+            this.iSharedPrefService.storeEncryptIV(enCryptor.iv!!)
+        }.addOnFailureListener {
+            Log.i("FailedGettingIdToken: ", it.localizedMessage!!)
+        }
     }
     private fun enableBottomBar(isLoggedIn: Boolean) {
         if (isLoggedIn) {

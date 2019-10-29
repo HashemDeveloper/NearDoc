@@ -70,7 +70,7 @@ class Registration : Fragment(), Injectable, IRegistrationViewModel{
         registerInputValidators()
     }
     private fun registerInputValidators() {
-        this.emptyFieldValidator = EmptyFieldValidator(fragment_register_full_name_input_layout_id)
+        this.emptyFieldValidator = EmptyFieldValidator(fragment_register_full_name_input_layout_id, "")
         this.usernameValidator = UsernameValidator(fragment_register_username_input_layout_id)
         this.emailValidator = EmailValidator(fragment_register_email_input_layout_id)
         this.passwordValidator = PasswordValidator(fragment_register_password_input_layout_id)
@@ -95,7 +95,7 @@ class Registration : Fragment(), Injectable, IRegistrationViewModel{
         val email: String = fragment_register_email_edit_text_id.text.toString()
         val password: String = fragment_register_password_edit_text_id.text.toString()
 
-        val isNameValidated: Boolean = this.emptyFieldValidator!!.getIsValidated(fullName)
+        val isNameValidated: Boolean = this.emptyFieldValidator?.setEmptyMessage(resources.getString(R.string.name_required))!!.getIsValidated(fullName)
         val isUsernameValidated: Boolean = this.usernameValidator!!.getIsValidated(username)
         val isEmailValidated: Boolean = this.emailValidator!!.getIsValidated(email)
         val isPasswordValidated: Boolean = this.passwordValidator!!.getIsValidated(password)

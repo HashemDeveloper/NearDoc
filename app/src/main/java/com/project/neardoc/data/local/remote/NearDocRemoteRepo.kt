@@ -79,19 +79,25 @@ class NearDocRemoteRepo @Inject constructor(): INearDocRemoteRepo {
     }
     override fun updateEmail(
         url: String,
+        key: String,
         idToken: String,
         email: String,
         returnSecureToken: Boolean
     ): Observable<UpdateLoginInfoRes> {
-        return this.iNearDocRemoteApi.updateUserEmail(url, idToken, email, returnSecureToken)
+        return this.iNearDocRemoteApi.updateUserEmail(url, key, idToken, email, returnSecureToken)
     }
 
     override fun updatePassword(
         url: String,
+        key: String,
         idToken: String,
         password: String,
         returnSecureToken: Boolean
     ): Observable<UpdateLoginInfoRes> {
-       return this.iNearDocRemoteApi.updateUserPassword(url, idToken, password, returnSecureToken)
+       return this.iNearDocRemoteApi.updateUserPassword(url, key, idToken, password, returnSecureToken)
+    }
+
+    override fun getFirebaseUserData(url: String, key: String, idToken: String): Observable<CurrentUserRes> {
+        return this.iNearDocRemoteApi.getFirebaseUserData(url, key, idToken)
     }
 }

@@ -9,6 +9,7 @@ import io.reactivex.Observable
 import javax.inject.Inject
 
 class RxAuthentication @Inject constructor() : IRxAuthentication {
+
     override fun appSignIn(
         activity: FragmentActivity,
         firebaseAuth: FirebaseAuth,

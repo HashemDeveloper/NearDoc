@@ -10,10 +10,7 @@ import androidx.work.Configuration
 import androidx.work.Worker
 import com.project.neardoc.di.ApplicationInjector
 import com.project.neardoc.di.workermanager.HasWorkerInjector
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasActivityInjector
-import dagger.android.HasBroadcastReceiverInjector
+import dagger.android.*
 import javax.inject.Inject
 
 class NearDocApp: Application(), HasActivityInjector, HasBroadcastReceiverInjector, HasWorkerInjector, Configuration.Provider {
