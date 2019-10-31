@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
@@ -20,9 +21,11 @@ import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.PageType
 import com.project.neardoc.utils.validators.EmailValidator
 import com.project.neardoc.utils.validators.EmptyFieldValidator
+import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.UpdateEmailViewModel
 import com.project.neardoc.viewmodel.listeners.UpdateEmailListener
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_update_email.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -119,6 +122,33 @@ class UpdateEmail : Fragment(), Injectable, UpdateEmailListener{
     private fun closeSnackbar() {
         if (this.connectionSettings != null && this.connectionSettings?.getSnackBar() != null) {
             this.connectionSettings?.getSnackBar()!!.dismiss()
+        }
+    }
+
+    override fun onSuccess() {
+       this.updateEmailViewModel.getLoadingLiveData().observe(this, Observer { isLoading ->
+           if (isLoading) {
+               displayLoading(true)
+           } else {
+               displayLoading(false)
+           }
+       })
+    }
+
+    override fun onFailed() {
+        this.updateEmailViewModel.getLoadingLiveData().observe(this, Observer { isLoading ->
+            if (isLoading) {
+                displayLoading(false)
+            }
+        })
+    }
+
+    private fun displayLoading(isLoading: Boolean) {
+        val globalLoadingBar = GlobalLoadingBar(activity!!, fragment_update_email_progress_bar_id)
+        if (isLoading) {
+            globalLoadingBar.setVisibility(true)
+        } else {
+            globalLoadingBar.setVisibility(false)
         }
     }
 }

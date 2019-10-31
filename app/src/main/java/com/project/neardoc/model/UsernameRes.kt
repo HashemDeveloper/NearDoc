@@ -6,6 +6,6 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class UsernameRes(
-    @SerializedName("email")
+    @SerializedName("username")
     var username: String
 ): Parcelable

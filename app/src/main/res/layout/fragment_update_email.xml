@@ -75,5 +75,9 @@
             android:shadowRadius="4.0"
             android:shadowColor="@color/blue_gray_800"
             />
+        <include android:id="@+id/fragment_update_email_progress_bar_id"
+            layout="@layout/global_progress_bar_layout"
+            android:visibility="gone"
+            />
     </LinearLayout>
 </layout>
