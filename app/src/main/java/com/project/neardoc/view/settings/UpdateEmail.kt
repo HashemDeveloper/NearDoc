@@ -151,4 +151,14 @@ class UpdateEmail : Fragment(), Injectable, UpdateEmailListener{
             globalLoadingBar.setVisibility(false)
         }
     }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
 }
