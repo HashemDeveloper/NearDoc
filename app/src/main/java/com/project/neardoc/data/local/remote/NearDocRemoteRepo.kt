@@ -100,4 +100,8 @@ class NearDocRemoteRepo @Inject constructor(): INearDocRemoteRepo {
     override fun getFirebaseUserData(url: String, key: String, idToken: String): Observable<CurrentUserRes> {
         return this.iNearDocRemoteApi.getFirebaseUserData(url, key, idToken)
     }
+
+    override fun deleteUser(email: String, authKey: String): Observable<Void> {
+       return this.iNearDocRemoteApi.deleteUserInfoFromFirebaseDb(email, authKey)
+    }
 }

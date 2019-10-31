@@ -17,7 +17,9 @@ interface INearDocRemoteApi {
     @Headers("Content-Type: application/json")
     @PUT("/users/{email}/.json")
     fun saveUserInfoInFirebaseDb(@Path("email") email: String, @Query("auth") dbKey: String, @Body users: Users): Observable<Users>
-
+    @Headers("Content-Type: application/json")
+    @DELETE("/users/{email}/.json")
+    fun deleteUserInfoFromFirebaseDb(@Path("email") email: String, @Query("auth") dbKey: String): Observable<Void>
     @Headers("Content-Type: application/json")
     @POST
     fun signUpWithEmailAndPassword(

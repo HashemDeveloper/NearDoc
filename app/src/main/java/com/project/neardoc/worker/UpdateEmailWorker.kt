@@ -9,8 +9,10 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
 import com.project.neardoc.di.workermanager.NearDocWorkerInjection
+import com.project.neardoc.model.Users
 import com.project.neardoc.utils.Constants
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -18,14 +20,12 @@ import java.lang.Exception
 import javax.inject.Inject
 
 class UpdateEmailWorker @Inject constructor(context: Context, workerParameters: WorkerParameters): Worker(context, workerParameters) {
-
     @Inject
     lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
     private val compositeDisposable = CompositeDisposable()
 
     override fun doWork(): Result {
         NearDocWorkerInjection.inject(this)
-        var outputData: Data?= null
         return try {
             val key: String = inputData.getString(Constants.WORKER_WEB_KEY)!!
             val newEmail: String = inputData.getString(Constants.WORKER_NEW_EMAIL)!!
@@ -43,16 +43,16 @@ class UpdateEmailWorker @Inject constructor(context: Context, workerParameters: 
                         key, it.token!!, newEmail, true
                     )
                         .subscribeOn(Schedulers.io())
-                        .subscribe({ response ->
+                        .subscribe({ updateEmailRes ->
                             this.compositeDisposable.add(this.iNearDocRemoteRepo.sendEmailVerification(
                                 Constants.FIREBASE_AUTH_EMAIL_VERIFICATION_ENDPOINT,
                                 Constants.FIREBASE_EMAIL_VERFICATION_REQUEST_TYPE,
-                                response.idToken,
+                                updateEmailRes.idToken,
                                 key
                             )
                                 .subscribeOn(Schedulers.io())
-                                .subscribe({ onEmailSent ->
-                                    Log.i("Sent: ", onEmailSent.email)
+                                .subscribe({ emailSentRes ->
+                                    Log.i("Sent: ", emailSentRes.email)
                                 }, { onSentError ->
                                     Log.i(
                                         "FailedToSendEmail: ",
@@ -69,10 +69,9 @@ class UpdateEmailWorker @Inject constructor(context: Context, workerParameters: 
             }.addOnFailureListener { onFailed ->
                 Log.i("ReAuthenticationFailed:", onFailed.localizedMessage!!)
             }
-            Result.success(outputData!!)
+            Result.success()
         } catch (ex: Exception) {
-            Log.i("Ex: ", ex.localizedMessage!!)
-            return Result.failure(outputData!!)
+            return Result.failure()
         }
     }
     override fun onStopped() {

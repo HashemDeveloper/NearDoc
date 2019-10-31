@@ -6,6 +6,7 @@ import java.util.regex.Pattern
 
 class Constants {
     companion object {
+
         val CONNECTIVITY_ACTION = "android.net.conn.CONNECTIVITY_CHANGE"
         val USER_STATE_ACTION = "USER_STATE_ACTION"
         val LOCATION_SERVICE_ACTION = "ACTION_LOCATION_SERVICE"
@@ -20,6 +21,7 @@ class Constants {
         val WORKER_WEB_KEY = "webKey"
         val WORKER_PASSWORD = "password"
         val WORKER_TOKEN_ID = "tokenId"
+        val WORKER_OLD_EMAIL = "oldEmail"
         val SEARCH_DOC_BY_DISEASE_ENDPOINT = "https://api.betterdoctor.com/2016-03-01/doctors"
         val BETTER_DOC_API_HEALTH_ENDPOINT = "https://api.betterdoctor.com/2016-03-01/info"
         val BETTER_DOC_KNOWN_CONDITIONS = "https://api.betterdoctor.com/2016-03-01/conditions"
