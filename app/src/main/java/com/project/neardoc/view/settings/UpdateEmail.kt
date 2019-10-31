@@ -1,14 +1,17 @@
 package com.project.neardoc.view.settings
 
 
+import android.content.Context
 import android.os.Bundle
 import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
@@ -20,9 +23,11 @@ import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.PageType
 import com.project.neardoc.utils.validators.EmailValidator
 import com.project.neardoc.utils.validators.EmptyFieldValidator
+import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.UpdateEmailViewModel
 import com.project.neardoc.viewmodel.listeners.UpdateEmailListener
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_update_email.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -68,8 +73,10 @@ class UpdateEmail : Fragment(), Injectable, UpdateEmailListener{
         fragment_update_email_update_bt_id.setOnClickListener {
             if (this.isInternetAvailable) {
                 processUpdateEmail()
+                hideKeyboard()
             } else {
                 displayConnectionSetting()
+                hideKeyboard()
             }
         }
     }
@@ -120,5 +127,46 @@ class UpdateEmail : Fragment(), Injectable, UpdateEmailListener{
         if (this.connectionSettings != null && this.connectionSettings?.getSnackBar() != null) {
             this.connectionSettings?.getSnackBar()!!.dismiss()
         }
+    }
+
+    override fun onSuccess() {
+       this.updateEmailViewModel.getLoadingLiveData().observe(this, Observer { isLoading ->
+           if (isLoading) {
+               displayLoading(true)
+           } else {
+               displayLoading(false)
+           }
+       })
+    }
+
+    override fun onFailed() {
+        this.updateEmailViewModel.getLoadingLiveData().observe(this, Observer { isLoading ->
+            if (isLoading) {
+                displayLoading(false)
+            }
+        })
+    }
+    fun hideKeyboard() {
+        val imputMethodService: InputMethodManager = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imputMethodService.hideSoftInputFromWindow(view!!.windowToken, 0)
+    }
+
+    private fun displayLoading(isLoading: Boolean) {
+        val globalLoadingBar = GlobalLoadingBar(activity!!, fragment_update_email_progress_bar_id)
+        if (isLoading) {
+            globalLoadingBar.setVisibility(true)
+        } else {
+            globalLoadingBar.setVisibility(false)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
     }
 }

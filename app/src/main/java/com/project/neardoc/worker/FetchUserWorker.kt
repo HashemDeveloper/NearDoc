@@ -7,8 +7,8 @@ import androidx.work.WorkerParameters
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
 import com.project.neardoc.di.workermanager.NearDocWorkerInjection
+import com.project.neardoc.model.Users
 import com.project.neardoc.utils.Constants
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject

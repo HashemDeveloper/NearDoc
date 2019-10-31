@@ -2,6 +2,7 @@ package com.project.neardoc.viewmodel
 
 import android.content.Context
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -64,10 +65,12 @@ class UpdateEmailViewModel @Inject constructor(): ViewModel() {
                         WorkInfo.State.SUCCEEDED -> {
                             this.isLoadingLiveData.value = false
                             this.isErrorLiveData.value = false
+                            this.updateEmailListener?.onSuccess()
                         }
                         WorkInfo.State.FAILED -> {
                             this.isLoadingLiveData.value = false
                             this.isErrorLiveData.value = true
+                            this.updateEmailListener?.onFailed()
                         }
                         else ->
                             return@Observer
@@ -81,5 +84,13 @@ class UpdateEmailViewModel @Inject constructor(): ViewModel() {
     override fun onCleared() {
         super.onCleared()
         this.compositeDisposable.clear()
+    }
+
+    fun getLoadingLiveData(): LiveData<Boolean> {
+        return this.isLoadingLiveData
+    }
+
+    fun getErrorLiveData(): LiveData<Boolean> {
+        return this.isErrorLiveData
     }
 }

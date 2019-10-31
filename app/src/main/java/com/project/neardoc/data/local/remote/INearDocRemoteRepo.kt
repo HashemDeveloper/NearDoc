@@ -17,4 +17,5 @@ interface INearDocRemoteRepo {
     fun updateEmail(url: String, key: String, idToken: String, email: String, returnSecureToken: Boolean): Observable<UpdateLoginInfoRes>
     fun updatePassword(url: String, key: String, idToken: String, password: String, returnSecureToken: Boolean): Observable<UpdateLoginInfoRes>
     fun getFirebaseUserData(url: String, key: String, idToken: String): Observable<CurrentUserRes>
+    fun deleteUser(email: String, authKey: String): Observable<Void>
 }

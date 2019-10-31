@@ -21,6 +21,7 @@ import com.project.neardoc.utils.DeCryptor
 import com.project.neardoc.viewmodel.listeners.ILoginViewModel
 import com.project.neardoc.worker.FetchUserWorker
 import com.project.neardoc.worker.LoginWorker
+import com.project.neardoc.worker.UpdateUserInfoWorker
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -168,26 +169,44 @@ class LoginViewModel @Inject constructor() : ViewModel() {
                 Log.i("ErrorSendingEmail:", onError.localizedMessage!!)
             }))
     }
-    fun fetchUserInfoFromFirebaseDb(userEmail: String) {
+    fun fetchUserInfoFromFirebaseDb(newEmail: String) {
         val userImage: String = this.iSharedPrefService.getUserImage()
         val fullName: String = this.iSharedPrefService.getUserName()
         val username: String = this.iSharedPrefService.getUserUsername()
-        val email: String = this.iSharedPrefService.getUserEmail()
+        val oldEmail: String = this.iSharedPrefService.getUserEmail()
         val dbKey: String = this.context.resources!!.getString(R.string.firebase_db_secret)
-        if (userImage.isEmpty() || userImage == ""
-            && fullName.isEmpty() || fullName == ""
+        if (fullName.isEmpty() || fullName == ""
             && username.isEmpty() || username == ""
-            && email.isEmpty() || email == "") {
-
-            val keyData: Data = Data.Builder()
-                .putString(Constants.WORKER_DB_AUTH_KEY, dbKey)
-                .putString(Constants.WORKER_EMAIL, userEmail)
-                .build()
-            val request: OneTimeWorkRequest = OneTimeWorkRequest.Builder(FetchUserWorker::class.java)
-                .setInputData(keyData)
-                .build()
-            val workManager: WorkManager = WorkManager.getInstance(this.context)
-            workManager.beginWith(request).enqueue()
+            && oldEmail.isEmpty() || oldEmail == "") {
+            fetchUserInfoProcessInBg(dbKey, newEmail)
+        } else if (oldEmail != newEmail) {
+           updateUserInfoProcessInBg(dbKey, newEmail, oldEmail, userImage, fullName, username)
         }
+    }
+    private fun fetchUserInfoProcessInBg(dbKey: String, newEmail: String) {
+        val keyData: Data = Data.Builder()
+            .putString(Constants.WORKER_DB_AUTH_KEY, dbKey)
+            .putString(Constants.WORKER_EMAIL, newEmail)
+            .build()
+        val request: OneTimeWorkRequest = OneTimeWorkRequest.Builder(FetchUserWorker::class.java)
+            .setInputData(keyData)
+            .build()
+        val workManager: WorkManager = WorkManager.getInstance(this.context)
+        workManager.beginWith(request).enqueue()
+    }
+    private fun updateUserInfoProcessInBg(dbKey: String, newEmail: String, oldEmail: String, userImage: String, fullName: String, username: String) {
+        val keyData: Data = Data.Builder()
+            .putString(Constants.WORKER_DB_AUTH_KEY, dbKey)
+            .putString(Constants.WORKER_EMAIL, newEmail)
+            .putString(Constants.WORKER_IMAGE_PATH, userImage)
+            .putString(Constants.WORKER_FULL_NAME, fullName)
+            .putString(Constants.WORKER_DISPLAY_NAME, username)
+            .putString(Constants.WORKER_OLD_EMAIL, oldEmail)
+            .build()
+        val request: OneTimeWorkRequest = OneTimeWorkRequest.Builder(UpdateUserInfoWorker::class.java)
+            .setInputData(keyData)
+            .build()
+        val workManager: WorkManager = WorkManager.getInstance(this.context)
+        workManager.beginWith(request).enqueue()
     }
 }

@@ -1,8 +1,6 @@
 package com.project.neardoc.di
 
 import com.project.neardoc.NearDocApp
-import com.project.neardoc.di.firebaseservice.FirebaseServiceModule
-import com.project.neardoc.di.firebaseservice.NearDocFirebaseServiceInjectionModule
 import com.project.neardoc.di.networking.BroadcastReceiverModule
 import com.project.neardoc.di.networking.NearDocNetServiceModule
 import com.project.neardoc.di.viewmodel.ViewModelModule
