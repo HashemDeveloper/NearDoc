@@ -157,6 +157,7 @@ class UpdateEmail : Fragment(), Injectable, UpdateEmailListener{
         this.updateEmailViewModel.getLoadingLiveData().observe(this, Observer { isLoading ->
             if (!isLoading) {
                 displayLoading(false)
+                Toast.makeText(context, getString(R.string.update_email_failed), Toast.LENGTH_SHORT).show()
             }
         })
     }
