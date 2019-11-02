@@ -10,13 +10,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.LandInSettingPageEvent
+import com.project.neardoc.events.LoginInfoUpdatedEvent
 import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.utils.ConnectionSettings
 import com.project.neardoc.utils.Constants
@@ -128,6 +131,15 @@ class UpdateEmail : Fragment(), Injectable, UpdateEmailListener{
             this.connectionSettings?.getSnackBar()!!.dismiss()
         }
     }
+    override fun onProcess() {
+        this.updateEmailViewModel.getLoadingLiveData().observe(this, Observer { isLoading ->
+            if (isLoading) {
+                displayLoading(true)
+            } else {
+                displayLoading(false)
+            }
+        })
+    }
 
     override fun onSuccess() {
        this.updateEmailViewModel.getLoadingLiveData().observe(this, Observer { isLoading ->
@@ -135,13 +147,15 @@ class UpdateEmail : Fragment(), Injectable, UpdateEmailListener{
                displayLoading(true)
            } else {
                displayLoading(false)
+               Toast.makeText(context, getString(R.string.email_update_success), Toast.LENGTH_SHORT).show()
+               EventBus.getDefault().post(LoginInfoUpdatedEvent(true))
            }
        })
     }
 
     override fun onFailed() {
         this.updateEmailViewModel.getLoadingLiveData().observe(this, Observer { isLoading ->
-            if (isLoading) {
+            if (!isLoading) {
                 displayLoading(false)
             }
         })

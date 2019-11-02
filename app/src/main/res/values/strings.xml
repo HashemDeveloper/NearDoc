@@ -69,4 +69,5 @@
     <string name="change_email">Change Email</string>
     <string name="change_password">Change Password</string>
     <string name="new_email">New Email</string>
+    <string name="email_update_success">Email updated successfully</string>
 </resources>
