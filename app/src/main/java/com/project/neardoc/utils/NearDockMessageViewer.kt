@@ -9,11 +9,11 @@ import com.google.android.material.snackbar.Snackbar
 import com.project.neardoc.R
 import javax.inject.Inject
 
-class NearDockSnackBar @Inject constructor(private val context: Context): INearDockSnackBar{
+class NearDockMessageViewer @Inject constructor(private val context: Context): INearDockMessageViewer{
 
     private var mSnackBar: Snackbar?= null
     private var iSnackBarListeners: ISnackBarListeners?= null
-
+    private var connectionSettings: ConnectionSettings?= null
     override fun registerSnackBarListener(iSnackBarListeners: ISnackBarListeners) {
        this.iSnackBarListeners = iSnackBarListeners
     }
@@ -24,10 +24,11 @@ class NearDockSnackBar @Inject constructor(private val context: Context): INearD
        }
     }
 
-    private fun <T> snackbarOnTop(item: T, type: SnackbarType, show: Boolean, message: String, isOnTop: Boolean) {
+    override fun <T> snackbarOnTop(item: T, type: SnackbarType, show: Boolean, message: String, isOnTop: Boolean) {
         when(type) {
             SnackbarType.CONNECTION_SETTING -> {
                 if (item is ConnectionSettings) {
+                    this.connectionSettings = item
                     val view: View = item.getSnackBar().view
                     if (isOnTop) {
                         val params: FrameLayout.LayoutParams = view.layoutParams as FrameLayout.LayoutParams
@@ -85,10 +86,32 @@ class NearDockSnackBar @Inject constructor(private val context: Context): INearD
             }
         }
     }
-
-    override fun dismis() {
-        if (this.mSnackBar != null) {
-            this.mSnackBar?.dismiss()
-        }
+    override fun <T> dismiss(item: T, type: SnackbarType) {
+       when(type) {
+           SnackbarType.CONNECTION_SETTING -> {
+               if (item is ConnectionSettings) {
+                   this.connectionSettings = item
+                   if (this.connectionSettings != null && this.connectionSettings?.getSnackBar() != null) {
+                       this.connectionSettings?.getSnackBar()!!.dismiss()
+                   }
+               }
+           }
+           SnackbarType.RESEND_EMAIL -> {
+               if (item is Snackbar) {
+                   this.mSnackBar = item
+                   if (this.mSnackBar != null) {
+                       this.mSnackBar?.dismiss()
+                   }
+               }
+           }
+           SnackbarType.OPEN_INBOX -> {
+               if (item is Snackbar) {
+                   this.mSnackBar = item
+                   if (this.mSnackBar != null) {
+                       this.mSnackBar?.dismiss()
+                   }
+               }
+           }
+       }
     }
 }

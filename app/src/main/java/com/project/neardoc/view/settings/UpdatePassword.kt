@@ -13,17 +13,18 @@ import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.events.NetworkStateEvent
-import com.project.neardoc.utils.ConnectionSettings
-import com.project.neardoc.utils.Constants
-import com.project.neardoc.utils.PageType
+import com.project.neardoc.utils.*
 import com.project.neardoc.utils.validators.PasswordValidator
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_update_password.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import javax.inject.Inject
 
 class UpdatePassword : Fragment(), Injectable {
+    @Inject
+    lateinit var iNearDockMessageViewer: INearDockMessageViewer
     private var passwordValidator:PasswordValidator?= null
     private var isInternetAvailable = false
     private var connectionSettings:ConnectionSettings?= null
@@ -57,7 +58,8 @@ class UpdatePassword : Fragment(), Injectable {
     private fun displayConnectionSetting() {
         this.connectionSettings = ConnectionSettings(activity!!, view!!)
         connectionSettings?.initWifiSetting(false)
-        viewSnackbarOnTop(connectionSettings!!)
+//        viewSnackbarOnTop(connectionSettings!!)
+        this.iNearDockMessageViewer.snackbarOnTop(connectionSettings, SnackbarType.CONNECTION_SETTING, true, "", true)
     }
     private fun viewSnackbarOnTop(connectionSettings: ConnectionSettings) {
         val view: View = connectionSettings.getSnackBar().view
@@ -82,9 +84,17 @@ class UpdatePassword : Fragment(), Injectable {
         }
     }
     private fun closeSnackbar() {
-        if (this.connectionSettings != null && this.connectionSettings?.getSnackBar() != null) {
-            this.connectionSettings?.getSnackBar()!!.dismiss()
-        }
+        this.iNearDockMessageViewer.dismiss(this.connectionSettings, SnackbarType.CONNECTION_SETTING)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
     }
 
     override fun onDestroy() {
