@@ -25,13 +25,11 @@ import javax.inject.Inject
 import android.view.WindowManager
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.iid.FirebaseInstanceId
 import com.project.neardoc.events.LandInSettingPageEvent
+import com.project.neardoc.events.LoginInfoUpdatedEvent
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import kotlin.math.log
 
 
 class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, SharedPreferences.OnSharedPreferenceChangeListener{
@@ -50,6 +48,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
     private lateinit var navController: NavController
     private var isWifiConnected = false
     private var view: View? = null
+    private var isLoginInfoUpdated = false
 
     
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -128,9 +127,17 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
         this.iSharedPrefService.registerSharedPrefListener(this)
         monitorConnectionSetting()
         monitorUserState()
+        if (this.isLoginInfoUpdated) {
+            EventBus.getDefault().postSticky(UserStateEvent(false))
+        }
     }
+
+    override fun onStop() {
+        super.onStop()
+    }
+
     private fun monitorUserState() {
-        this.iUserStateService.getObserver().observe(this, Observer {currentUser ->
+        this.iUserStateService.getAuthObserver().observe(this, Observer { currentUser ->
             if (currentUser.currentUser != null) {
                 enableBottomBar(true)
                 getUserIdToken(currentUser.currentUser!!)
@@ -268,6 +275,14 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
         this.iSharedPrefService.unregisterSharedPrefListener(this)
         EventBus.getDefault().unregister(this)
     }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    fun onLoginInfoUpdatedEvent(event: LoginInfoUpdatedEvent) {
+        if (event.getIsLoginInfoUpdated()) {
+            this.isLoginInfoUpdated = true
+        }
+    }
+
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onLandInSettingPageEvent(event: LandInSettingPageEvent) {
         if (event.getIsOnSettingPage()) {

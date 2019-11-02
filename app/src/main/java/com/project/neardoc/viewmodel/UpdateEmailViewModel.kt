@@ -43,6 +43,7 @@ class UpdateEmailViewModel @Inject constructor(): ViewModel() {
         password: String
     ) {
         this.isLoadingLiveData.value = true
+        this.updateEmailListener?.onProcess()
         val key: String = this.context.resources!!.getString(R.string.firebase_web_key)
         val keyData: Data = Data.Builder()
             .putString(Constants.WORKER_WEB_KEY, key)

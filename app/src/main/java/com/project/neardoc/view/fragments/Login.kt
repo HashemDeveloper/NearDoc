@@ -44,17 +44,14 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
 import com.project.neardoc.events.EmailVerificationEvent
-import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.Constants.Companion.mobileData
 import com.project.neardoc.utils.Constants.Companion.wifiData
-import com.project.neardoc.utils.DeCryptor
 import com.project.neardoc.utils.validators.EmailValidator
 import com.project.neardoc.utils.validators.PasswordValidator
 import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.listeners.ILoginViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_registration.*
 
 class Login : Fragment(), Injectable, ILoginViewModel{
 
@@ -78,6 +75,7 @@ class Login : Fragment(), Injectable, ILoginViewModel{
         this.viewModelFactory
     }
     private var isInternetAvailable = false
+    private var mSnackBar: Snackbar?= null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -115,13 +113,7 @@ class Login : Fragment(), Injectable, ILoginViewModel{
     }
     private fun emailInboxSnackBar(message: String) {
         val snackbar: Snackbar = Snackbar.make(view!!, message, Snackbar.LENGTH_INDEFINITE)
-        snackbar.view.setBackgroundColor(ContextCompat.getColor(activity!!, R.color.blue_gray_800))
-        snackbar.show()
-        snackbar.setAction(R.string.email_inbox) {
-            run {
-                openEmailInbox(snackbar)
-            }
-        }
+        snackbarOnTop(snackbar, SnackbarType.OPEN_INBOX, true)
     }
 
     private fun onBackPressed() {
@@ -168,13 +160,63 @@ class Login : Fragment(), Injectable, ILoginViewModel{
     private fun displayConnectionSetting() {
         this.connectionSettings = ConnectionSettings(activity!!, view!!)
         connectionSettings?.initWifiSetting(false)
-        viewSnackbarOnTop(connectionSettings!!)
+        connectionSettingSnackbar(connectionSettings!!)
     }
-    private fun viewSnackbarOnTop(connectionSettings: ConnectionSettings) {
-        val view: View = connectionSettings.getSnackBar().view
-        val params: FrameLayout.LayoutParams = view.layoutParams as FrameLayout.LayoutParams
-        params.gravity = Gravity.TOP
-        view.layoutParams = params
+    private fun connectionSettingSnackbar(connectionSettings: ConnectionSettings) {
+        snackbarOnTop(connectionSettings, SnackbarType.CONNECTION_SETTING, true)
+    }
+    private fun <T> snackbarOnTop(item: T, type: SnackbarType, show: Boolean) {
+        when(type) {
+            SnackbarType.CONNECTION_SETTING -> {
+                if (item is ConnectionSettings) {
+                    val view: View = item.getSnackBar().view
+                    val params: FrameLayout.LayoutParams = view.layoutParams as FrameLayout.LayoutParams
+                    params.gravity = Gravity.TOP
+                    view.layoutParams = params
+                }
+            }
+            SnackbarType.RESEND_EMAIL -> {
+                if (item is Snackbar) {
+                    this.mSnackBar = item
+                    val view: View = item.view
+                    val params: FrameLayout.LayoutParams =
+                        view.layoutParams as FrameLayout.LayoutParams
+                    params.gravity = Gravity.TOP
+                    view.setBackgroundColor(
+                        ContextCompat.getColor(
+                            activity!!,
+                            R.color.blue_gray_800
+                        )
+                    )
+                    this.mSnackBar?.show()
+                    this.mSnackBar?.setAction(R.string.email_resend) {
+                        run {
+                            this.loginViewModel.resendEmailEmailVerification(activity)
+                            this.mSnackBar?.dismiss()
+                        }
+                    }
+                }
+            }
+            SnackbarType.OPEN_INBOX -> {
+                if (item is Snackbar) {
+                    this.mSnackBar = item
+                    if (show) {
+                        val view: View = item.view
+                        val params: FrameLayout.LayoutParams = view.layoutParams as FrameLayout.LayoutParams
+                        params.gravity = Gravity.TOP
+                        view.setBackgroundColor(ContextCompat.getColor(activity!!, R.color.blue_gray_800))
+                        this.mSnackBar?.show()
+                        this.mSnackBar?.setAction(R.string.email_inbox) {
+                            run {
+                                openEmailInbox(item)
+                            }
+                        }
+                    } else {
+                        this.mSnackBar?.dismiss()
+                    }
+                }
+            }
+        }
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
@@ -248,15 +290,11 @@ class Login : Fragment(), Injectable, ILoginViewModel{
             }
         })
         this.loginViewModel.getIsEmailVerificationRequireLiveData().observe(this, Observer { isRequried ->
+            val snackbar: Snackbar = Snackbar.make(view!!, R.string.email_not_verified, Snackbar.LENGTH_INDEFINITE)
             if (isRequried) {
-                val snackbar: Snackbar = Snackbar.make(view!!, R.string.email_not_verified, Snackbar.LENGTH_INDEFINITE)
-                snackbar.view.setBackgroundColor(ContextCompat.getColor(activity!!, R.color.blue_gray_800))
-                snackbar.show()
-                snackbar.setAction(R.string.email_resend) {
-                    run {
-                        this.loginViewModel.resendEmailEmailVerification(activity)
-                    }
-                }
+                snackbarOnTop(snackbar, SnackbarType.RESEND_EMAIL, true)
+            } else {
+                snackbarOnTop(snackbar, SnackbarType.RESEND_EMAIL, false)
             }
         })
         this.loginViewModel.getErrorMessageLiveData().observe(this, Observer {errorMessage ->
@@ -286,6 +324,9 @@ class Login : Fragment(), Injectable, ILoginViewModel{
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
+        if (this.mSnackBar != null) {
+            this.mSnackBar?.dismiss()
+        }
     }
 
     override fun onDestroyView() {
@@ -300,5 +341,10 @@ class Login : Fragment(), Injectable, ILoginViewModel{
         } else {
             globalLoadingBar.setVisibility(false)
         }
+    }
+    private enum class SnackbarType {
+        OPEN_INBOX,
+        CONNECTION_SETTING,
+        RESEND_EMAIL
     }
 }
