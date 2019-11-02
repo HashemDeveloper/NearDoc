@@ -63,4 +63,9 @@ class ApplicationModule {
     fun provideUserStateService(userStateService: UserStateService): IUserStateService {
         return userStateService
     }
+    @Singleton
+    @Provides
+    fun provideNearDockSnackBar(nearDockSnackBar: NearDockSnackBar): INearDockSnackBar {
+        return nearDockSnackBar
+    }
 }
