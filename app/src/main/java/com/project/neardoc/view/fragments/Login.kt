@@ -287,6 +287,9 @@ class Login : Fragment(), Injectable, ILoginViewModel{
             if (isLoginSuccess) {
                 val openHomePage = findNavController()
                 openHomePage.navigate(R.id.homePage)
+                if (this.mSnackBar != null) {
+                    this.mSnackBar?.dismiss()
+                }
             }
         })
         this.loginViewModel.getIsEmailVerificationRequireLiveData().observe(this, Observer { isRequried ->

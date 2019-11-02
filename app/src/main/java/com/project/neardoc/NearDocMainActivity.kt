@@ -127,8 +127,12 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
         this.iSharedPrefService.registerSharedPrefListener(this)
         monitorConnectionSetting()
         monitorUserState()
+    }
+
+    override fun onResume() {
+        super.onResume()
         if (this.isLoginInfoUpdated) {
-            EventBus.getDefault().postSticky(UserStateEvent(false))
+            this.navController.navigate(R.id.welcome)
         }
     }
 
@@ -143,8 +147,11 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
                 getUserIdToken(currentUser.currentUser!!)
                 EventBus.getDefault().postSticky(UserStateEvent(true))
             } else {
-                enableBottomBar(false)
-                this.iSharedPrefService.removeItems(Constants.FIREBASE_ID_TOKEN)
+                if (!this.isLoginInfoUpdated) {
+                    enableBottomBar(false)
+                    this.iSharedPrefService.removeItems(Constants.FIREBASE_ID_TOKEN)
+                }
+                EventBus.getDefault().postSticky(UserStateEvent(false))
             }
         })
     }
