@@ -89,13 +89,25 @@ class NearDockMessageViewer @Inject constructor(private val context: Context): I
             }
             SnackbarType.INVALID_PASSWORD -> {
                 if (item is Snackbar) {
+                    val view: View = item.view
                     item.view.setBackgroundColor(ContextCompat.getColor(this.context, R.color.blue_gray_800))
+                    if (isOnTop) {
+                        val params: FrameLayout.LayoutParams = view.layoutParams as FrameLayout.LayoutParams
+                        params.gravity = Gravity.TOP
+                        view.layoutParams = params
+                    }
                     item.show()
                 }
             }
             SnackbarType.EMAIL_NOT_FOUND -> {
                 if (item is Snackbar) {
+                    val view: View = item.view
                     item.view.setBackgroundColor(ContextCompat.getColor(this.context, R.color.blue_gray_800))
+                    if (isOnTop) {
+                        val params: FrameLayout.LayoutParams = view.layoutParams as FrameLayout.LayoutParams
+                        params.gravity = Gravity.TOP
+                        view.layoutParams = params
+                    }
                     item.show()
                 }
             }

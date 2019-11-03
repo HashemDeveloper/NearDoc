@@ -88,15 +88,17 @@ class UpdatePassword : Fragment(), Injectable {
 
     private fun observeUpdateStatus() {
         this.updatePasswordViewModel.getLoadingLiveData().observe(this, loadingObserver())
-        this.updatePasswordViewModel.getErrorLiveData().observe(this, errorObserver())
+        this.updatePasswordViewModel.getStatusMessageLiveData().observe(this, statusObserver())
     }
 
-    private fun errorObserver(): Observer<String> {
-        return Observer { isError ->
-            if (isError.isNotEmpty()) {
-                if (isError == "The password is invalid or the user does not have a password.") {
+    private fun statusObserver(): Observer<String> {
+        return Observer { status ->
+            if (status.isNotEmpty()) {
+                if (status == "The password is invalid or the user does not have a password.") {
                     val snackbar: Snackbar = Snackbar.make(view!!, R.string.login_invalid_password, Snackbar.LENGTH_LONG)
                     this.iNearDockMessageViewer.displayMessage(snackbar, SnackbarType.INVALID_PASSWORD, true, "", true)
+                } else if (status == this.context?.resources!!.getString(R.string.password_updated)) {
+                    Toast.makeText(this.context, this.context?.resources!!.getString(R.string.password_updated), Toast.LENGTH_SHORT).show()
                 }
             }
         }

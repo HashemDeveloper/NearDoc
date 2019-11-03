@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 class UpdatePasswordViewModel @Inject constructor(): ViewModel() {
     private val isLoadingData: MutableLiveData<Boolean> = MutableLiveData()
-    private val isErrorLiveData: MutableLiveData<String> = MutableLiveData()
+    private val statusMessageLiveData: MutableLiveData<String> = MutableLiveData()
     private var workerLiveData: LiveData<WorkInfo>?= null
     @Inject
     lateinit var context: Context
@@ -53,6 +53,8 @@ class UpdatePasswordViewModel @Inject constructor(): ViewModel() {
                when (it.state) {
                    WorkInfo.State.SUCCEEDED -> {
                        this.isLoadingData.value = false
+                       val message = this.context.resources.getString(R.string.password_updated)
+                       this.statusMessageLiveData.value = message
                    }
                    WorkInfo.State.FAILED -> {
                        val errorData: Data? = it.outputData
@@ -61,7 +63,7 @@ class UpdatePasswordViewModel @Inject constructor(): ViewModel() {
                            if (errorMessage.isNotEmpty()) {
                                Log.i("Error: ", errorMessage)
                                this.isLoadingData.value = false
-                               this.isErrorLiveData.value = errorMessage
+                               this.statusMessageLiveData.value = errorMessage
                            }
                        }
                    }
@@ -77,8 +79,8 @@ class UpdatePasswordViewModel @Inject constructor(): ViewModel() {
         return this.isLoadingData
     }
 
-    fun getErrorLiveData(): LiveData<String> {
-        return this.isErrorLiveData
+    fun getStatusMessageLiveData(): LiveData<String> {
+        return this.statusMessageLiveData
     }
 
     override fun onCleared() {
