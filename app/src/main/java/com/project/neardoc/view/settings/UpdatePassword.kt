@@ -2,12 +2,10 @@ package com.project.neardoc.view.settings
 
 
 import android.os.Bundle
-import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
@@ -58,14 +56,7 @@ class UpdatePassword : Fragment(), Injectable {
     private fun displayConnectionSetting() {
         this.connectionSettings = ConnectionSettings(activity!!, view!!)
         connectionSettings?.initWifiSetting(false)
-//        viewSnackbarOnTop(connectionSettings!!)
-        this.iNearDockMessageViewer.snackbarOnTop(connectionSettings, SnackbarType.CONNECTION_SETTING, true, "", true)
-    }
-    private fun viewSnackbarOnTop(connectionSettings: ConnectionSettings) {
-        val view: View = connectionSettings.getSnackBar().view
-        val params: FrameLayout.LayoutParams = view.layoutParams as FrameLayout.LayoutParams
-        params.gravity = Gravity.TOP
-        view.layoutParams = params
+        this.iNearDockMessageViewer.displayMessage(connectionSettings, SnackbarType.CONNECTION_SETTING, true, "", true)
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)

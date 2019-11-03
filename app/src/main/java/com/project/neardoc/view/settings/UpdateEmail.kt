@@ -3,17 +3,14 @@ package com.project.neardoc.view.settings
 
 import android.content.Context
 import android.os.Bundle
-import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
@@ -21,16 +18,13 @@ import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.events.LoginInfoUpdatedEvent
 import com.project.neardoc.events.NetworkStateEvent
-import com.project.neardoc.utils.ConnectionSettings
-import com.project.neardoc.utils.Constants
-import com.project.neardoc.utils.PageType
+import com.project.neardoc.utils.*
 import com.project.neardoc.utils.validators.EmailValidator
 import com.project.neardoc.utils.validators.EmptyFieldValidator
 import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.UpdateEmailViewModel
 import com.project.neardoc.viewmodel.listeners.UpdateEmailListener
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_update_email.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -38,7 +32,8 @@ import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 class UpdateEmail : Fragment(), Injectable, UpdateEmailListener{
-
+    @Inject
+    lateinit var iNearDockMessageViewer: INearDockMessageViewer
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val updateEmailViewModel: UpdateEmailViewModel by viewModels {
@@ -112,13 +107,7 @@ class UpdateEmail : Fragment(), Injectable, UpdateEmailListener{
     private fun displayConnectionSetting() {
         this.connectionSettings = ConnectionSettings(activity!!, view!!)
         connectionSettings?.initWifiSetting(false)
-        viewSnackbarOnTop(connectionSettings!!)
-    }
-    private fun viewSnackbarOnTop(connectionSettings: ConnectionSettings) {
-        val view: View = connectionSettings.getSnackBar().view
-        val params: FrameLayout.LayoutParams = view.layoutParams as FrameLayout.LayoutParams
-        params.gravity = Gravity.TOP
-        view.layoutParams = params
+        this.iNearDockMessageViewer.displayMessage(connectionSettings, SnackbarType.CONNECTION_SETTING, true, "", true)
     }
 
     override fun onDestroy() {
@@ -127,9 +116,7 @@ class UpdateEmail : Fragment(), Injectable, UpdateEmailListener{
         EventBus.getDefault().postSticky(LandInSettingPageEvent(false, PageType.SIGN_IN_SECURITY))
     }
     private fun closeSnackbar() {
-        if (this.connectionSettings != null && this.connectionSettings?.getSnackBar() != null) {
-            this.connectionSettings?.getSnackBar()!!.dismiss()
-        }
+       this.iNearDockMessageViewer.dismiss(this.connectionSettings, SnackbarType.CONNECTION_SETTING)
     }
     override fun onProcess() {
         this.updateEmailViewModel.getLoadingLiveData().observe(this, Observer { isLoading ->
