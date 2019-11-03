@@ -6,10 +6,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import com.google.android.material.snackbar.Snackbar
 
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
@@ -35,10 +37,10 @@ class UpdatePassword : Fragment(), Injectable {
     private val updatePasswordViewModel: UpdatePasswordViewModel by viewModels {
         this.viewModelFactory
     }
-    private var currentPassValidator:PasswordValidator?= null
-    private var newPassValidator:PasswordValidator?= null
+    private var currentPassValidator: PasswordValidator? = null
+    private var newPassValidator: PasswordValidator? = null
     private var isInternetAvailable = false
-    private var connectionSettings:ConnectionSettings?= null
+    private var connectionSettings: ConnectionSettings? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -56,9 +58,11 @@ class UpdatePassword : Fragment(), Injectable {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupClickListeners()
-        this.currentPassValidator = PasswordValidator(fragment_update_password_current_pass_input_layout_id)
+        this.currentPassValidator =
+            PasswordValidator(fragment_update_password_current_pass_input_layout_id)
         this.newPassValidator = PasswordValidator(fragment_update_password_new_pass_input_layout_id)
     }
+
     private fun setupClickListeners() {
         fragment_update_password_update_bt_id.setOnClickListener {
             if (this.isInternetAvailable) {
@@ -68,19 +72,36 @@ class UpdatePassword : Fragment(), Injectable {
             }
         }
     }
+
     private fun processPasswordUpdate() {
-        val currentPassword: String = fragment_update_password_current_pass_edit_text_id.text.toString()
+        val currentPassword: String =
+            fragment_update_password_current_pass_edit_text_id.text.toString()
         val newPassword: String = fragment_update_password_new_pass_edit_text_id.text.toString()
-        val isValidCurrentPass: Boolean = this.currentPassValidator?.getIsValidated(currentPassword)!!
+        val isValidCurrentPass: Boolean =
+            this.currentPassValidator?.getIsValidated(currentPassword)!!
         val isValidNewPass: Boolean = this.newPassValidator?.getIsValidated(newPassword)!!
         if (isValidCurrentPass && isValidNewPass) {
-            this.updatePasswordViewModel.updatePassword(currentPassword, newPassword)
+            this.updatePasswordViewModel.updatePassword(activity!!, currentPassword, newPassword)
             observeUpdateStatus()
         }
     }
+
     private fun observeUpdateStatus() {
-       this.updatePasswordViewModel.getLoadingLiveData().observe(this, loadingObserver())
+        this.updatePasswordViewModel.getLoadingLiveData().observe(this, loadingObserver())
+        this.updatePasswordViewModel.getErrorLiveData().observe(this, errorObserver())
     }
+
+    private fun errorObserver(): Observer<String> {
+        return Observer { isError ->
+            if (isError.isNotEmpty()) {
+                if (isError == "The password is invalid or the user does not have a password.") {
+                    val snackbar: Snackbar = Snackbar.make(view!!, R.string.login_invalid_password, Snackbar.LENGTH_LONG)
+                    this.iNearDockMessageViewer.displayMessage(snackbar, SnackbarType.INVALID_PASSWORD, true, "", true)
+                }
+            }
+        }
+    }
+
     private fun loadingObserver(): Observer<Boolean> {
         return Observer { isLoading ->
             if (isLoading) {
@@ -90,6 +111,7 @@ class UpdatePassword : Fragment(), Injectable {
             }
         }
     }
+
     private fun displayLoading(isLoading: Boolean) {
         val globalLoadingBar = GlobalLoadingBar(activity!!, fragment_update_password_loading_bar_id)
         if (isLoading) {
@@ -98,10 +120,17 @@ class UpdatePassword : Fragment(), Injectable {
             globalLoadingBar.setVisibility(false)
         }
     }
+
     private fun displayConnectionSetting() {
         this.connectionSettings = ConnectionSettings(activity!!, view!!)
         connectionSettings?.initWifiSetting(false)
-        this.iNearDockMessageViewer.displayMessage(connectionSettings, SnackbarType.CONNECTION_SETTING, true, "", true)
+        this.iNearDockMessageViewer.displayMessage(
+            connectionSettings,
+            SnackbarType.CONNECTION_SETTING,
+            true,
+            "",
+            true
+        )
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
@@ -119,8 +148,12 @@ class UpdatePassword : Fragment(), Injectable {
             closeSnackbar()
         }
     }
+
     private fun closeSnackbar() {
-        this.iNearDockMessageViewer.dismiss(this.connectionSettings, SnackbarType.CONNECTION_SETTING)
+        this.iNearDockMessageViewer.dismiss(
+            this.connectionSettings,
+            SnackbarType.CONNECTION_SETTING
+        )
     }
 
     override fun onStart() {
@@ -147,6 +180,7 @@ class UpdatePassword : Fragment(), Injectable {
         super.onActivityCreated(savedInstanceState)
         this.updatePasswordViewModel.getLoadingLiveData().reObserve(this, loadingObserver())
     }
+
     fun <T> LiveData<T>.reObserve(owner: LifecycleOwner, observer: Observer<T>) {
         removeObserver(observer)
         observe(owner, observer)
