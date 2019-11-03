@@ -7,14 +7,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
+import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.utils.*
 import com.project.neardoc.utils.validators.PasswordValidator
+import com.project.neardoc.view.widgets.GlobalLoadingBar
+import com.project.neardoc.viewmodel.UpdatePasswordViewModel
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.synthetic.main.fragment_update_email.*
 import kotlinx.android.synthetic.main.fragment_update_password.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -24,6 +30,11 @@ import javax.inject.Inject
 class UpdatePassword : Fragment(), Injectable {
     @Inject
     lateinit var iNearDockMessageViewer: INearDockMessageViewer
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    private val updatePasswordViewModel: UpdatePasswordViewModel by viewModels {
+        this.viewModelFactory
+    }
     private var currentPassValidator:PasswordValidator?= null
     private var newPassValidator:PasswordValidator?= null
     private var isInternetAvailable = false
@@ -63,7 +74,25 @@ class UpdatePassword : Fragment(), Injectable {
         val isValidCurrentPass: Boolean = this.currentPassValidator?.getIsValidated(currentPassword)!!
         val isValidNewPass: Boolean = this.newPassValidator?.getIsValidated(newPassword)!!
         if (isValidCurrentPass && isValidNewPass) {
-            Toast.makeText(context, "Good To Go!", Toast.LENGTH_SHORT).show()
+            this.updatePasswordViewModel.updatePassword(currentPassword, newPassword)
+            observeUpdateStatus()
+        }
+    }
+    private fun observeUpdateStatus() {
+        this.updatePasswordViewModel.getLoadingLiveData().observe(this, Observer {isLoading ->
+            if (isLoading) {
+                displayLoading(true)
+            } else {
+                displayLoading(false)
+            }
+        })
+    }
+    private fun displayLoading(isLoading: Boolean) {
+        val globalLoadingBar = GlobalLoadingBar(activity!!, fragment_update_password_loading_bar_id)
+        if (isLoading) {
+            globalLoadingBar.setVisibility(true)
+        } else {
+            globalLoadingBar.setVisibility(false)
         }
     }
     private fun displayConnectionSetting() {
