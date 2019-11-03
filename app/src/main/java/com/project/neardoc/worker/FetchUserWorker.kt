@@ -36,6 +36,8 @@ class FetchUserWorker @Inject constructor(context: Context, workerParams: Worker
                     this.iSharedPreferences.storeUserEmail(userEmail)
                     this.iSharedPreferences.storeUserImage(image)
                     this.iSharedPreferences.storeUserUsername(username)
+                } else {
+                    //TODO: Prompt user to create profile
                 }
             }, {onError ->
                 Log.i("GetUserError: ", onError.localizedMessage!!)

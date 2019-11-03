@@ -71,4 +71,5 @@
     <string name="new_email">New Email</string>
     <string name="email_update_success">Email updated successfully</string>
     <string name="update_email_failed">Failed to update email. Please try again.</string>
+    <string name="password_updated">Password is updated successfully.</string>
 </resources>

@@ -33,9 +33,6 @@ import android.app.Activity.RESULT_OK
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.util.Log
-import android.view.Gravity
-import android.widget.FrameLayout
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -47,7 +44,7 @@ import com.project.neardoc.events.EmailVerificationEvent
 import com.project.neardoc.utils.Constants.Companion.mobileData
 import com.project.neardoc.utils.Constants.Companion.wifiData
 import com.project.neardoc.utils.INearDockMessageViewer
-import com.project.neardoc.utils.ISnackBarListeners
+import com.project.neardoc.utils.ILoginSnackBarListeners
 import com.project.neardoc.utils.SnackbarType
 import com.project.neardoc.utils.validators.EmailValidator
 import com.project.neardoc.utils.validators.PasswordValidator
@@ -56,7 +53,7 @@ import com.project.neardoc.viewmodel.listeners.ILoginViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class Login : Fragment(), Injectable, ILoginViewModel, ISnackBarListeners{
+class Login : Fragment(), Injectable, ILoginViewModel, ILoginSnackBarListeners{
 
     companion object {
         @JvmStatic private val GOOGLE_SIGN_IN_CODE: Int = 0
@@ -100,7 +97,7 @@ class Login : Fragment(), Injectable, ILoginViewModel, ISnackBarListeners{
         performNavigateActions()
         onBackPressed()
         this.loginViewModel.setLoginViewModelListener(this)
-        this.iNearDockMessageViewer.registerSnackBarListener(this)
+        this.iNearDockMessageViewer.registerLoginSnackBarListener(this)
         observerEmailVerificationEvent()
         registerInputValidators()
     }
@@ -283,7 +280,7 @@ class Login : Fragment(), Injectable, ILoginViewModel, ISnackBarListeners{
         super.onDestroyView()
         this.compositeDisposable.clear()
         this.loginViewModel.removeLoginViewModelListener(this)
-        this.iNearDockMessageViewer.unRegisterSnackBarListener(this)
+        this.iNearDockMessageViewer.unRegisterLoginSnackBarListener(this)
         MESSAGE_TYPE_LIST.clear()
     }
     private fun displayLoading(isLoading: Boolean) {

@@ -1,6 +1,7 @@
 package com.project.neardoc.viewmodel
 
 import android.content.Context
+import android.os.Handler
 import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
@@ -11,15 +12,21 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import com.google.firebase.auth.FirebaseAuth
 import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
+import com.project.neardoc.events.BottomBarEvent
+import com.project.neardoc.events.LandInSettingPageEvent
+import com.project.neardoc.events.UserStateEvent
 import com.project.neardoc.utils.Constants
+import com.project.neardoc.utils.PageType
 import com.project.neardoc.worker.UpdatePasswordWorker
+import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 class UpdatePasswordViewModel @Inject constructor(): ViewModel() {
     private val isLoadingData: MutableLiveData<Boolean> = MutableLiveData()
-    private val isErrorLiveData: MutableLiveData<String> = MutableLiveData()
+    private val statusMessageLiveData: MutableLiveData<String> = MutableLiveData()
     private var workerLiveData: LiveData<WorkInfo>?= null
     @Inject
     lateinit var context: Context
@@ -53,6 +60,8 @@ class UpdatePasswordViewModel @Inject constructor(): ViewModel() {
                when (it.state) {
                    WorkInfo.State.SUCCEEDED -> {
                        this.isLoadingData.value = false
+                       val message = this.context.resources.getString(R.string.password_updated)
+                       this.statusMessageLiveData.value = message
                    }
                    WorkInfo.State.FAILED -> {
                        val errorData: Data? = it.outputData
@@ -61,7 +70,7 @@ class UpdatePasswordViewModel @Inject constructor(): ViewModel() {
                            if (errorMessage.isNotEmpty()) {
                                Log.i("Error: ", errorMessage)
                                this.isLoadingData.value = false
-                               this.isErrorLiveData.value = errorMessage
+                               this.statusMessageLiveData.value = errorMessage
                            }
                        }
                    }
@@ -77,8 +86,8 @@ class UpdatePasswordViewModel @Inject constructor(): ViewModel() {
         return this.isLoadingData
     }
 
-    fun getErrorLiveData(): LiveData<String> {
-        return this.isErrorLiveData
+    fun getStatusMessageLiveData(): LiveData<String> {
+        return this.statusMessageLiveData
     }
 
     override fun onCleared() {
@@ -86,5 +95,12 @@ class UpdatePasswordViewModel @Inject constructor(): ViewModel() {
         if (this.workerLiveData != null) {
             this.workerLiveData?.removeObserver(workerObserver())
         }
+    }
+
+    fun signOut() {
+        FirebaseAuth.getInstance().signOut()
+        EventBus.getDefault().postSticky(UserStateEvent(false))
+        EventBus.getDefault().postSticky(LandInSettingPageEvent(false, PageType.MAIN_PAGE))
+        EventBus.getDefault().postSticky(BottomBarEvent(false))
     }
 }

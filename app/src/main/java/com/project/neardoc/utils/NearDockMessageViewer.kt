@@ -10,18 +10,32 @@ import com.project.neardoc.R
 import javax.inject.Inject
 
 class NearDockMessageViewer @Inject constructor(private val context: Context): INearDockMessageViewer{
+
     private var mTypeList: MutableList<SnackbarType>?= null
     private var mSnackBar: Snackbar?= null
-    private var iSnackBarListeners: ISnackBarListeners?= null
+    private var iLoginSnackBarListeners: ILoginSnackBarListeners?= null
+    private var iUpdatePassSnackBarListener: IUpdatePassSnackBarListener?= null
     private var connectionSettings: ConnectionSettings?= null
-    override fun registerSnackBarListener(iSnackBarListeners: ISnackBarListeners) {
-       this.iSnackBarListeners = iSnackBarListeners
+
+
+    override fun registerLoginSnackBarListener(iLoginSnackBarListeners: ILoginSnackBarListeners) {
+       this.iLoginSnackBarListeners = iLoginSnackBarListeners
     }
 
-    override fun unRegisterSnackBarListener(iSnackBarListeners: ISnackBarListeners) {
-       if (this.iSnackBarListeners != null) {
-           this.iSnackBarListeners = null
+    override fun unRegisterLoginSnackBarListener(iLoginSnackBarListeners: ILoginSnackBarListeners) {
+       if (this.iLoginSnackBarListeners != null) {
+           this.iLoginSnackBarListeners = null
        }
+    }
+
+    override fun registerUpdatePassSnackBarListener(iUpdatePassSnackBarListener: IUpdatePassSnackBarListener) {
+        this.iUpdatePassSnackBarListener = iUpdatePassSnackBarListener
+    }
+
+    override fun unRegisterUpdatePassSnackBarListener(iUpdatePassSnackBarListener: IUpdatePassSnackBarListener) {
+        if (this.iUpdatePassSnackBarListener != null) {
+            this.iUpdatePassSnackBarListener = null
+        }
     }
 
     override fun <T> displayMessage(item: T, type: SnackbarType, show: Boolean, message: String, isOnTop: Boolean) {
@@ -56,7 +70,7 @@ class NearDockMessageViewer @Inject constructor(private val context: Context): I
                         val actionMessage: String = this.context.resources.getString(R.string.email_resend)
                         item.setAction(actionMessage) {
                             run {
-                                this.iSnackBarListeners?.onResendEmailVerification()
+                                this.iLoginSnackBarListeners?.onResendEmailVerification()
                                 item.dismiss()
                             }
                         }
@@ -79,7 +93,7 @@ class NearDockMessageViewer @Inject constructor(private val context: Context): I
                         val actionMessage: String = this.context.resources.getString(R.string.email_inbox)
                         item.setAction(actionMessage) {
                             run {
-                                this.iSnackBarListeners?.onOpenEmailInbox(item)
+                                this.iLoginSnackBarListeners?.onOpenEmailInbox(item)
                             }
                         }
                     } else {
@@ -89,14 +103,46 @@ class NearDockMessageViewer @Inject constructor(private val context: Context): I
             }
             SnackbarType.INVALID_PASSWORD -> {
                 if (item is Snackbar) {
+                    val view: View = item.view
                     item.view.setBackgroundColor(ContextCompat.getColor(this.context, R.color.blue_gray_800))
+                    if (isOnTop) {
+                        val params: FrameLayout.LayoutParams = view.layoutParams as FrameLayout.LayoutParams
+                        params.gravity = Gravity.TOP
+                        view.layoutParams = params
+                    }
                     item.show()
                 }
             }
             SnackbarType.EMAIL_NOT_FOUND -> {
                 if (item is Snackbar) {
+                    val view: View = item.view
                     item.view.setBackgroundColor(ContextCompat.getColor(this.context, R.color.blue_gray_800))
+                    if (isOnTop) {
+                        val params: FrameLayout.LayoutParams = view.layoutParams as FrameLayout.LayoutParams
+                        params.gravity = Gravity.TOP
+                        view.layoutParams = params
+                    }
                     item.show()
+                }
+            }
+            SnackbarType.SIGN_IN_AGAIN -> {
+                if (item is Snackbar) {
+                    if (show) {
+                        val view: View = item.view
+                        if (isOnTop) {
+                            val params: FrameLayout.LayoutParams = view.layoutParams as FrameLayout.LayoutParams
+                            params.gravity = Gravity.TOP
+                            view.layoutParams = params
+                        }
+                        view.setBackgroundColor(ContextCompat.getColor(this.context, R.color.blue_gray_800))
+                        item.show()
+                        val actionTitle = this.context.resources.getString(R.string.log_in)
+                        item.setAction(actionTitle) {
+                            run {
+                                this.iUpdatePassSnackBarListener?.signIn()
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -116,6 +162,9 @@ class NearDockMessageViewer @Inject constructor(private val context: Context): I
                dismiss(item)
            }
            SnackbarType.EMAIL_NOT_FOUND -> {
+               dismiss(item)
+           }
+           SnackbarType.SIGN_IN_AGAIN -> {
                dismiss(item)
            }
        }
@@ -171,6 +220,14 @@ class NearDockMessageViewer @Inject constructor(private val context: Context): I
                     }
                     SnackbarType.INVALID_PASSWORD -> {
                         break@loop
+                    }
+                    SnackbarType.SIGN_IN_AGAIN -> {
+                        if (item is Snackbar) {
+                            this.mSnackBar = item
+                            if (this.mSnackBar != null) {
+                                this.mSnackBar?.dismiss()
+                            }
+                        }
                     }
                 }
             }
