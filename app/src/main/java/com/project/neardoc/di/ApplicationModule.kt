@@ -1,7 +1,6 @@
 package com.project.neardoc.di
 
 import android.content.Context
-import android.view.View
 import com.project.neardoc.NearDocApp
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.SharedPrefService
@@ -62,5 +61,10 @@ class ApplicationModule {
     @Provides
     fun provideUserStateService(userStateService: UserStateService): IUserStateService {
         return userStateService
+    }
+    @Singleton
+    @Provides
+    fun provideNearDockSnackBar(nearDockMessageViewer: NearDockMessageViewer): INearDockMessageViewer {
+        return nearDockMessageViewer
     }
 }

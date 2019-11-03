@@ -23,13 +23,14 @@ import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.utils.ConnectionSettings
 import com.project.neardoc.utils.Constants.Companion.mobileData
 import com.project.neardoc.utils.Constants.Companion.wifiData
+import com.project.neardoc.utils.INearDockMessageViewer
+import com.project.neardoc.utils.SnackbarType
 import com.project.neardoc.utils.validators.EmailValidator
 import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.ForgotPasswordViewModel
 import com.project.neardoc.viewmodel.listeners.IForgotPasswordViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_forgot_password.*
-import kotlinx.android.synthetic.main.fragment_login.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode

@@ -2,13 +2,10 @@ package com.project.neardoc.view.fragments
 
 
 import android.os.Bundle
-import android.os.Handler
-import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -20,6 +17,8 @@ import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.utils.ConnectionSettings
+import com.project.neardoc.utils.INearDockMessageViewer
+import com.project.neardoc.utils.SnackbarType
 import com.project.neardoc.utils.validators.EmailValidator
 import com.project.neardoc.utils.validators.EmptyFieldValidator
 import com.project.neardoc.utils.validators.PasswordValidator
@@ -35,6 +34,8 @@ import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 class Registration : Fragment(), Injectable, IRegistrationViewModel{
+    @Inject
+    lateinit var iNearDockMessageViewer: INearDockMessageViewer
     private var connectionSettings: ConnectionSettings?= null
     private var isInternetAvailable: Boolean = false
     private val mobileData = "MOBILE_DATA"
@@ -141,13 +142,7 @@ class Registration : Fragment(), Injectable, IRegistrationViewModel{
     private fun displayConnectionSetting() {
         this.connectionSettings = ConnectionSettings(activity!!, view!!)
         connectionSettings?.initWifiSetting(false)
-        viewSnackbarOnTop(connectionSettings!!)
-    }
-    private fun viewSnackbarOnTop(connectionSettings: ConnectionSettings) {
-        val view: View = connectionSettings.getSnackBar().view
-        val params: FrameLayout.LayoutParams = view.layoutParams as FrameLayout.LayoutParams
-        params.gravity = Gravity.TOP
-        view.layoutParams = params
+        this.iNearDockMessageViewer.displayMessage(connectionSettings, SnackbarType.CONNECTION_SETTING, true, "", true)
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
@@ -163,9 +158,7 @@ class Registration : Fragment(), Injectable, IRegistrationViewModel{
             this.isInternetAvailable = false
         }
         if (this.isInternetAvailable) {
-            if (this.connectionSettings != null && this.connectionSettings?.getSnackBar() != null) {
-                this.connectionSettings?.getSnackBar()!!.dismiss()
-            }
+            this.iNearDockMessageViewer.dismiss(this.connectionSettings, SnackbarType.CONNECTION_SETTING)
         }
     }
 

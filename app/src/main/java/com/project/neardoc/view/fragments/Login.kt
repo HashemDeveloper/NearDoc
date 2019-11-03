@@ -46,6 +46,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.project.neardoc.events.EmailVerificationEvent
 import com.project.neardoc.utils.Constants.Companion.mobileData
 import com.project.neardoc.utils.Constants.Companion.wifiData
+import com.project.neardoc.utils.INearDockMessageViewer
+import com.project.neardoc.utils.ISnackBarListeners
+import com.project.neardoc.utils.SnackbarType
 import com.project.neardoc.utils.validators.EmailValidator
 import com.project.neardoc.utils.validators.PasswordValidator
 import com.project.neardoc.view.widgets.GlobalLoadingBar
@@ -53,16 +56,19 @@ import com.project.neardoc.viewmodel.listeners.ILoginViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class Login : Fragment(), Injectable, ILoginViewModel{
+class Login : Fragment(), Injectable, ILoginViewModel, ISnackBarListeners{
 
     companion object {
         @JvmStatic private val GOOGLE_SIGN_IN_CODE: Int = 0
+        @JvmStatic private val MESSAGE_TYPE_LIST: MutableList<SnackbarType> = arrayListOf()
     }
     private var connectionSettings: ConnectionSettings?= null
     private var emailValidator: EmailValidator?= null
     private var passwordValidator: PasswordValidator?= null
     private var email: String = ""
     private val compositeDisposable = CompositeDisposable()
+    @Inject
+    lateinit var iNearDockMessageViewer: INearDockMessageViewer
     @Inject
     lateinit var googleSignInClient: GoogleSignInClient
     @Inject
@@ -94,6 +100,7 @@ class Login : Fragment(), Injectable, ILoginViewModel{
         performNavigateActions()
         onBackPressed()
         this.loginViewModel.setLoginViewModelListener(this)
+        this.iNearDockMessageViewer.registerSnackBarListener(this)
         observerEmailVerificationEvent()
         registerInputValidators()
     }
@@ -112,8 +119,9 @@ class Login : Fragment(), Injectable, ILoginViewModel{
             })
     }
     private fun emailInboxSnackBar(message: String) {
-        val snackbar: Snackbar = Snackbar.make(view!!, message, Snackbar.LENGTH_INDEFINITE)
-        snackbarOnTop(snackbar, SnackbarType.OPEN_INBOX, true)
+        this.mSnackBar = Snackbar.make(view!!, message, Snackbar.LENGTH_INDEFINITE)
+        MESSAGE_TYPE_LIST.add(SnackbarType.OPEN_INBOX)
+        this.iNearDockMessageViewer.displayMessage(this.mSnackBar, SnackbarType.OPEN_INBOX, true, message, true)
     }
 
     private fun onBackPressed() {
@@ -160,63 +168,7 @@ class Login : Fragment(), Injectable, ILoginViewModel{
     private fun displayConnectionSetting() {
         this.connectionSettings = ConnectionSettings(activity!!, view!!)
         connectionSettings?.initWifiSetting(false)
-        connectionSettingSnackbar(connectionSettings!!)
-    }
-    private fun connectionSettingSnackbar(connectionSettings: ConnectionSettings) {
-        snackbarOnTop(connectionSettings, SnackbarType.CONNECTION_SETTING, true)
-    }
-    private fun <T> snackbarOnTop(item: T, type: SnackbarType, show: Boolean) {
-        when(type) {
-            SnackbarType.CONNECTION_SETTING -> {
-                if (item is ConnectionSettings) {
-                    val view: View = item.getSnackBar().view
-                    val params: FrameLayout.LayoutParams = view.layoutParams as FrameLayout.LayoutParams
-                    params.gravity = Gravity.TOP
-                    view.layoutParams = params
-                }
-            }
-            SnackbarType.RESEND_EMAIL -> {
-                if (item is Snackbar) {
-                    this.mSnackBar = item
-                    val view: View = item.view
-                    val params: FrameLayout.LayoutParams =
-                        view.layoutParams as FrameLayout.LayoutParams
-                    params.gravity = Gravity.TOP
-                    view.setBackgroundColor(
-                        ContextCompat.getColor(
-                            activity!!,
-                            R.color.blue_gray_800
-                        )
-                    )
-                    this.mSnackBar?.show()
-                    this.mSnackBar?.setAction(R.string.email_resend) {
-                        run {
-                            this.loginViewModel.resendEmailEmailVerification(activity)
-                            this.mSnackBar?.dismiss()
-                        }
-                    }
-                }
-            }
-            SnackbarType.OPEN_INBOX -> {
-                if (item is Snackbar) {
-                    this.mSnackBar = item
-                    if (show) {
-                        val view: View = item.view
-                        val params: FrameLayout.LayoutParams = view.layoutParams as FrameLayout.LayoutParams
-                        params.gravity = Gravity.TOP
-                        view.setBackgroundColor(ContextCompat.getColor(activity!!, R.color.blue_gray_800))
-                        this.mSnackBar?.show()
-                        this.mSnackBar?.setAction(R.string.email_inbox) {
-                            run {
-                                openEmailInbox(item)
-                            }
-                        }
-                    } else {
-                        this.mSnackBar?.dismiss()
-                    }
-                }
-            }
-        }
+        this.iNearDockMessageViewer.displayMessage(connectionSettings, SnackbarType.CONNECTION_SETTING, true, "", true)
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
@@ -231,9 +183,7 @@ class Login : Fragment(), Injectable, ILoginViewModel{
             this.isInternetAvailable = false
         }
         if (this.isInternetAvailable) {
-            if (this.connectionSettings != null && this.connectionSettings?.getSnackBar() != null) {
-                this.connectionSettings?.getSnackBar()!!.dismiss()
-            }
+            this.iNearDockMessageViewer.dismiss(this.connectionSettings, SnackbarType.CONNECTION_SETTING)
         }
     }
 
@@ -287,30 +237,29 @@ class Login : Fragment(), Injectable, ILoginViewModel{
             if (isLoginSuccess) {
                 val openHomePage = findNavController()
                 openHomePage.navigate(R.id.homePage)
-                if (this.mSnackBar != null) {
-                    this.mSnackBar?.dismiss()
-                }
+                this.iNearDockMessageViewer.batchDismiss(this.mSnackBar, MESSAGE_TYPE_LIST)
             }
         })
         this.loginViewModel.getIsEmailVerificationRequireLiveData().observe(this, Observer { isRequried ->
-            val snackbar: Snackbar = Snackbar.make(view!!, R.string.email_not_verified, Snackbar.LENGTH_INDEFINITE)
-            if (isRequried) {
-                snackbarOnTop(snackbar, SnackbarType.RESEND_EMAIL, true)
-            } else {
-                snackbarOnTop(snackbar, SnackbarType.RESEND_EMAIL, false)
-            }
+            val message: String = resources.getString(R.string.email_not_verified)
+            displayEmailResendMessage(message, isRequried)
         })
         this.loginViewModel.getErrorMessageLiveData().observe(this, Observer {errorMessage ->
             if (errorMessage == "The password is invalid or the user does not have a password.") {
                 val snackbar: Snackbar = Snackbar.make(view!!, R.string.login_invalid_password, Snackbar.LENGTH_LONG)
-                snackbar.view.setBackgroundColor(ContextCompat.getColor(activity!!, R.color.blue_gray_800))
-                snackbar.show()
+                this.iNearDockMessageViewer.displayMessage(snackbar, SnackbarType.INVALID_PASSWORD, true, "", false)
             } else if (errorMessage == "There is no user record corresponding to this identifier. The user may have been deleted.") {
                 val snackbar: Snackbar = Snackbar.make(view!!, R.string.email_not_found, Snackbar.LENGTH_LONG)
-                snackbar.view.setBackgroundColor(ContextCompat.getColor(activity!!, R.color.blue_gray_800))
-                snackbar.show()
+                this.iNearDockMessageViewer.displayMessage(snackbar, SnackbarType.EMAIL_NOT_FOUND, true, "", false)
             }
         })
+    }
+    private fun displayEmailResendMessage(message: String, isRequired: Boolean) {
+        this.mSnackBar = Snackbar.make(view!!, message, Snackbar.LENGTH_INDEFINITE)
+        if (isRequired) {
+            MESSAGE_TYPE_LIST.add(SnackbarType.RESEND_EMAIL)
+            this.iNearDockMessageViewer.displayMessage(this.mSnackBar, SnackbarType.RESEND_EMAIL, true, message, true)
+        }
     }
 
     override fun onEmailVerificationSent() {
@@ -327,15 +276,15 @@ class Login : Fragment(), Injectable, ILoginViewModel{
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
-        if (this.mSnackBar != null) {
-            this.mSnackBar?.dismiss()
-        }
+        this.iNearDockMessageViewer.batchDismiss(this.mSnackBar, MESSAGE_TYPE_LIST)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         this.compositeDisposable.clear()
         this.loginViewModel.removeLoginViewModelListener(this)
+        this.iNearDockMessageViewer.unRegisterSnackBarListener(this)
+        MESSAGE_TYPE_LIST.clear()
     }
     private fun displayLoading(isLoading: Boolean) {
         val globalLoadingBar = GlobalLoadingBar(activity!!, fragment_login_progress_bar_id)
@@ -345,9 +294,12 @@ class Login : Fragment(), Injectable, ILoginViewModel{
             globalLoadingBar.setVisibility(false)
         }
     }
-    private enum class SnackbarType {
-        OPEN_INBOX,
-        CONNECTION_SETTING,
-        RESEND_EMAIL
+    override fun onResendEmailVerification() {
+       this.loginViewModel.resendEmailEmailVerification(activity)
+    }
+
+    override fun onOpenEmailInbox(snackbar: Snackbar) {
+        this.mSnackBar = snackbar
+        openEmailInbox(this.mSnackBar!!)
     }
 }
