@@ -6,8 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 
 import com.project.neardoc.R
@@ -20,7 +21,6 @@ import com.project.neardoc.utils.validators.PasswordValidator
 import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.UpdatePasswordViewModel
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.fragment_update_email.*
 import kotlinx.android.synthetic.main.fragment_update_password.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -79,13 +79,16 @@ class UpdatePassword : Fragment(), Injectable {
         }
     }
     private fun observeUpdateStatus() {
-        this.updatePasswordViewModel.getLoadingLiveData().observe(this, Observer {isLoading ->
+       this.updatePasswordViewModel.getLoadingLiveData().observe(this, loadingObserver())
+    }
+    private fun loadingObserver(): Observer<Boolean> {
+        return Observer { isLoading ->
             if (isLoading) {
                 displayLoading(true)
             } else {
                 displayLoading(false)
             }
-        })
+        }
     }
     private fun displayLoading(isLoading: Boolean) {
         val globalLoadingBar = GlobalLoadingBar(activity!!, fragment_update_password_loading_bar_id)
@@ -133,5 +136,19 @@ class UpdatePassword : Fragment(), Injectable {
     override fun onDestroy() {
         super.onDestroy()
         EventBus.getDefault().postSticky(LandInSettingPageEvent(false, PageType.SIGN_IN_SECURITY))
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        this.updatePasswordViewModel.getLoadingLiveData().removeObserver(loadingObserver())
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        this.updatePasswordViewModel.getLoadingLiveData().reObserve(this, loadingObserver())
+    }
+    fun <T> LiveData<T>.reObserve(owner: LifecycleOwner, observer: Observer<T>) {
+        removeObserver(observer)
+        observe(owner, observer)
     }
 }
