@@ -36,4 +36,8 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(UpdateEmailViewModel::class)
     internal abstract fun provideUpdateEmailViewModel(updateEmailViewModel: UpdateEmailViewModel): ViewModel
+    @Binds
+    @IntoMap
+    @ViewModelKey(UpdatePasswordViewModel::class)
+    internal abstract fun provideUpdatePasswordViewModel(updatePasswordViewModel: UpdatePasswordViewModel): ViewModel
 }

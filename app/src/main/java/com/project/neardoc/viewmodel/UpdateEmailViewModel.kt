@@ -34,7 +34,7 @@ class UpdateEmailViewModel @Inject constructor(): ViewModel() {
     lateinit var iSharedPreferences: ISharedPrefService
     @Inject
     lateinit var iRxAuthentication: IRxAuthentication
-
+    private var workerLiveData: LiveData<WorkInfo>?= null
 
     fun processUpdateEmailRequest(
         activity: FragmentActivity,
@@ -57,27 +57,30 @@ class UpdateEmailViewModel @Inject constructor(): ViewModel() {
         val workerManager: WorkManager = WorkManager.getInstance(this.context)
         workerManager.beginWith(request).enqueue()
 
-        workerManager.getWorkInfoByIdLiveData(request.id)
-            .observe(activity, Observer {
-                if (it?.state == null) {
-                    return@Observer
-                } else {
-                    when (it.state) {
-                        WorkInfo.State.SUCCEEDED -> {
-                            this.isLoadingLiveData.value = false
-                            this.isErrorLiveData.value = false
-                            this.updateEmailListener?.onSuccess()
-                        }
-                        WorkInfo.State.FAILED -> {
-                            this.isLoadingLiveData.value = false
-                            this.isErrorLiveData.value = true
-                            this.updateEmailListener?.onFailed()
-                        }
-                        else ->
-                            return@Observer
+        this.workerLiveData = workerManager.getWorkInfoByIdLiveData(request.id)
+        this.workerLiveData?.observe(activity, workerObserver())
+    }
+    private fun workerObserver(): Observer<WorkInfo> {
+        return Observer {
+            if (it?.state == null) {
+                return@Observer
+            } else {
+                when (it.state) {
+                    WorkInfo.State.SUCCEEDED -> {
+                        this.isLoadingLiveData.value = false
+                        this.isErrorLiveData.value = false
+                        this.updateEmailListener?.onSuccess()
                     }
+                    WorkInfo.State.FAILED -> {
+                        this.isLoadingLiveData.value = false
+                        this.isErrorLiveData.value = true
+                        this.updateEmailListener?.onFailed()
+                    }
+                    else ->
+                        return@Observer
                 }
-            })
+            }
+        }
     }
     fun setUpdateEmailListener(emailListener: UpdateEmailListener) {
         this.updateEmailListener = emailListener;
@@ -85,6 +88,9 @@ class UpdateEmailViewModel @Inject constructor(): ViewModel() {
     override fun onCleared() {
         super.onCleared()
         this.compositeDisposable.clear()
+        if (this.workerLiveData != null) {
+            this.workerLiveData?.removeObserver(workerObserver())
+        }
     }
 
     fun getLoadingLiveData(): LiveData<Boolean> {
