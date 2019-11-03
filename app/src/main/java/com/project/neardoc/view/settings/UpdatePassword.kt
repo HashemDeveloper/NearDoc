@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
@@ -23,7 +24,8 @@ import javax.inject.Inject
 class UpdatePassword : Fragment(), Injectable {
     @Inject
     lateinit var iNearDockMessageViewer: INearDockMessageViewer
-    private var passwordValidator:PasswordValidator?= null
+    private var currentPassValidator:PasswordValidator?= null
+    private var newPassValidator:PasswordValidator?= null
     private var isInternetAvailable = false
     private var connectionSettings:ConnectionSettings?= null
 
@@ -43,14 +45,25 @@ class UpdatePassword : Fragment(), Injectable {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupClickListeners()
+        this.currentPassValidator = PasswordValidator(fragment_update_password_current_pass_input_layout_id)
+        this.newPassValidator = PasswordValidator(fragment_update_password_new_pass_input_layout_id)
     }
     private fun setupClickListeners() {
         fragment_update_password_update_bt_id.setOnClickListener {
             if (this.isInternetAvailable) {
-
+                processPasswordUpdate()
             } else {
                 displayConnectionSetting()
             }
+        }
+    }
+    private fun processPasswordUpdate() {
+        val currentPassword: String = fragment_update_password_current_pass_edit_text_id.text.toString()
+        val newPassword: String = fragment_update_password_new_pass_edit_text_id.text.toString()
+        val isValidCurrentPass: Boolean = this.currentPassValidator?.getIsValidated(currentPassword)!!
+        val isValidNewPass: Boolean = this.newPassValidator?.getIsValidated(newPassword)!!
+        if (isValidCurrentPass && isValidNewPass) {
+            Toast.makeText(context, "Good To Go!", Toast.LENGTH_SHORT).show()
         }
     }
     private fun displayConnectionSetting() {
