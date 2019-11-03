@@ -11,13 +11,17 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
+import com.project.neardoc.events.BottomBarEvent
 import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.events.NetworkStateEvent
+import com.project.neardoc.events.UserStateEvent
 import com.project.neardoc.utils.*
 import com.project.neardoc.utils.validators.PasswordValidator
 import com.project.neardoc.view.widgets.GlobalLoadingBar
@@ -29,7 +33,8 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
-class UpdatePassword : Fragment(), Injectable {
+class UpdatePassword : Fragment(), Injectable, IUpdatePassSnackBarListener {
+
     @Inject
     lateinit var iNearDockMessageViewer: INearDockMessageViewer
     @Inject
@@ -57,6 +62,7 @@ class UpdatePassword : Fragment(), Injectable {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        this.iNearDockMessageViewer.registerUpdatePassSnackBarListener(this)
         setupClickListeners()
         this.currentPassValidator =
             PasswordValidator(fragment_update_password_current_pass_input_layout_id)
@@ -99,6 +105,9 @@ class UpdatePassword : Fragment(), Injectable {
                     this.iNearDockMessageViewer.displayMessage(snackbar, SnackbarType.INVALID_PASSWORD, true, "", true)
                 } else if (status == this.context?.resources!!.getString(R.string.password_updated)) {
                     Toast.makeText(this.context, this.context?.resources!!.getString(R.string.password_updated), Toast.LENGTH_SHORT).show()
+                } else if (status == "There is no user record corresponding to this identifier. The user may have been deleted.") {
+                    val snackbar: Snackbar = Snackbar.make(view!!, R.string.sign_in_again, Snackbar.LENGTH_INDEFINITE)
+                    this.iNearDockMessageViewer.displayMessage(snackbar, SnackbarType.SIGN_IN_AGAIN, true, "", true)
                 }
             }
         }
@@ -186,5 +195,11 @@ class UpdatePassword : Fragment(), Injectable {
     fun <T> LiveData<T>.reObserve(owner: LifecycleOwner, observer: Observer<T>) {
         removeObserver(observer)
         observe(owner, observer)
+    }
+
+    override fun signIn() {
+        this.updatePasswordViewModel.signOut()
+        val navigateToWelcome = findNavController()
+        navigateToWelcome.navigate(R.id.welcome)
     }
 }

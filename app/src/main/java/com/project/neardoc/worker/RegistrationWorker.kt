@@ -31,15 +31,17 @@ class RegistrationWorker @Inject constructor(context: Context, workerParameters:
         this.compositeDisposable.add(this.iNearDocRemoteRepo.storeUsername(displayName, dbKey, usernameModel)
             .subscribeOn(Schedulers.io())
             .subscribe({username ->
-                val users = Users(fullName, displayName, email, "", false, Constants.SIGN_IN_PROVIDER_FIREBASE)
-                this.compositeDisposable.add(this.iNearDocRemoteRepo.storeUsersInfo(encodedEmail, dbKey, users)
-                    .subscribeOn(Schedulers.io())
-                    .subscribe({userRes ->
-                    }, {onUserErr ->
-                        Log.i("OnUserErr: ", onUserErr.localizedMessage!!)
-                    }))
+                Log.i("UsernameSaved: ", username.username)
             }, {onUsernameErr ->
                 Log.i("OnUsernameErr: ", onUsernameErr.localizedMessage!!)
+            }))
+        val users = Users(fullName, displayName, email, "", false, Constants.SIGN_IN_PROVIDER_FIREBASE)
+        this.compositeDisposable.add(this.iNearDocRemoteRepo.storeUsersInfo(encodedEmail, dbKey, users)
+            .subscribeOn(Schedulers.io())
+            .subscribe({userRes ->
+                Log.i("UserRes: ", userRes.email)
+            }, {onUserErr ->
+                Log.i("OnUserErr: ", onUserErr.localizedMessage!!)
             }))
         return Result.success()
     }

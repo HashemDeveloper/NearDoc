@@ -12,8 +12,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.project.neardoc.data.local.ISharedPrefService
-import com.project.neardoc.events.NetworkStateEvent
-import com.project.neardoc.events.UserStateEvent
 import com.project.neardoc.rxeventbus.IRxEventBus
 import com.project.neardoc.utils.*
 import dagger.android.AndroidInjector
@@ -26,8 +24,7 @@ import android.view.WindowManager
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseUser
-import com.project.neardoc.events.LandInSettingPageEvent
-import com.project.neardoc.events.LoginInfoUpdatedEvent
+import com.project.neardoc.events.*
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
@@ -282,7 +279,12 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
         this.iSharedPrefService.unregisterSharedPrefListener(this)
         EventBus.getDefault().unregister(this)
     }
-
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun onBottomBarEvent(event: BottomBarEvent) {
+        if (!event.getIsBottomBarEnabled()) {
+            enableBottomBar(false)
+        }
+    }
     @Subscribe(threadMode = ThreadMode.ASYNC)
     fun onLoginInfoUpdatedEvent(event: LoginInfoUpdatedEvent) {
         if (event.getIsLoginInfoUpdated()) {

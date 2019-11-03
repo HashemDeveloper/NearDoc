@@ -5,5 +5,6 @@ enum class SnackbarType {
     CONNECTION_SETTING,
     RESEND_EMAIL,
     INVALID_PASSWORD,
-    EMAIL_NOT_FOUND
+    EMAIL_NOT_FOUND,
+    SIGN_IN_AGAIN
 }

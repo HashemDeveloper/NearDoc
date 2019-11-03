@@ -1,6 +1,7 @@
 package com.project.neardoc.viewmodel
 
 import android.content.Context
+import android.os.Handler
 import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
@@ -11,10 +12,16 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import com.google.firebase.auth.FirebaseAuth
 import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
+import com.project.neardoc.events.BottomBarEvent
+import com.project.neardoc.events.LandInSettingPageEvent
+import com.project.neardoc.events.UserStateEvent
 import com.project.neardoc.utils.Constants
+import com.project.neardoc.utils.PageType
 import com.project.neardoc.worker.UpdatePasswordWorker
+import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 class UpdatePasswordViewModel @Inject constructor(): ViewModel() {
@@ -88,5 +95,12 @@ class UpdatePasswordViewModel @Inject constructor(): ViewModel() {
         if (this.workerLiveData != null) {
             this.workerLiveData?.removeObserver(workerObserver())
         }
+    }
+
+    fun signOut() {
+        FirebaseAuth.getInstance().signOut()
+        EventBus.getDefault().postSticky(UserStateEvent(false))
+        EventBus.getDefault().postSticky(LandInSettingPageEvent(false, PageType.MAIN_PAGE))
+        EventBus.getDefault().postSticky(BottomBarEvent(false))
     }
 }
