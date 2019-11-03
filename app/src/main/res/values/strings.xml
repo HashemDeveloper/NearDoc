@@ -73,4 +73,7 @@
     <string name="update_email_failed">Failed to update email. Please try again.</string>
     <string name="password_updated">Password is updated successfully.</string>
     <string name="sign_in_again">You have updated your email recently. Please sign in again</string>
+    <string name="too_many_login_attempt">Too many unsuccessful login attempts. Please try again later.</string>
+    <string name="multiple_login_error_message_long">We have blocked all requests from this device due to unusual activity. Try again later. [ Too many unsuccessful login attempts.  Please include reCaptcha verification or try again later ]</string>
+
 </resources>

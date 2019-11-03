@@ -108,6 +108,9 @@ class UpdatePassword : Fragment(), Injectable, IUpdatePassSnackBarListener {
                 } else if (status == "There is no user record corresponding to this identifier. The user may have been deleted.") {
                     val snackbar: Snackbar = Snackbar.make(view!!, R.string.sign_in_again, Snackbar.LENGTH_INDEFINITE)
                     this.iNearDockMessageViewer.displayMessage(snackbar, SnackbarType.SIGN_IN_AGAIN, true, "", true)
+                } else if (status == "We have blocked all requests from this device due to unusual activity. Try again later. [ Too many unsuccessful login attempts.  Please include reCaptcha verification or try again later ]") {
+                    val snackBar: Snackbar = Snackbar.make(view!!, R.string.too_many_login_attempt, Snackbar.LENGTH_LONG)
+                    this.iNearDockMessageViewer.displayMessage(snackBar, SnackbarType.INVALID_PASSWORD, true, "", true)
                 }
             }
         }
@@ -185,11 +188,13 @@ class UpdatePassword : Fragment(), Injectable, IUpdatePassSnackBarListener {
     override fun onDestroyView() {
         super.onDestroyView()
         this.updatePasswordViewModel.getLoadingLiveData().removeObserver(loadingObserver())
+        this.updatePasswordViewModel.getStatusMessageLiveData().removeObserver(statusObserver())
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        this.updatePasswordViewModel.getLoadingLiveData().reObserve(this, loadingObserver())
+//        this.updatePasswordViewModel.getLoadingLiveData().reObserve(this, loadingObserver())
+//        this.updatePasswordViewModel.getStatusMessageLiveData().reObserve(this, statusObserver())
     }
 
     fun <T> LiveData<T>.reObserve(owner: LifecycleOwner, observer: Observer<T>) {
