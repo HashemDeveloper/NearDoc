@@ -10,22 +10,26 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import com.google.firebase.auth.FirebaseAuth
 import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
+import com.project.neardoc.events.BottomBarEvent
+import com.project.neardoc.events.LandInSettingPageEvent
+import com.project.neardoc.events.UserStateEvent
 import com.project.neardoc.rxauth.IRxAuthentication
 import com.project.neardoc.utils.Constants
-import com.project.neardoc.viewmodel.listeners.UpdateEmailListener
+import com.project.neardoc.utils.PageType
 import com.project.neardoc.worker.UpdateEmailWorker
 import io.reactivex.disposables.CompositeDisposable
+import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 class UpdateEmailViewModel @Inject constructor(): ViewModel() {
 
-    private var updateEmailListener: UpdateEmailListener?= null
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val isLoadingLiveData: MutableLiveData<Boolean> = MutableLiveData()
-    private val isErrorLiveData: MutableLiveData<Boolean> = MutableLiveData()
+    private val statusMessageLiveData: MutableLiveData<String> = MutableLiveData()
     @Inject
     lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
     @Inject
@@ -43,7 +47,6 @@ class UpdateEmailViewModel @Inject constructor(): ViewModel() {
         password: String
     ) {
         this.isLoadingLiveData.value = true
-        this.updateEmailListener?.onProcess()
         val key: String = this.context.resources!!.getString(R.string.firebase_web_key)
         val keyData: Data = Data.Builder()
             .putString(Constants.WORKER_WEB_KEY, key)
@@ -68,13 +71,18 @@ class UpdateEmailViewModel @Inject constructor(): ViewModel() {
                 when (it.state) {
                     WorkInfo.State.SUCCEEDED -> {
                         this.isLoadingLiveData.value = false
-                        this.isErrorLiveData.value = false
-                        this.updateEmailListener?.onSuccess()
+                        val message: String = this.context.resources.getString(R.string.email_update_success)
+                        this.statusMessageLiveData.value = message
                     }
                     WorkInfo.State.FAILED -> {
-                        this.isLoadingLiveData.value = false
-                        this.isErrorLiveData.value = true
-                        this.updateEmailListener?.onFailed()
+                        val errorData: Data? = it.outputData
+                        if (errorData != null) {
+                            val errorMessage: String = errorData.getString(Constants.WORKER_ERROR_DATA)!!
+                            if (errorMessage.isNotEmpty()) {
+                                this.isLoadingLiveData.value = false
+                                this.statusMessageLiveData.value = errorMessage
+                            }
+                        }
                     }
                     else ->
                         return@Observer
@@ -82,9 +90,7 @@ class UpdateEmailViewModel @Inject constructor(): ViewModel() {
             }
         }
     }
-    fun setUpdateEmailListener(emailListener: UpdateEmailListener) {
-        this.updateEmailListener = emailListener;
-    }
+
     override fun onCleared() {
         super.onCleared()
         this.compositeDisposable.clear()
@@ -97,7 +103,14 @@ class UpdateEmailViewModel @Inject constructor(): ViewModel() {
         return this.isLoadingLiveData
     }
 
-    fun getErrorLiveData(): LiveData<Boolean> {
-        return this.isErrorLiveData
+    fun getStatusMessageLiveData(): LiveData<String> {
+        return this.statusMessageLiveData
+    }
+
+    fun signOut() {
+        FirebaseAuth.getInstance().signOut()
+        EventBus.getDefault().postSticky(UserStateEvent(false))
+        EventBus.getDefault().postSticky(LandInSettingPageEvent(false, PageType.MAIN_PAGE))
+        EventBus.getDefault().postSticky(BottomBarEvent(false))
     }
 }
