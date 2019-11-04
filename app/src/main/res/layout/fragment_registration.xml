@@ -48,15 +48,14 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginEnd="16dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                app:startIconDrawable="@drawable/ic_user_black_24dp"
                 >
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/fragment_register_full_name_edit_text_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColorHint="@color/blue_gray_800"
-                    android:drawableLeft="@drawable/ic_user_black_24dp"
-                    android:drawableStart="@drawable/ic_user_black_24dp"
-                    android:drawablePadding="8dp"
                     android:textColor="@color/blue_gray_800"
                     android:inputType="text"
                     android:maxLines="1"
@@ -75,14 +74,13 @@
                 app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
                 android:hint="@string/username"
                 android:textColorHint="@color/blue_gray_800"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                app:startIconDrawable="@drawable/ic_user_black_24dp"
                 >
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/fragment_register_username_edit_text_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_user_black_24dp"
-                    android:drawableStart="@drawable/ic_user_black_24dp"
-                    android:drawablePadding="8dp"
                     android:textColor="@color/blue_gray_800"
                     android:inputType="text"
                     android:maxLines="1"
@@ -102,6 +100,8 @@
                 android:layout_marginEnd="16dp"
                 android:layout_below="@+id/fragment_register_username_input_layout_id"
                 android:hint="@string/email"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                app:startIconDrawable="@drawable/ic_email_black_24dp"
                 >
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/fragment_register_email_edit_text_id"
@@ -112,9 +112,6 @@
                     android:maxLines="1"
                     android:imeOptions="actionNext"
                     android:textColorHint="@color/blue_gray_800"
-                    android:drawableLeft="@drawable/ic_email_black_24dp"
-                    android:drawableStart="@drawable/ic_email_black_24dp"
-                    android:drawablePadding="8dp"
                     />
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
@@ -131,6 +128,8 @@
                 android:hint="@string/password"
                 app:passwordToggleEnabled="true"
                 app:passwordToggleTint="@color/blue_gray_600"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                app:startIconDrawable="@drawable/ic_password_black_24dp"
                 >
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/fragment_register_password_edit_text_id"
@@ -139,9 +138,6 @@
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:imeOptions="actionDone"
-                    android:drawableLeft="@drawable/ic_password_black_24dp"
-                    android:drawableStart="@drawable/ic_password_black_24dp"
-                    android:drawablePadding="8dp"
                     android:textColorHint="@color/blue_gray_800"
                     android:textColor="@color/blue_gray_800"
                     />

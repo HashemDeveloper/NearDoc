@@ -107,17 +107,20 @@ class UpdateEmail : Fragment(), Injectable, IUpdatePassSnackBarListener{
     private fun statusObserver(): Observer<String> {
         return Observer { status ->
             if (status.isNotEmpty()) {
-                if (status == resources.getString(R.string.email_update_success)) {
-                    Toast.makeText(activity!!, status, Toast.LENGTH_SHORT).show()
-                } else if (status == "There is no user record corresponding to this identifier. The user may have been deleted.") {
-                    val snackBar: Snackbar = Snackbar.make(view!!, R.string.sign_in_again, Snackbar.LENGTH_INDEFINITE)
-                    this.iNearDockMessageViewer.displayMessage(snackBar, SnackbarType.SIGN_IN_AGAIN, true, "", true)
-                } else if (status == "The password is invalid or the user does not have a password.") {
-                    val snackbar: Snackbar = Snackbar.make(view!!, R.string.login_invalid_password, Snackbar.LENGTH_LONG)
-                    this.iNearDockMessageViewer.displayMessage(snackbar, SnackbarType.INVALID_PASSWORD, true, "", true)
-                } else if (status == "We have blocked all requests from this device due to unusual activity. Try again later. [ Too many unsuccessful login attempts.  Please include reCaptcha verification or try again later ]") {
-                    val snackBar: Snackbar = Snackbar.make(view!!, R.string.too_many_login_attempt, Snackbar.LENGTH_LONG)
-                    this.iNearDockMessageViewer.displayMessage(snackBar, SnackbarType.INVALID_PASSWORD, true, "", true)
+                when (status) {
+                    resources.getString(R.string.email_update_success) -> Toast.makeText(activity!!, status, Toast.LENGTH_SHORT).show()
+                    "There is no user record corresponding to this identifier. The user may have been deleted." -> {
+                        val snackBar: Snackbar = Snackbar.make(view!!, R.string.sign_in_again, Snackbar.LENGTH_INDEFINITE)
+                        this.iNearDockMessageViewer.displayMessage(snackBar, SnackbarType.SIGN_IN_AGAIN, true, "", true)
+                    }
+                    "The password is invalid or the user does not have a password." -> {
+                        val snackbar: Snackbar = Snackbar.make(view!!, R.string.login_invalid_password, Snackbar.LENGTH_LONG)
+                        this.iNearDockMessageViewer.displayMessage(snackbar, SnackbarType.INVALID_PASSWORD, true, "", true)
+                    }
+                    "We have blocked all requests from this device due to unusual activity. Try again later. [ Too many unsuccessful login attempts.  Please include reCaptcha verification or try again later ]" -> {
+                        val snackBar: Snackbar = Snackbar.make(view!!, R.string.too_many_login_attempt, Snackbar.LENGTH_LONG)
+                        this.iNearDockMessageViewer.displayMessage(snackBar, SnackbarType.INVALID_PASSWORD, true, "", true)
+                    }
                 }
             }
         }

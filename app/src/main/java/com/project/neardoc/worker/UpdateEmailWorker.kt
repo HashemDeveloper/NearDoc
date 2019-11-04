@@ -20,7 +20,8 @@ import java.lang.Exception
 import java.util.concurrent.CountDownLatch
 import javax.inject.Inject
 
-class UpdateEmailWorker @Inject constructor(context: Context, workerParameters: WorkerParameters): Worker(context, workerParameters) {
+class UpdateEmailWorker @Inject constructor(context: Context, workerParameters: WorkerParameters) :
+    Worker(context, workerParameters) {
     @Inject
     lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
     private val compositeDisposable = CompositeDisposable()
@@ -28,8 +29,8 @@ class UpdateEmailWorker @Inject constructor(context: Context, workerParameters: 
 
     override fun doWork(): Result {
         NearDocWorkerInjection.inject(this)
-        var isSuccess: Boolean?= null
-        var message: String?= ""
+        var isSuccess: Boolean? = null
+        var message: String? = ""
         val outputData: Data?
         try {
             val key: String = inputData.getString(Constants.WORKER_WEB_KEY)!!
@@ -43,38 +44,41 @@ class UpdateEmailWorker @Inject constructor(context: Context, workerParameters: 
             val user: FirebaseUser = firebaseAuth.currentUser!!
             user.reauthenticate(authCredential).addOnSuccessListener { onSuccess ->
                 user.getIdToken(true).addOnSuccessListener {
-                    this.compositeDisposable.add(this.iNearDocRemoteRepo.updateEmail(
-                        Constants.FIREBASE_AUTH_UPDATE_LOGIN_INFO_END_POINT,
-                        key, it.token!!, newEmail, true
-                    )
-                        .subscribeOn(Schedulers.io())
-                        .subscribe({ updateEmailRes ->
-                            this.compositeDisposable.add(this.iNearDocRemoteRepo.sendEmailVerification(
-                                Constants.FIREBASE_AUTH_EMAIL_VERIFICATION_ENDPOINT,
-                                Constants.FIREBASE_EMAIL_VERFICATION_REQUEST_TYPE,
-                                updateEmailRes.idToken,
-                                key
-                            )
-                                .subscribeOn(Schedulers.io())
-                                .subscribe({ emailSentRes ->
-                                    isSuccess = true
-                                    this.countDownLatch.countDown()
-                                    Log.i("Sent: ", emailSentRes.email)
-                                }, { onSentError ->
-                                    isSuccess = false
-                                    message = onSentError.localizedMessage!!
-                                    this.countDownLatch.countDown()
-                                    Log.i(
-                                        "FailedToSendEmail: ",
-                                        onSentError.localizedMessage!!)
-                                })
-                            )
-                        }, { onError ->
-                            isSuccess = false
-                            message = onError.localizedMessage!!
-                            this.countDownLatch.countDown()
-                            Log.i("EmailUpdateError: ", onError.localizedMessage!!)
-                        })
+                    this.compositeDisposable.add(
+                        this.iNearDocRemoteRepo.updateEmail(
+                            Constants.FIREBASE_AUTH_UPDATE_LOGIN_INFO_END_POINT,
+                            key, it.token!!, newEmail, true
+                        )
+                            .subscribeOn(Schedulers.io())
+                            .subscribe({ updateEmailRes ->
+                                this.compositeDisposable.add(
+                                    this.iNearDocRemoteRepo.sendEmailVerification(
+                                        Constants.FIREBASE_AUTH_EMAIL_VERIFICATION_ENDPOINT,
+                                        Constants.FIREBASE_EMAIL_VERFICATION_REQUEST_TYPE,
+                                        updateEmailRes.idToken,
+                                        key
+                                    )
+                                        .subscribeOn(Schedulers.io())
+                                        .subscribe({ emailSentRes ->
+                                            isSuccess = true
+                                            this.countDownLatch.countDown()
+                                            Log.i("Sent: ", emailSentRes.email)
+                                        }, { onSentError ->
+                                            isSuccess = false
+                                            message = onSentError.localizedMessage!!
+                                            this.countDownLatch.countDown()
+                                            Log.i(
+                                                "FailedToSendEmail: ",
+                                                onSentError.localizedMessage!!
+                                            )
+                                        })
+                                )
+                            }, { onError ->
+                                isSuccess = false
+                                message = onError.localizedMessage!!
+                                this.countDownLatch.countDown()
+                                Log.i("EmailUpdateError: ", onError.localizedMessage!!)
+                            })
                     )
                 }.addOnFailureListener {
                     isSuccess = false
@@ -105,10 +109,12 @@ class UpdateEmailWorker @Inject constructor(context: Context, workerParameters: 
             return Result.failure()
         }
     }
+
     override fun onStopped() {
         super.onStopped()
         this.compositeDisposable.clear()
     }
+
     private fun createErrorData(errorMessage: String): Data {
         return Data.Builder()
             .putString(Constants.WORKER_ERROR_DATA, errorMessage)
