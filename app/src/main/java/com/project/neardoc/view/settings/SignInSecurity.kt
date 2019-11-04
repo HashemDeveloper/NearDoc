@@ -1,6 +1,7 @@
 package com.project.neardoc.view.settings
 
 
+import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
@@ -79,7 +81,13 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
                 }
             }
             is ManageAccountModel -> {
-                Toast.makeText(context, "Email: " + items.deleteEmail, Toast.LENGTH_SHORT).show()
+                val alertDialog = MaterialAlertDialogBuilder(this.context)
+                alertDialog.setTitle("Delete Account")
+                alertDialog.setMessage("Are you sure? All your information will be deleted!")
+                alertDialog.setPositiveButton("OK") { onClick, i ->
+                    Toast.makeText(this.context, "Deleted", Toast.LENGTH_SHORT).show()
+                }
+                alertDialog.show()
             }
         }
     }

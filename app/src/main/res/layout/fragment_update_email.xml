@@ -23,19 +23,18 @@
                 android:hint="@string/email"
                 android:textColorHint="@color/blue_gray_400"
                 app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
+                app:startIconDrawable="@drawable/ic_email_black_24dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 >
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/fragment_update_email_edit_text_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_email_black_24dp"
-                    android:drawablePadding="8dp"
                     android:textColor="@color/blue_gray_400"
                     android:textColorHint="@color/blue_gray_400"
                     android:inputType="text"
                     android:maxLines="1"
-                    android:imeOptions="actionDone"
-                    android:drawableLeft="@drawable/ic_email_black_24dp" />
+                    android:imeOptions="actionDone"/>
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/fragment_update_email_current_password_input_layout"
@@ -47,19 +46,18 @@
                 app:passwordToggleEnabled="true"
                 android:textColorHint="@color/blue_gray_400"
                 app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
+                app:startIconDrawable="@drawable/ic_password_black_24dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 >
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/fragment_update_email_current_password_edit_text_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
-                    android:drawableStart="@drawable/ic_password_black_24dp"
-                    android:drawablePadding="8dp"
                     android:maxLines="1"
                     android:imeOptions="actionDone"
                     android:textColor="@color/blue_gray_400"
-                    android:textColorHint="@color/blue_gray_400"
-                    android:drawableLeft="@drawable/ic_password_black_24dp" />
+                    android:textColorHint="@color/blue_gray_400"/>
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/fragment_update_email_update_bt_id"

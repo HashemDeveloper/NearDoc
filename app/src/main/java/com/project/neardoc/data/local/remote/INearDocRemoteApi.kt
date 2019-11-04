@@ -87,4 +87,7 @@ interface INearDocRemoteApi {
     @Headers("Content-Type: application/json")
     @POST
     fun getFirebaseUserData(@Url url: String, @Query("key") key: String, @Query("idToken") idToken: String): Observable<CurrentUserRes>
+    @Headers("Content-Type: application/json")
+    @POST
+    fun deleteUserAccount(@Url url: String, @Query("key") webApiKey: String, @Query("idToken") idToken: String): Observable<Void>
 }

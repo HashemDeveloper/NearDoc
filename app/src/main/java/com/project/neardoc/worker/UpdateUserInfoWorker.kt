@@ -30,7 +30,7 @@ class UpdateUserInfoWorker @Inject constructor(context: Context, workerParameter
         val fullName: String = inputData.getString(Constants.WORKER_FULL_NAME)!!
         val user = Users(fullName, username, newEmail, userImage, true, Constants.SIGN_IN_PROVIDER_FIREBASE)
 
-        this.compositeDisposable.add(this.iNearDocRemoteRepo.deleteUser(Constants.encodeUserEmail(oldEmail), dbKey)
+        this.compositeDisposable.add(this.iNearDocRemoteRepo.deleteUserInfoFromFirebaseDb(Constants.encodeUserEmail(oldEmail), dbKey)
             .subscribeOn(Schedulers.io())
             .subscribe({void ->
                 Log.i("OldInfo: ", "Deleted")
