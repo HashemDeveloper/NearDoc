@@ -74,4 +74,6 @@
     <string name="password_updated">Password is updated successfully.</string>
     <string name="too_many_login_attempt">Too many unsuccessful login attempts. Please try again later.</string>
     <string name="multiple_login_error_message_long">We have blocked all requests from this device due to unusual activity. Try again later. [ Too many unsuccessful login attempts.  Please include reCaptcha verification or try again later ]</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="confirm_delete_account">Are you sure? All your information will be deleted!</string>
 </resources>
