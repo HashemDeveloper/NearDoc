@@ -2,10 +2,11 @@ package com.project.neardoc.view.settings
 
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -15,7 +16,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-
 import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.di.Injectable
@@ -34,7 +34,6 @@ import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.SignInSecViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_sign_in_and_security.*
-import kotlinx.android.synthetic.main.fragment_update_email.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -51,6 +50,7 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
     lateinit var iSharedPrefService: ISharedPrefService
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+    private var snackbar: Snackbar?= null
     private val signInSecViewModel: SignInSecViewModel by viewModels {
         this.viewModelFactory
     }
@@ -184,7 +184,6 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
                         if (isValidPass) {
                             processDeleteAccount(email, password)
                             alertDialog.dismiss()
-                            observeDeleteAccountStatus()
                         }
                     } else {
                         displayConnectionSetting()
@@ -197,11 +196,6 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
         confirmDeleteDialog.show()
     }
 
-    private fun observeDeleteAccountStatus() {
-        this.signInSecViewModel.getLoadingLiveData().observe(activity!!, loadingObserver())
-        this.signInSecViewModel.getErrorMessageData().observe(activity!!, statusMessageObserver())
-    }
-
     private fun statusMessageObserver(): Observer<String> {
         return Observer { message ->
             if (message.isNotEmpty()) {
@@ -211,12 +205,26 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
                         this.iNearDockMessageViewer.displayMessage(snackbar, SnackbarType.INVALID_PASSWORD, true, "", true)
                     }
                     "We have blocked all requests from this device due to unusual activity. Try again later. [ Too many unsuccessful login attempts.  Please include reCaptcha verification or try again later ]" -> {
-                        val snackBar: Snackbar = Snackbar.make(view!!, R.string.too_many_login_attempt, Snackbar.LENGTH_LONG)
-                        this.iNearDockMessageViewer.displayMessage(snackBar, SnackbarType.INVALID_PASSWORD, true, "", true)
+                        this.snackbar = Snackbar.make(view!!, R.string.too_many_login_attempt, Snackbar.LENGTH_LONG)
+                        this.iNearDockMessageViewer.displayMessage(this.snackbar, SnackbarType.INVALID_PASSWORD, true, "", true)
+                    }
+                    resources.getString(R.string.delete_success) -> {
+                        val deleteMessage: String = resources.getString(R.string.delete_success) + " " + "\uD83D\uDE42"
+                        this.snackbar = Snackbar.make(view!!, deleteMessage, Snackbar.LENGTH_LONG)
+                        this.iNearDockMessageViewer.displayMessage(this.snackbar, SnackbarType.INVALID_PASSWORD, true, "", true)
+                        val handler = Handler()
+                        handler.postDelayed({
+                            signOut()
+                        }, 3000)
                     }
                 }
             }
         }
+    }
+    private fun signOut() {
+        this.signInSecViewModel.signOut()
+        val navigateToWelcome = findNavController()
+        navigateToWelcome.navigate(R.id.welcome)
     }
 
     private fun loadingObserver(): Observer<Boolean> {
@@ -230,16 +238,26 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
     }
 
     private fun displayLoading(isLoading: Boolean) {
-        val globalLoadingBar = GlobalLoadingBar(activity!!, fragment_sign_in_security_loading_bar)
-        if (isLoading) {
-            globalLoadingBar.setVisibility(true)
-        } else {
-            globalLoadingBar.setVisibility(false)
+        if (activity != null) {
+            activity!!.runOnUiThread {
+                val globalLoadingBar = GlobalLoadingBar(activity!!, fragment_sign_in_security_loading_bar)
+                if (isLoading) {
+                    globalLoadingBar.setVisibility(true)
+                } else {
+                    globalLoadingBar.setVisibility(false)
+                }
+            }
         }
     }
 
     private fun processDeleteAccount(email: String, password: String) {
         this.signInSecViewModel.deleteAccount(email, password, activity!!)
+        observeDeleteAccountStatus()
+    }
+
+    private fun observeDeleteAccountStatus() {
+        this.signInSecViewModel.getLoadingLiveData().observe(activity!!, loadingObserver())
+        this.signInSecViewModel.getDeleteStatusData().observe(activity!!, statusMessageObserver())
     }
 
     override fun onDestroyView() {
@@ -247,5 +265,6 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
         if (this.connectionSettings != null) {
             this.iNearDockMessageViewer.dismiss(this.connectionSettings, SnackbarType.CONNECTION_SETTING)
         }
+        this.iNearDockMessageViewer.dismiss(this.snackbar, SnackbarType.INVALID_PASSWORD)
     }
 }

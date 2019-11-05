@@ -50,6 +50,7 @@ class DeleteUserInfoWorker @Inject constructor(context: Context, workerParameter
                     }
                     this.countDownLatch.countDown()
                 }))
+
             try {
                 this.countDownLatch.await()
             } catch (interrupEx: InterruptedException) {

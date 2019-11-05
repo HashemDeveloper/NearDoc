@@ -11,11 +11,17 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import com.google.firebase.auth.FirebaseAuth
 import com.project.neardoc.R
+import com.project.neardoc.events.BottomBarEvent
+import com.project.neardoc.events.LandInSettingPageEvent
+import com.project.neardoc.events.UserStateEvent
 import com.project.neardoc.utils.Constants
+import com.project.neardoc.utils.PageType
 import com.project.neardoc.worker.DeleteAccountWorker
 import com.project.neardoc.worker.DeleteUserInfoWorker
 import com.project.neardoc.worker.DeleteUsernameWorker
+import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 class SignInSecViewModel @Inject constructor(): ViewModel() {
@@ -23,7 +29,7 @@ class SignInSecViewModel @Inject constructor(): ViewModel() {
     lateinit var context: Context
     private var deleteAccountLiveData: LiveData<WorkInfo>?= null
     private val isLoadingLiveData: MutableLiveData<Boolean> = MutableLiveData()
-    private val isErrorLiveData: MutableLiveData<String> = MutableLiveData()
+    private val deleteStatusLiveData: MutableLiveData<String> = MutableLiveData()
 
 
     fun deleteAccount(email: String, password: String, activity: FragmentActivity) {
@@ -56,9 +62,9 @@ class SignInSecViewModel @Inject constructor(): ViewModel() {
 
         val workManager: WorkManager = WorkManager.getInstance(this.context)
         workManager
-            .beginWith(deleteUsernameRequest)
+            .beginWith(deleteAccountRequest)
+            .then(deleteUsernameRequest)
             .then(deleteUserInfoRequest)
-            .then(deleteAccountRequest)
             .enqueue()
 
         this.deleteAccountLiveData = workManager.getWorkInfoByIdLiveData(deleteAccountRequest.id)
@@ -73,6 +79,7 @@ class SignInSecViewModel @Inject constructor(): ViewModel() {
                 when(it.state) {
                     WorkInfo.State.SUCCEEDED -> {
                         this.isLoadingLiveData.value = false
+                        this.deleteStatusLiveData.value = this.context.resources.getString(R.string.delete_success)
                     }
                     WorkInfo.State.FAILED -> {
                         this.isLoadingLiveData.value = false
@@ -80,9 +87,10 @@ class SignInSecViewModel @Inject constructor(): ViewModel() {
                         if (errorData != null) {
                             val errorMessage: String = it.outputData.getString(Constants.WORKER_ERROR_DATA)!!
                             if (errorMessage.isNotEmpty()) {
-                                if (errorMessage == "The password is invalid or the user does not have a password.")
-                                Log.i("Error: ", errorMessage)
-                                this.isErrorLiveData.value = errorMessage
+                                if (errorMessage == "The password is invalid or the user does not have a password.") {
+                                    Log.i("Error: ", errorMessage)
+                                    this.deleteStatusLiveData.value = errorMessage
+                                }
                             }
                         }
                     }
@@ -105,7 +113,14 @@ class SignInSecViewModel @Inject constructor(): ViewModel() {
         return this.isLoadingLiveData
     }
 
-    fun getErrorMessageData(): LiveData<String> {
-        return this.isErrorLiveData
+    fun getDeleteStatusData(): LiveData<String> {
+        return this.deleteStatusLiveData
+    }
+
+    fun signOut() {
+        FirebaseAuth.getInstance().signOut()
+        EventBus.getDefault().postSticky(UserStateEvent(false))
+        EventBus.getDefault().postSticky(LandInSettingPageEvent(false, PageType.MAIN_PAGE))
+        EventBus.getDefault().postSticky(BottomBarEvent(false))
     }
 }
