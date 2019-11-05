@@ -14,5 +14,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />
+        <include android:id="@+id/fragment_sign_in_security_loading_bar"
+            layout="@layout/global_progress_bar_layout"
+            android:visibility="gone"
+            />
     </RelativeLayout>
 </layout>
