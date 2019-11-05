@@ -7,10 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
@@ -28,9 +30,11 @@ import com.project.neardoc.utils.*
 import com.project.neardoc.utils.validators.PasswordValidator
 import com.project.neardoc.view.adapters.SignInSecClickListener
 import com.project.neardoc.view.adapters.SignInSecurityAdapter
+import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.SignInSecViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_sign_in_and_security.*
+import kotlinx.android.synthetic.main.fragment_update_email.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -150,11 +154,11 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
             dView.findViewById(R.id.layout_delete_account_pass_input_layout_id)
         this.passwordValidator = PasswordValidator(passwordInputLayout)
         val passwordTextView: TextInputEditText =
-            dView.run { findViewById(R.id.layout_delete_account_pass_edit_text_id) }
+            dView.run { this.findViewById(R.id.layout_delete_account_pass_edit_text_id) }
         val cancelBt: MaterialButton =
-            dView.run { findViewById(R.id.layout_delete_account_cancel_bt_id) }
+            dView.run { this.findViewById(R.id.layout_delete_account_cancel_bt_id) }
         val deleteBt: MaterialButton =
-            dView.run { findViewById(R.id.layout_delete_account_delete_bt_id) }
+            dView.run { this.findViewById(R.id.layout_delete_account_delete_bt_id) }
 
         val accountInfoDialog = MaterialAlertDialogBuilder(this.context)
         val confirmDeleteDialog = MaterialAlertDialogBuilder(this.context)
@@ -180,6 +184,7 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
                         if (isValidPass) {
                             processDeleteAccount(email, password)
                             alertDialog.dismiss()
+                            observeDeleteAccountStatus()
                         }
                     } else {
                         displayConnectionSetting()
@@ -190,6 +195,47 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
             }
         }
         confirmDeleteDialog.show()
+    }
+
+    private fun observeDeleteAccountStatus() {
+        this.signInSecViewModel.getLoadingLiveData().observe(activity!!, loadingObserver())
+        this.signInSecViewModel.getErrorMessageData().observe(activity!!, statusMessageObserver())
+    }
+
+    private fun statusMessageObserver(): Observer<String> {
+        return Observer { message ->
+            if (message.isNotEmpty()) {
+                when (message) {
+                    "The password is invalid or the user does not have a password." -> {
+                        val snackbar: Snackbar = Snackbar.make(view!!, R.string.login_invalid_password, Snackbar.LENGTH_LONG)
+                        this.iNearDockMessageViewer.displayMessage(snackbar, SnackbarType.INVALID_PASSWORD, true, "", true)
+                    }
+                    "We have blocked all requests from this device due to unusual activity. Try again later. [ Too many unsuccessful login attempts.  Please include reCaptcha verification or try again later ]" -> {
+                        val snackBar: Snackbar = Snackbar.make(view!!, R.string.too_many_login_attempt, Snackbar.LENGTH_LONG)
+                        this.iNearDockMessageViewer.displayMessage(snackBar, SnackbarType.INVALID_PASSWORD, true, "", true)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun loadingObserver(): Observer<Boolean> {
+        return Observer {isLoading ->
+            if (isLoading) {
+                displayLoading(true)
+            } else {
+                displayLoading(false)
+            }
+        }
+    }
+
+    private fun displayLoading(isLoading: Boolean) {
+        val globalLoadingBar = GlobalLoadingBar(activity!!, fragment_sign_in_security_loading_bar)
+        if (isLoading) {
+            globalLoadingBar.setVisibility(true)
+        } else {
+            globalLoadingBar.setVisibility(false)
+        }
     }
 
     private fun processDeleteAccount(email: String, password: String) {

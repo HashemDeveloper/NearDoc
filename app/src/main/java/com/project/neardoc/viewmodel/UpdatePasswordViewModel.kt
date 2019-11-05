@@ -64,12 +64,12 @@ class UpdatePasswordViewModel @Inject constructor(): ViewModel() {
                        this.statusMessageLiveData.value = message
                    }
                    WorkInfo.State.FAILED -> {
+                       this.isLoadingData.value = false
                        val errorData: Data? = it.outputData
                        if (errorData != null) {
                            val errorMessage: String = errorData.getString(Constants.WORKER_ERROR_DATA)!!
                            if (errorMessage.isNotEmpty()) {
                                Log.i("Error: ", errorMessage)
-                               this.isLoadingData.value = false
                                this.statusMessageLiveData.value = errorMessage
                            }
                        }

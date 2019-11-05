@@ -107,4 +107,8 @@ class NearDocRemoteRepo @Inject constructor(): INearDocRemoteRepo {
     override fun deleteUserAccount(url: String, webKey: String, idToken: String): Observable<Void> {
        return this.iNearDocRemoteApi.deleteUserAccount(url, webKey, idToken)
     }
+
+    override fun deleteUsername(username: String, dbKey: String): Observable<Void> {
+       return this.iNearDocRemoteApi.deleteUsername(username, dbKey)
+    }
 }

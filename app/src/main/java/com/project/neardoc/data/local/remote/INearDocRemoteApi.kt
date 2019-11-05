@@ -11,9 +11,11 @@ interface INearDocRemoteApi {
     fun signInWithCustomToken(@Query("auth") apiKey: String, @Query("token") token: String, @Query("returnSecureToken") secureToken: Boolean): Observable<ResponseTokenModel>
 
     @Headers("Content-Type: application/json")
-    @PUT("/usernames/{email}/.json")
-    fun saveUsernameInFirebaseDb(@Path("email") username: String, @Query("auth") dbKey: String, @Body usernameModel: Username): Observable<Username>
-
+    @PUT("/usernames/{username}/.json")
+    fun saveUsernameInFirebaseDb(@Path("username") username: String, @Query("auth") dbKey: String, @Body usernameModel: Username): Observable<Username>
+    @Headers("Content-Type: application/json")
+    @DELETE("/usernames/{node}/.json")
+    fun deleteUsername(@Path("node") username: String, @Query("auth") dbKey: String): Observable<Void>
     @Headers("Content-Type: application/json")
     @PUT("/users/{email}/.json")
     fun saveUserInfoInFirebaseDb(@Path("email") email: String, @Query("auth") dbKey: String, @Body users: Users): Observable<Users>

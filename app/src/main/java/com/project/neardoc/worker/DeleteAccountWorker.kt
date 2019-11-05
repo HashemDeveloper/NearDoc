@@ -9,6 +9,7 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
 import com.project.neardoc.di.workermanager.NearDocWorkerInjection
 import com.project.neardoc.utils.Constants
@@ -23,6 +24,8 @@ class DeleteAccountWorker @Inject constructor(context: Context, workerParameters
     private val countDownLatch: CountDownLatch = CountDownLatch(1)
     @Inject
     lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
+    @Inject
+    lateinit var iSharedPrefService: ISharedPrefService
 
     override fun doWork(): Result {
         NearDocWorkerInjection.inject(this)
