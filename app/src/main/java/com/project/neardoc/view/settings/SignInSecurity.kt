@@ -2,17 +2,10 @@ package com.project.neardoc.view.settings
 
 
 import android.os.Bundle
-import android.text.InputType
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.Toast
-import androidx.core.content.ContextCompat
-import androidx.core.view.children
-import androidx.core.view.setPadding
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,6 +28,7 @@ import com.project.neardoc.utils.*
 import com.project.neardoc.utils.validators.PasswordValidator
 import com.project.neardoc.view.adapters.SignInSecClickListener
 import com.project.neardoc.view.adapters.SignInSecurityAdapter
+import com.project.neardoc.viewmodel.SignInSecViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_sign_in_and_security.*
 import org.greenrobot.eventbus.EventBus
@@ -199,7 +193,7 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
     }
 
     private fun processDeleteAccount(email: String, password: String) {
-        this.signInSecViewModel.deleteAccount(email, password)
+        this.signInSecViewModel.deleteAccount(email, password, activity!!)
     }
 
     override fun onDestroyView() {
