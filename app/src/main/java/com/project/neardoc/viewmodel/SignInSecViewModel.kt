@@ -56,9 +56,9 @@ class SignInSecViewModel @Inject constructor(): ViewModel() {
 
         val workManager: WorkManager = WorkManager.getInstance(this.context)
         workManager
-            .beginWith(deleteUsernameRequest)
+            .beginWith(deleteAccountRequest)
+            .then(deleteUsernameRequest)
             .then(deleteUserInfoRequest)
-            .then(deleteAccountRequest)
             .enqueue()
 
         this.deleteAccountLiveData = workManager.getWorkInfoByIdLiveData(deleteAccountRequest.id)
