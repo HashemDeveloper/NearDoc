@@ -19,4 +19,5 @@ interface INearDocRemoteRepo {
     fun getFirebaseUserData(url: String, key: String, idToken: String): Observable<CurrentUserRes>
     fun deleteUserInfoFromFirebaseDb(email: String, authKey: String): Observable<Void>
     fun deleteUserAccount(url: String, webKey: String, idToken: String): Observable<Void>
+    fun deleteUsername(username: String, dbKey: String): Observable<Void>
 }

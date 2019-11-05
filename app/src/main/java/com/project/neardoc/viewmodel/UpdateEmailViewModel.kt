@@ -75,11 +75,11 @@ class UpdateEmailViewModel @Inject constructor(): ViewModel() {
                         this.statusMessageLiveData.value = message
                     }
                     WorkInfo.State.FAILED -> {
+                        this.isLoadingLiveData.value = false
                         val errorData: Data? = it.outputData
                         if (errorData != null) {
                             val errorMessage: String = errorData.getString(Constants.WORKER_ERROR_DATA)!!
                             if (errorMessage.isNotEmpty()) {
-                                this.isLoadingLiveData.value = false
                                 this.statusMessageLiveData.value = errorMessage
                             }
                         }
