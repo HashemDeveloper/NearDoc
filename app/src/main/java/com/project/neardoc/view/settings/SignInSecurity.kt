@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.core.view.setPadding
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.button.MaterialButton
@@ -23,6 +24,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.di.Injectable
+import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.model.ManageAccountHeader
 import com.project.neardoc.model.ManageAccountModel
@@ -43,6 +45,11 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
     private var signInSecurityAdapter: SignInSecurityAdapter? = null
     @Inject
     lateinit var iSharedPrefService: ISharedPrefService
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    private val signInSecViewModel: SignInSecViewModel by viewModels {
+        this.viewModelFactory
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -92,12 +99,13 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
                 }
             }
             is ManageAccountModel -> {
-                deleteAccountDialog()
+                val email: String = items.deleteEmail
+                deleteAccountDialog(email)
             }
         }
     }
 
-    private fun deleteAccountDialog() {
+    private fun deleteAccountDialog(email: String) {
         val viewGroup: ViewGroup = activity!!.window.decorView.rootView as ViewGroup
         val dView: View =
             layoutInflater.inflate(R.layout.layout_delete_account_dialog, viewGroup, false)
@@ -119,8 +127,8 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
 
         }
         confirmDeleteDialog.setPositiveButton(android.R.string.ok) { _, _ ->
-            accountInfoDialog.setTitle("Please enter your password")
-            accountInfoDialog.setMessage("juniayulia@outlook.com")
+            accountInfoDialog.setTitle(getString(R.string.enter_password))
+            accountInfoDialog.setMessage(email)
             accountInfoDialog.setView(dView)
             val alertDialog = accountInfoDialog.create()
             alertDialog.show()
@@ -131,7 +139,7 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
                 val password: String = passwordTextView.text.toString()
                 val isValidPass: Boolean = this.passwordValidator?.getIsValidated(password)!!
                 if (isValidPass) {
-                    processDeleteAccount(password)
+                    processDeleteAccount(email, password)
                     alertDialog.dismiss()
                 }
             }
@@ -139,7 +147,7 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
         confirmDeleteDialog.show()
     }
 
-    private fun processDeleteAccount(password: String) {
-        Log.i("Password: ", password)
+    private fun processDeleteAccount(email: String, password: String) {
+        this.signInSecViewModel.deleteAccount(email, password)
     }
 }

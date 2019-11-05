@@ -3,6 +3,7 @@ package com.project.neardoc.di.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.project.neardoc.di.scopes.ViewModelKey
+import com.project.neardoc.view.settings.SignInSecViewModel
 import com.project.neardoc.viewmodel.*
 import dagger.Binds
 import dagger.Module
@@ -40,4 +41,8 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(UpdatePasswordViewModel::class)
     internal abstract fun provideUpdatePasswordViewModel(updatePasswordViewModel: UpdatePasswordViewModel): ViewModel
+    @Binds
+    @IntoMap
+    @ViewModelKey(SignInSecViewModel::class)
+    internal abstract fun provideSignInSecViewModel(signInSecViewModel: SignInSecViewModel): ViewModel
 }
