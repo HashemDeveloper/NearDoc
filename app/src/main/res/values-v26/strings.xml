@@ -79,4 +79,5 @@
     <string name="enter_password">Please enter your password</string>
     <string name="delete_success">Sorry to see you go, hope to see you soon </string>
     <string name="google_user_cannot_update">You cannot update google account information from NearDoc. Sorry for any inconvenient.</string>
+    <string name="must_update_password">You must update your password to avoid unexpected behavior. Thank you.</string>
 </resources>

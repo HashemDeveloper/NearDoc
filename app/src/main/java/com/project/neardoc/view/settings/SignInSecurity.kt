@@ -106,23 +106,13 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
         when (items) {
             is SignInSecurityModel -> {
                 if (items.email == model) {
-                    if (this.loginProvider == Constants.SIGN_IN_PROVIDER_GOOGLE) {
-                        val message: String = this.resources.getString(R.string.google_user_cannot_update)
-                        displayGoogleProviderMessage(message)
-                    } else if (this.loginProvider == Constants.SIGN_IN_PROVIDER_FIREBASE) {
-                        val updateEmailAction = findNavController()
-                        val bundle = Bundle()
-                        bundle.putString(Constants.WORKER_EMAIL, items.email)
-                        updateEmailAction.navigate(R.id.updateEmail, bundle)
-                    }
+                    val updateEmailAction = findNavController()
+                    val bundle = Bundle()
+                    bundle.putString(Constants.WORKER_EMAIL, items.email)
+                    updateEmailAction.navigate(R.id.updateEmail, bundle)
                 } else {
-                    if (this.loginProvider == Constants.SIGN_IN_PROVIDER_GOOGLE) {
-                        val message: String = this.resources.getString(R.string.google_user_cannot_update)
-                        displayGoogleProviderMessage(message)
-                    } else if (this.loginProvider == Constants.SIGN_IN_PROVIDER_FIREBASE) {
-                        val updatePasswordAction = findNavController()
-                        updatePasswordAction.navigate(R.id.updatePassword)
-                    }
+                    val updatePasswordAction = findNavController()
+                    updatePasswordAction.navigate(R.id.updatePassword)
                 }
             }
             is ManageAccountModel -> {

@@ -121,6 +121,11 @@ class UpdateEmail : Fragment(), Injectable, IUpdatePassSnackBarListener{
                         val snackBar: Snackbar = Snackbar.make(view!!, R.string.too_many_login_attempt, Snackbar.LENGTH_LONG)
                         this.iNearDockMessageViewer.displayMessage(snackBar, SnackbarType.INVALID_PASSWORD, true, "", true)
                     }
+                    Constants.SIGN_IN_PROVIDER_GOOGLE -> {
+                        val updatePasswordAction = findNavController()
+                        updatePasswordAction.navigate(R.id.updatePassword)
+                        Toast.makeText(activity!!, this.resources.getString(R.string.must_update_password), Toast.LENGTH_LONG).show()
+                    }
                 }
             }
         }
