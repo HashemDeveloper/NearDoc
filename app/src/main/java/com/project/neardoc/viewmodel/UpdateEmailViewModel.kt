@@ -71,8 +71,14 @@ class UpdateEmailViewModel @Inject constructor(): ViewModel() {
                 when (it.state) {
                     WorkInfo.State.SUCCEEDED -> {
                         this.isLoadingLiveData.value = false
-                        val message: String = this.context.resources.getString(R.string.email_update_success)
-                        this.statusMessageLiveData.value = message
+                        val googleProvider: String = this.iSharedPreferences.getLoginProvider()
+                        if (googleProvider == Constants.SIGN_IN_PROVIDER_GOOGLE) {
+                            val message: String = Constants.SIGN_IN_PROVIDER_GOOGLE
+                            this.statusMessageLiveData.value = message
+                        } else {
+                            val message: String = this.context.resources.getString(R.string.email_update_success)
+                            this.statusMessageLiveData.value = message
+                        }
                     }
                     WorkInfo.State.FAILED -> {
                         this.isLoadingLiveData.value = false

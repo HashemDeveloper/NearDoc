@@ -51,6 +51,26 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
             putString(Constants.SHARED_PREF_ENCRYPT_IV, Base64.encodeToString(iv, Base64.DEFAULT))
         }
     }
+
+    override fun storeGoogleIdToken(encryptedIdToken: ByteArray) {
+        pref?.edit(commit = true) {
+            putString(Constants.SHARED_PREF_GOOGLE_TOKEN_ID, Base64.encodeToString(encryptedIdToken, Base64.DEFAULT))
+        }
+    }
+
+    override fun storeGoogleEncryptIv(iv: ByteArray?) {
+        pref?.edit(commit = true) {
+            putString(Constants.SHARED_PREF_GOOGLE_TOKEN_ENCRYPT_IV, Base64.encodeToString(iv, Base64.DEFAULT))
+        }
+    }
+
+    override fun getGoogleTokenId(): String {
+        return pref?.getString(Constants.SHARED_PREF_GOOGLE_TOKEN_ID, "")!!
+    }
+
+    override fun getGoogleTokenEncryptIv(): String {
+        return pref?.getString(Constants.SHARED_PREF_GOOGLE_TOKEN_ENCRYPT_IV, "")!!
+    }
     override fun getIdToken(): String {
         return pref?.getString(Constants.SHARED_PREF_ID_TOKEN, "")!!
     }
@@ -70,6 +90,16 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
            putString(Constants.SHARED_PREF_USER_EMAIL, email)
        }
         listener?.onSharedPreferenceChanged(pref, Constants.SHARED_PREF_USER_EMAIL)
+    }
+
+    override fun storeLoginProvider(loginProvider: String) {
+        pref?.edit(commit = true) {
+            putString(Constants.SHARED_PREF_USER_LOGIN_PROVIDER, loginProvider)
+        }
+    }
+
+    override fun getLoginProvider(): String {
+        return pref?.getString(Constants.SHARED_PREF_USER_LOGIN_PROVIDER, "")!!
     }
     override fun getUserName(): String {
         return pref?.getString(Constants.SHARED_PREF_USER_NAME, "")!!

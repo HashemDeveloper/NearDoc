@@ -19,6 +19,8 @@ class LoginWorker @Inject constructor(context: Context, workerParams: WorkerPara
     @Inject
     lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
     private val compositeDisposable = CompositeDisposable()
+    @Inject
+    lateinit var iSharedPrefService: ISharedPrefService
 
     override fun doWork(): Result {
         NearDocWorkerInjection.inject(this)
@@ -43,7 +45,7 @@ class LoginWorker @Inject constructor(context: Context, workerParams: WorkerPara
                            }
 
                            override fun onNext(t: Users) {
-
+                               iSharedPrefService.storeLoginProvider(t.loginProvider)
                            }
 
                            override fun onError(e: Throwable) {
