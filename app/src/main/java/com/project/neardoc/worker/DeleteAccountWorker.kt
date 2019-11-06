@@ -1,18 +1,18 @@
 package com.project.neardoc.worker
 
 import android.content.Context
+import android.util.Base64
 import android.util.Log
 import androidx.work.Data
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import com.google.android.gms.auth.api.Auth
+import com.google.firebase.auth.*
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
 import com.project.neardoc.di.workermanager.NearDocWorkerInjection
 import com.project.neardoc.utils.Constants
+import com.project.neardoc.utils.DeCryptor
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.lang.Exception
@@ -26,6 +26,7 @@ class DeleteAccountWorker @Inject constructor(context: Context, workerParameters
     lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
     @Inject
     lateinit var iSharedPrefService: ISharedPrefService
+    private var authCredential: AuthCredential?= null
 
     override fun doWork(): Result {
         NearDocWorkerInjection.inject(this)
@@ -36,11 +37,21 @@ class DeleteAccountWorker @Inject constructor(context: Context, workerParameters
             val authKey: String = inputData.getString(Constants.WORKER_WEB_KEY)!!
             val email: String = inputData.getString(Constants.WORKER_EMAIL)!!
             val password: String = inputData.getString(Constants.WORKER_PASSWORD)!!
-
-            val authCredential: AuthCredential = EmailAuthProvider.getCredential(email, password)
+            val loginProvider: String = this.iSharedPrefService.getLoginProvider()
+            if (loginProvider == Constants.SIGN_IN_PROVIDER_GOOGLE) {
+                val deCryptor = DeCryptor()
+                val encryptedIdToken: String = this.iSharedPrefService.getGoogleTokenId()
+                val encryptIv: String = this.iSharedPrefService.getGoogleTokenEncryptIv()
+                val byteArrayIdToken = Base64.decode(encryptedIdToken, Base64.DEFAULT)
+                val byteArrayEncryptIv = Base64.decode(encryptIv, Base64.DEFAULT)
+                val idToken = deCryptor.decryptData(Constants.GOOGLE_ID_TOKEN, byteArrayIdToken, byteArrayEncryptIv)
+                this.authCredential = GoogleAuthProvider.getCredential(idToken, null)
+            } else if (loginProvider == Constants.SIGN_IN_PROVIDER_FIREBASE) {
+                this.authCredential = EmailAuthProvider.getCredential(email, password)
+            }
             val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
             val user: FirebaseUser = firebaseAuth.currentUser!!
-            user.reauthenticateAndRetrieveData(authCredential)
+            user.reauthenticateAndRetrieveData(this.authCredential!!)
                 .addOnSuccessListener {
                    it.user!!.getIdToken(true)
                        .addOnSuccessListener {token ->
@@ -88,6 +99,8 @@ class DeleteAccountWorker @Inject constructor(context: Context, workerParameters
         } catch (e: Exception) {
             if (e.localizedMessage != null) {
                 Log.i("DeleteAccountException", e.localizedMessage!!)
+                message = e.localizedMessage!!
+                this.countDownLatch.countDown()
             }
             return Result.failure()
         }

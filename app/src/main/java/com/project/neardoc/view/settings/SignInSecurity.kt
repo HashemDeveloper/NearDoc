@@ -6,6 +6,7 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -54,6 +55,7 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
     private val signInSecViewModel: SignInSecViewModel by viewModels {
         this.viewModelFactory
     }
+    private var loginProvider: String?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -75,6 +77,7 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
         fragment_sign_in_security_recycler_view_id.adapter = this.signInSecurityAdapter
         val fullName: String = this.iSharedPrefService.getUserName()
         val email: String = this.iSharedPrefService.getUserEmail()
+        this.loginProvider = this.iSharedPrefService.getLoginProvider()
         val headerModel = SignInSecurityHeaderModel("Login Information")
         val infoModel = SignInSecurityModel(fullName, email, "******")
         val manageHeader = ManageAccountHeader("Manage Account")
@@ -103,13 +106,23 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
         when (items) {
             is SignInSecurityModel -> {
                 if (items.email == model) {
-                    val updateEmailAction = findNavController()
-                    val bundle = Bundle()
-                    bundle.putString(Constants.WORKER_EMAIL, items.email)
-                    updateEmailAction.navigate(R.id.updateEmail, bundle)
+                    if (this.loginProvider == Constants.SIGN_IN_PROVIDER_GOOGLE) {
+                        val message: String = this.resources.getString(R.string.google_user_cannot_update)
+                        displayGoogleProviderMessage(message)
+                    } else if (this.loginProvider == Constants.SIGN_IN_PROVIDER_FIREBASE) {
+                        val updateEmailAction = findNavController()
+                        val bundle = Bundle()
+                        bundle.putString(Constants.WORKER_EMAIL, items.email)
+                        updateEmailAction.navigate(R.id.updateEmail, bundle)
+                    }
                 } else {
-                    val updatePasswordAction = findNavController()
-                    updatePasswordAction.navigate(R.id.updatePassword)
+                    if (this.loginProvider == Constants.SIGN_IN_PROVIDER_GOOGLE) {
+                        val message: String = this.resources.getString(R.string.google_user_cannot_update)
+                        displayGoogleProviderMessage(message)
+                    } else if (this.loginProvider == Constants.SIGN_IN_PROVIDER_FIREBASE) {
+                        val updatePasswordAction = findNavController()
+                        updatePasswordAction.navigate(R.id.updatePassword)
+                    }
                 }
             }
             is ManageAccountModel -> {
@@ -119,6 +132,13 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
                 } else {
                     displayConnectionSetting()
                 }
+            }
+        }
+    }
+    private fun displayGoogleProviderMessage(message: String) {
+        if (activity != null) {
+            activity!!.runOnUiThread{
+                Toast.makeText(this.context, message, Toast.LENGTH_LONG).show()
             }
         }
     }

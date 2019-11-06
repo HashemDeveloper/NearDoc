@@ -7,6 +7,9 @@ import java.util.regex.Pattern
 class Constants {
     companion object {
 
+        val SHARED_PREF_GOOGLE_TOKEN_ID: String = "GOOGLE_TOKEN_ID"
+        val SHARED_PREF_GOOGLE_TOKEN_ENCRYPT_IV = "GOOGLE_TOKEN_ENCRYPT_IV"
+        val SHARED_PREF_USER_LOGIN_PROVIDER: String = "LOGIN_PROVIDER"
         val CONNECTIVITY_ACTION = "android.net.conn.CONNECTIVITY_CHANGE"
         val USER_STATE_ACTION = "USER_STATE_ACTION"
         val LOCATION_SERVICE_ACTION = "ACTION_LOCATION_SERVICE"
@@ -38,6 +41,7 @@ class Constants {
         val SHARED_PREF_ID_TOKEN = "idToken"
         val SHARED_PREF_ENCRYPT_IV = "encryptIv"
         val FIREBASE_ID_TOKEN = "ID_TOKEN"
+        val GOOGLE_ID_TOKEN = "GOOGLE_ID_TOKEN"
         val mobileData = "MOBILE_DATA"
         val wifiData = "WIFI_DATA"
         val SHARED_PREF_USER_IMAGE = "userImage"

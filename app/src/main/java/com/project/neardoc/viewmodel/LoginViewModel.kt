@@ -18,6 +18,7 @@ import com.project.neardoc.data.local.remote.INearDocRemoteRepo
 import com.project.neardoc.rxauth.IRxAuthentication
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.DeCryptor
+import com.project.neardoc.utils.EnCryptor
 import com.project.neardoc.viewmodel.listeners.ILoginViewModel
 import com.project.neardoc.worker.FetchUserWorker
 import com.project.neardoc.worker.LoginWorker
@@ -57,6 +58,11 @@ class LoginViewModel @Inject constructor() : ViewModel() {
         val authCredential: AuthCredential =
             GoogleAuthProvider.getCredential(accountIfo.idToken, null)
         val fullName = accountIfo.givenName + " " + accountIfo.familyName
+        val tokenId: String = accountIfo.idToken!!
+        val enCrypter = EnCryptor()
+        val encryptedIdToken = enCrypter.encryptText(Constants.GOOGLE_ID_TOKEN, tokenId)
+        this.iSharedPrefService.storeGoogleIdToken(encryptedIdToken)
+        this.iSharedPrefService.storeGoogleEncryptIv(enCrypter.iv)
        this.compositeDisposable.add(this.iRxAuthentication.googleSignIn(activity!!, this.firebaseAuth, authCredential)
            .subscribeOn(Schedulers.io())
            .observeOn(AndroidSchedulers.mainThread())
@@ -169,7 +175,7 @@ class LoginViewModel @Inject constructor() : ViewModel() {
                 Log.i("ErrorSendingEmail:", onError.localizedMessage!!)
             }))
     }
-    fun fetchUserInfoFromFirebaseDb(newEmail: String) {
+    private fun fetchUserInfoFromFirebaseDb(newEmail: String) {
         val userImage: String = this.iSharedPrefService.getUserImage()
         val fullName: String = this.iSharedPrefService.getUserName()
         val username: String = this.iSharedPrefService.getUserUsername()

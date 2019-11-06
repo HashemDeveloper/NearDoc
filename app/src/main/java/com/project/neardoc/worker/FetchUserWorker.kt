@@ -32,10 +32,12 @@ class FetchUserWorker @Inject constructor(context: Context, workerParams: Worker
                     val userEmail: String = users.email
                     val image: String = users.image
                     val username: String = users.username
+                    val loginProvider: String = users.loginProvider
                     this.iSharedPreferences.storeUserName(fullName)
                     this.iSharedPreferences.storeUserEmail(userEmail)
                     this.iSharedPreferences.storeUserImage(image)
                     this.iSharedPreferences.storeUserUsername(username)
+                    this.iSharedPreferences.storeLoginProvider(loginProvider)
                 } else {
                     //TODO: Prompt user to create profile
                 }

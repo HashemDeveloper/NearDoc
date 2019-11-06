@@ -18,4 +18,10 @@ interface ISharedPrefService {
     fun getUserEmail(): String
     fun getUserImage(): String
     fun getUserUsername(): String
+    fun storeLoginProvider(loginProvider: String)
+    fun getLoginProvider(): String
+    fun storeGoogleIdToken(encryptedIdToken: ByteArray)
+    fun storeGoogleEncryptIv(iv: ByteArray?)
+    fun getGoogleTokenId(): String
+    fun getGoogleTokenEncryptIv(): String
 }
