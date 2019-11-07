@@ -29,7 +29,12 @@ import javax.inject.Inject
 class SettingsFragment: PreferenceFragmentCompat(), Injectable {
     @Inject
     lateinit var iSharedPrefService: ISharedPrefService
+    private var seekBarMinValue: Int?= null
+    private var seekBarMaxValue: Int?= null
+    private var seekBarHalveValue: Int?= null
+    private var seekBarTotalValue: Int?= null
     private var list: List<String>? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
@@ -76,11 +81,13 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
 
                     it.key == "prefDistanceKey" -> {
                         activity!!.runOnUiThread {
-                            initSetDistanceSeekBar()
+                            initSeekBar(SeekBarType.SET_DISTANCE)
                         }
                     }
                     it.key == "prefSetLimitKey" -> {
-                        Toast.makeText(context, "SetLimit", Toast.LENGTH_SHORT).show()
+                        activity!!.runOnUiThread {
+                            initSeekBar(SeekBarType.SET_LIMIT)
+                        }
                     }
                     it.key == "prefContactUsKey" -> {
                         val contactUsFragment = findNavController()
@@ -104,41 +111,86 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
             }
         }
     }
-    private fun initSetDistanceSeekBar() {
-        val minValue = 10
-        val maxValue = 50
-        val halve: Int = maxValue / 2
-        val total: Int = maxValue - minValue
-        val viewGroup: ViewGroup = activity!!.window.decorView.rootView as ViewGroup
-        val sView: View = layoutInflater.inflate(R.layout.seekbar_layout, viewGroup, false)
-        val seekBar: FluidSlider = sView.run {
-            this.findViewById(R.id.seek_bar_layout_id)
-        }
-        val okBt: MaterialButton = sView.run {
-            this.findViewById(R.id.seekbar_ok_bt_id)
-        }
-        val cancelBt: MaterialButton = sView.run {
-            this.findViewById(R.id.seekbar_cancel_bt_id)
-        }
-        val seekBarDialog = MaterialAlertDialogBuilder(this.context)
-        seekBarDialog.setTitle(this.context!!.getString(R.string.set_distance))
-        seekBarDialog.setView(sView)
+    private fun initSeekBar(seekBarType: SeekBarType) {
+        when (seekBarType) {
+            SeekBarType.SET_DISTANCE -> {
+                this.seekBarMinValue = 10
+                this.seekBarMaxValue = 50
+                this.seekBarHalveValue = this.seekBarMaxValue!! / 2
+                this.seekBarTotalValue = this.seekBarMaxValue!! - this.seekBarMinValue!!
 
-        val originDialog: AlertDialog = seekBarDialog.create()
-        originDialog.show()
+                val viewGroup: ViewGroup = activity!!.window.decorView.rootView as ViewGroup
+                val sView: View = layoutInflater.inflate(R.layout.seekbar_layout, viewGroup, false)
+                val seekBar: FluidSlider = sView.run {
+                    this.findViewById(R.id.seek_bar_layout_id)
+                }
+                val okBt: MaterialButton = sView.run {
+                    this.findViewById(R.id.seekbar_ok_bt_id)
+                }
+                val cancelBt: MaterialButton = sView.run {
+                    this.findViewById(R.id.seekbar_cancel_bt_id)
+                }
+                val seekBarDialog = MaterialAlertDialogBuilder(this.context)
+                seekBarDialog.setTitle(this.context!!.getString(R.string.set_distance))
+                seekBarDialog.setMessage(this.context!!.getString(R.string.search_radius))
+                seekBarDialog.setView(sView)
 
-        seekBar.bubbleText = "$halve"
-        seekBar.startText = "$minValue"
-        seekBar.endText = "$maxValue"
-        seekBar.positionListener = {
-            seekBar.bubbleText = "${minValue + (total * it).toInt()}"
-        }
-        cancelBt.setOnClickListener {
-            originDialog.dismiss()
-        }
-        okBt.setOnClickListener {
-            Log.i("Final Result: ", seekBar.bubbleText!!)
-            originDialog.dismiss()
+                val originDialog: AlertDialog = seekBarDialog.create()
+                originDialog.show()
+
+                seekBar.bubbleText = "${this.seekBarHalveValue}"
+                seekBar.startText = "${this.seekBarMinValue}"
+                seekBar.endText = "${this.seekBarMaxValue}"
+                seekBar.positionListener = {
+                    seekBar.bubbleText = "${this.seekBarMinValue!! + (this.seekBarTotalValue!! * it).toInt()}"
+                }
+                cancelBt.setOnClickListener {
+                    originDialog.dismiss()
+                }
+                okBt.setOnClickListener {
+                    Log.i("Final Result: ", seekBar.bubbleText!!)
+                    originDialog.dismiss()
+                }
+            }
+            SeekBarType.SET_LIMIT -> {
+                this.seekBarMinValue = 5
+                this.seekBarMaxValue = 100
+                this.seekBarHalveValue = this.seekBarMaxValue!! / 2
+                this.seekBarTotalValue = this.seekBarMaxValue!! - this.seekBarMinValue!!
+
+                val viewGroup: ViewGroup = activity!!.window.decorView.rootView as ViewGroup
+                val sView: View = layoutInflater.inflate(R.layout.seekbar_layout, viewGroup, false)
+                val seekBar: FluidSlider = sView.run {
+                    this.findViewById(R.id.seek_bar_layout_id)
+                }
+                val okBt: MaterialButton = sView.run {
+                    this.findViewById(R.id.seekbar_ok_bt_id)
+                }
+                val cancelBt: MaterialButton = sView.run {
+                    this.findViewById(R.id.seekbar_cancel_bt_id)
+                }
+                val seekBarDialog = MaterialAlertDialogBuilder(this.context)
+                seekBarDialog.setTitle(this.context!!.getString(R.string.set_limit))
+                seekBarDialog.setMessage(this.context!!.getString(R.string.search_limit))
+                seekBarDialog.setView(sView)
+
+                val originDialog: AlertDialog = seekBarDialog.create()
+                originDialog.show()
+
+                seekBar.bubbleText = "${this.seekBarHalveValue}"
+                seekBar.startText = "${this.seekBarMinValue}"
+                seekBar.endText = "${this.seekBarMaxValue}"
+                seekBar.positionListener = {
+                    seekBar.bubbleText = "${this.seekBarMinValue!! + (this.seekBarTotalValue!! * it).toInt()}"
+                }
+                cancelBt.setOnClickListener {
+                    originDialog.dismiss()
+                }
+                okBt.setOnClickListener {
+                    Log.i("Final Result: ", seekBar.bubbleText!!)
+                    originDialog.dismiss()
+                }
+            }
         }
     }
 
@@ -146,5 +198,9 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
     override fun onDestroy() {
         super.onDestroy()
         EventBus.getDefault().postSticky(LandInSettingPageEvent(false, PageType.MAIN_PAGE))
+    }
+    private enum class SeekBarType {
+        SET_DISTANCE,
+        SET_LIMIT
     }
 }
