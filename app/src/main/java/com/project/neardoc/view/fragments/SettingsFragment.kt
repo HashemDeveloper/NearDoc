@@ -149,6 +149,7 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
                 }
                 okBt.setOnClickListener {
                     Log.i("Final Result: ", seekBar.bubbleText!!)
+                    this.iSharedPrefService.setDistanceRadius(seekBar.bubbleText!!)
                     originDialog.dismiss()
                 }
             }
@@ -188,6 +189,7 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
                 }
                 okBt.setOnClickListener {
                     Log.i("Final Result: ", seekBar.bubbleText!!)
+                    this.iSharedPrefService.setSearchLimit(seekBar.bubbleText!!)
                     originDialog.dismiss()
                 }
             }

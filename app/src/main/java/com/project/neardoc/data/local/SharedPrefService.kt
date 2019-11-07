@@ -7,7 +7,6 @@ import androidx.preference.PreferenceManager
 import javax.inject.Inject
 import androidx.core.content.edit
 import com.project.neardoc.utils.Constants
-import java.util.*
 
 class SharedPrefService @Inject constructor(): ISharedPrefService {
 
@@ -135,5 +134,24 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
            putBoolean(Constants.SHARED_PREF_IS_LOCATION_ENABLED, checked)
        }
         listener?.onSharedPreferenceChanged(pref, Constants.SHARED_PREF_IS_LOCATION_ENABLED)
+    }
+    override fun setDistanceRadius(distance: String) {
+       pref?.edit(commit = true) {
+           putString(Constants.SHARED_PREF_DISTANCE_RADIUS, distance)
+       }
+    }
+
+    override fun setSearchLimit(limit: String) {
+        pref?.edit(commit = true) {
+            putString(Constants.SHARED_PREF_SEARCH_LIMIT, limit)
+        }
+    }
+
+    override fun getDistanceRadius(): String {
+        return pref?.getString(Constants.SHARED_PREF_DISTANCE_RADIUS, "")!!
+    }
+
+    override fun getSearchLimit(): String {
+       return pref?.getString(Constants.SHARED_PREF_SEARCH_LIMIT, "")!!
     }
 }
