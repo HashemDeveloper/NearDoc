@@ -10,6 +10,7 @@ import com.project.neardoc.di.Injectable
 import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.utils.PageType
 import com.project.neardoc.view.widgets.CustomPreference
+import com.project.neardoc.view.widgets.CustomSwitchPreference
 import dagger.android.support.AndroidSupportInjection
 import org.greenrobot.eventbus.EventBus
 
@@ -27,7 +28,7 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
         setupPreferenceListeners()
     }
     private fun addPrefKeys() {
-        this.list = listOf("prefSignInSecKey", "prefDistanceKey", "prefSetLimitKey",
+        this.list = listOf("prefSignInSecKey" , "prefDistanceKey", "prefSetLimitKey",
             "prefContactUsKey", "prefRateKey", "prefSendFeedbackKey", "prefTermsAndConditionKey", "prefPrivacyPolicyKey")
     }
     private fun getPrefKeys(): List<String>? {
@@ -46,6 +47,7 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
                         val signInSecFragment = findNavController()
                         signInSecFragment.navigate(R.id.signInSecurity)
                     }
+
                     it.key == "prefDistanceKey" -> Toast.makeText(context, "SetDistance", Toast.LENGTH_SHORT).show()
                     it.key == "prefSetLimitKey" -> Toast.makeText(context, "SetLimit", Toast.LENGTH_SHORT).show()
                     it.key == "prefContactUsKey" -> {

@@ -32,6 +32,8 @@ import org.greenrobot.eventbus.ThreadMode
 class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, SharedPreferences.OnSharedPreferenceChangeListener{
 
     @Inject
+    lateinit var iLocationService: ILocationService
+    @Inject
     lateinit var iRxEventBus: IRxEventBus
     @Inject
     lateinit var iConnectionStateMonitor: IConnectionStateMonitor
@@ -124,6 +126,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
         this.iSharedPrefService.registerSharedPrefListener(this)
         monitorConnectionSetting()
         monitorUserState()
+//        monitorLocationUpdate()
     }
 
     override fun onResume() {
@@ -136,7 +139,13 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
     override fun onStop() {
         super.onStop()
     }
-
+    private fun monitorLocationUpdate() {
+        this.iLocationService.getObserver().observe(this, Observer {
+            if (it != null) {
+                Log.i("Location: ", "Location")
+            }
+        })
+    }
     private fun monitorUserState() {
         this.iUserStateService.getAuthObserver().observe(this, Observer { currentUser ->
             if (currentUser.currentUser != null) {

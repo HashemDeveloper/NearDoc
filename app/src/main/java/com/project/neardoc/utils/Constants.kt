@@ -6,7 +6,8 @@ import java.util.regex.Pattern
 
 class Constants {
     companion object {
-
+        val WORKER_LOCATION_LAT = "lat"
+        val WORKER_LOCATION_LON = "lon"
         val SHARED_PREF_GOOGLE_TOKEN_ID: String = "GOOGLE_TOKEN_ID"
         val SHARED_PREF_GOOGLE_TOKEN_ENCRYPT_IV = "GOOGLE_TOKEN_ENCRYPT_IV"
         val SHARED_PREF_USER_LOGIN_PROVIDER: String = "LOGIN_PROVIDER"

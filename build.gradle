@@ -56,6 +56,7 @@ ext {
     work_version = "2.3.0-alpha01"
     circularImage = "2.2.0"
     multidex_version = "2.0.1"
+    location_service = "17.0.0"
 }
 task clean(type: Delete) {
     delete rootProject.buildDir
