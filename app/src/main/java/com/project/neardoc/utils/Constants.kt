@@ -6,7 +6,9 @@ import java.util.regex.Pattern
 
 class Constants {
     companion object {
-
+        val SHARED_PREF_IS_LOCATION_ENABLED = "LOCATION_ENABLED"
+        val WORKER_LOCATION_LAT = "lat"
+        val WORKER_LOCATION_LON = "lon"
         val SHARED_PREF_GOOGLE_TOKEN_ID: String = "GOOGLE_TOKEN_ID"
         val SHARED_PREF_GOOGLE_TOKEN_ENCRYPT_IV = "GOOGLE_TOKEN_ENCRYPT_IV"
         val SHARED_PREF_USER_LOGIN_PROVIDER: String = "LOGIN_PROVIDER"
@@ -48,6 +50,7 @@ class Constants {
         val SHARED_PREF_USER_NAME = "userName"
         val SHARED_PREF_USER_EMAIL = "userEmail"
         val SHARED_PREF_USER_USERNAME = "email"
+        val ENABLE_LOCATION_SWITCH = false
         fun encodeUserEmail(email: String): String {
             return email.replace(".", ",")
         }

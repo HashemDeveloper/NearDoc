@@ -1,19 +1,34 @@
 package com.project.neardoc.view.fragments
 
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
+import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.project.neardoc.R
+import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.events.LandInSettingPageEvent
+import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.PageType
 import com.project.neardoc.view.widgets.CustomPreference
+import com.project.neardoc.view.widgets.CustomSwitchPreference
+import com.ramotion.fluidslider.FluidSlider
 import dagger.android.support.AndroidSupportInjection
 import org.greenrobot.eventbus.EventBus
+import javax.inject.Inject
 
 class SettingsFragment: PreferenceFragmentCompat(), Injectable {
+    @Inject
+    lateinit var iSharedPrefService: ISharedPrefService
     private var list: List<String>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +42,7 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
         setupPreferenceListeners()
     }
     private fun addPrefKeys() {
-        this.list = listOf("prefSignInSecKey", "prefDistanceKey", "prefSetLimitKey",
+        this.list = listOf("prefSignInSecKey" , "prefDistanceKey", "prefSetLimitKey",
             "prefContactUsKey", "prefRateKey", "prefSendFeedbackKey", "prefTermsAndConditionKey", "prefPrivacyPolicyKey")
     }
     private fun getPrefKeys(): List<String>? {
@@ -38,6 +53,18 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
         }
     }
     private fun setupPreferenceListeners() {
+        val locationEnablePref: CustomSwitchPreference = findPreference<CustomSwitchPreference>("prefEnableCurrentLocationKey") as CustomSwitchPreference
+        if (Constants.ENABLE_LOCATION_SWITCH) {
+            locationEnablePref.setOnPreferenceClickListener {
+                val sharedPref: SharedPreferences = it.sharedPreferences
+                val isChecked: Boolean = sharedPref.getBoolean("prefEnableCurrentLocationKey", false)
+                this.iSharedPrefService.isLocationEnabled(isChecked)
+                true }
+        } else {
+            val searchPrefCategory: PreferenceCategory = findPreference<PreferenceCategory>("searchPrefCategory") as PreferenceCategory
+            searchPrefCategory.removePreference(locationEnablePref)
+        }
+
         for (keys in this.getPrefKeys()!!) {
             val prefSignAndSec: CustomPreference = findPreference<CustomPreference>(keys) as CustomPreference
             prefSignAndSec.onPreferenceClickListener = Preference.OnPreferenceClickListener {
@@ -46,8 +73,15 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
                         val signInSecFragment = findNavController()
                         signInSecFragment.navigate(R.id.signInSecurity)
                     }
-                    it.key == "prefDistanceKey" -> Toast.makeText(context, "SetDistance", Toast.LENGTH_SHORT).show()
-                    it.key == "prefSetLimitKey" -> Toast.makeText(context, "SetLimit", Toast.LENGTH_SHORT).show()
+
+                    it.key == "prefDistanceKey" -> {
+                        activity!!.runOnUiThread {
+                            initSetDistanceSeekBar()
+                        }
+                    }
+                    it.key == "prefSetLimitKey" -> {
+                        Toast.makeText(context, "SetLimit", Toast.LENGTH_SHORT).show()
+                    }
                     it.key == "prefContactUsKey" -> {
                         val contactUsFragment = findNavController()
                         contactUsFragment.navigate(R.id.contactUs)
@@ -70,6 +104,44 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
             }
         }
     }
+    private fun initSetDistanceSeekBar() {
+        val minValue = 10
+        val maxValue = 50
+        val halve: Int = maxValue / 2
+        val total: Int = maxValue - minValue
+        val viewGroup: ViewGroup = activity!!.window.decorView.rootView as ViewGroup
+        val sView: View = layoutInflater.inflate(R.layout.seekbar_layout, viewGroup, false)
+        val seekBar: FluidSlider = sView.run {
+            this.findViewById(R.id.seek_bar_layout_id)
+        }
+        val okBt: MaterialButton = sView.run {
+            this.findViewById(R.id.seekbar_ok_bt_id)
+        }
+        val cancelBt: MaterialButton = sView.run {
+            this.findViewById(R.id.seekbar_cancel_bt_id)
+        }
+        val seekBarDialog = MaterialAlertDialogBuilder(this.context)
+        seekBarDialog.setTitle(this.context!!.getString(R.string.set_distance))
+        seekBarDialog.setView(sView)
+
+        val originDialog: AlertDialog = seekBarDialog.create()
+        originDialog.show()
+
+        seekBar.bubbleText = "$halve"
+        seekBar.startText = "$minValue"
+        seekBar.endText = "$maxValue"
+        seekBar.positionListener = {
+            seekBar.bubbleText = "${minValue + (total * it).toInt()}"
+        }
+        cancelBt.setOnClickListener {
+            originDialog.dismiss()
+        }
+        okBt.setOnClickListener {
+            Log.i("Final Result: ", seekBar.bubbleText!!)
+            originDialog.dismiss()
+        }
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()

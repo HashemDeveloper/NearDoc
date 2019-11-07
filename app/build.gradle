@@ -137,4 +137,8 @@ dependencies {
     implementation "de.hdodenhof:circleimageview:$circularImage"
     //multiDex
     implementation "androidx.multidex:multidex:$multidex_version"
+    //location service
+    implementation "com.google.android.gms:play-services-location:$location_service"
+    // seekBar
+    implementation 'com.ramotion.fluidslider:fluid-slider:0.3.1'
 }

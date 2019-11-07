@@ -129,4 +129,11 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
     override fun getUserUsername(): String {
         return pref?.getString(Constants.SHARED_PREF_USER_USERNAME, "")!!
     }
+
+    override fun isLocationEnabled(checked: Boolean) {
+       pref?.edit(commit = true) {
+           putBoolean(Constants.SHARED_PREF_IS_LOCATION_ENABLED, checked)
+       }
+        listener?.onSharedPreferenceChanged(pref, Constants.SHARED_PREF_IS_LOCATION_ENABLED)
+    }
 }

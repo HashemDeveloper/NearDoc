@@ -32,6 +32,8 @@ import org.greenrobot.eventbus.ThreadMode
 class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, SharedPreferences.OnSharedPreferenceChangeListener{
 
     @Inject
+    lateinit var iLocationService: ILocationService
+    @Inject
     lateinit var iRxEventBus: IRxEventBus
     @Inject
     lateinit var iConnectionStateMonitor: IConnectionStateMonitor
@@ -124,6 +126,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
         this.iSharedPrefService.registerSharedPrefListener(this)
         monitorConnectionSetting()
         monitorUserState()
+//        monitorLocationUpdate()
     }
 
     override fun onResume() {
@@ -136,7 +139,13 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
     override fun onStop() {
         super.onStop()
     }
-
+    private fun monitorLocationUpdate() {
+        this.iLocationService.getObserver().observe(this, Observer {
+            if (it != null) {
+                Log.i("Location: ", "Location")
+            }
+        })
+    }
     private fun monitorUserState() {
         this.iUserStateService.getAuthObserver().observe(this, Observer { currentUser ->
             if (currentUser.currentUser != null) {
@@ -325,6 +334,14 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
                 Constants.SHARED_PREF_USER_USERNAME -> {
                     val username: String = pref?.getString(key, "")!!
                     fragment_main_bottom_bar_username_view_id.text = username
+                }
+                Constants.SHARED_PREF_IS_LOCATION_ENABLED -> {
+                    val isEnabled: Boolean = pref?.getBoolean(key, false)!!
+                    if (isEnabled) {
+                        EventBus.getDefault().postSticky(LocationEnabledEvent(true))
+                    } else {
+                        EventBus.getDefault().postSticky(LocationEnabledEvent(false))
+                    }
                 }
             }
         }
