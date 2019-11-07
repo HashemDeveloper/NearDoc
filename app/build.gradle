@@ -140,5 +140,5 @@ dependencies {
     //location service
     implementation "com.google.android.gms:play-services-location:$location_service"
     // seekBar
-    implementation 'com.crystal:crystalrangeseekbar:1.1.3'
+    implementation 'com.ramotion.fluidslider:fluid-slider:0.3.1'
 }
