@@ -40,4 +40,8 @@
         <item name="android:dividerHeight">1dp</item>
         <item name="android:padding">2dp</item>
     </style>
+    <style name="SwitchPrefStyle">
+        <item name="android:thumbTint">@color/switch_color</item>
+        <item name="android:track">@color/switch_color</item>
+    </style>
 </resources>

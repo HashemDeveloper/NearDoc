@@ -24,4 +24,5 @@ interface ISharedPrefService {
     fun storeGoogleEncryptIv(iv: ByteArray?)
     fun getGoogleTokenId(): String
     fun getGoogleTokenEncryptIv(): String
+    abstract fun isLocationEnabled(checked: Boolean)
 }

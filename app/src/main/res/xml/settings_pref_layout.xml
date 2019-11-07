@@ -12,6 +12,7 @@
             />
     </PreferenceCategory>
     <PreferenceCategory
+        android:key="searchPrefCategory"
         android:layout="@xml/pref_heading_two"
         app:allowDividerAbove="true"
         >

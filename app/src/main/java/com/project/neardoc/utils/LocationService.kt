@@ -22,6 +22,7 @@ class LocationService @Inject constructor(private val context: Context): LiveDat
     private var locationManager: LocationManager?= null
     private var iPermissionListener: IPermissionListener?= null
     private var isRegister = false
+    private var isLocDisabled = false
 
     init {
        this.locationManager = this.context.getSystemService(Context.LOCATION_SERVICE) as LocationManager

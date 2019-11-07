@@ -335,6 +335,14 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
                     val username: String = pref?.getString(key, "")!!
                     fragment_main_bottom_bar_username_view_id.text = username
                 }
+                Constants.SHARED_PREF_IS_LOCATION_ENABLED -> {
+                    val isEnabled: Boolean = pref?.getBoolean(key, false)!!
+                    if (isEnabled) {
+                        EventBus.getDefault().postSticky(LocationEnabledEvent(true))
+                    } else {
+                        EventBus.getDefault().postSticky(LocationEnabledEvent(false))
+                    }
+                }
             }
         }
 
