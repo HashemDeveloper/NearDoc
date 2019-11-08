@@ -34,7 +34,6 @@ class UpdateEmailWorker @Inject constructor(context: Context, workerParameters: 
         var isSuccess: Boolean? = null
         var message: String? = ""
         val outputData: Data?
-        var isGoogleProvider: Boolean? = false
         try {
             val key: String = inputData.getString(Constants.WORKER_WEB_KEY)!!
             val newEmail: String = inputData.getString(Constants.WORKER_NEW_EMAIL)!!
@@ -49,7 +48,6 @@ class UpdateEmailWorker @Inject constructor(context: Context, workerParameters: 
                 val byteArrayEncryptIv = Base64.decode(encryptIv, Base64.DEFAULT)
                 val idToken = deCryptor.decryptData(Constants.GOOGLE_ID_TOKEN, byteArrayIdToken, byteArrayEncryptIv)
                 this.authCredential = GoogleAuthProvider.getCredential(idToken, null)
-                isGoogleProvider = true
             } else {
                 this.authCredential = EmailAuthProvider.getCredential(currentEmail, password)
             }

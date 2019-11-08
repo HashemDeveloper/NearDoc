@@ -21,6 +21,7 @@ import com.project.neardoc.rxauth.IRxAuthentication
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.PageType
 import com.project.neardoc.worker.UpdateEmailWorker
+import com.project.neardoc.worker.UpdateUserInfoWorker
 import io.reactivex.disposables.CompositeDisposable
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
@@ -48,19 +49,42 @@ class UpdateEmailViewModel @Inject constructor(): ViewModel() {
     ) {
         this.isLoadingLiveData.value = true
         val key: String = this.context.resources!!.getString(R.string.firebase_web_key)
-        val keyData: Data = Data.Builder()
+        val dbKey: String = this.context.resources!!.getString(R.string.firebase_db_secret)
+
+        // old information to update
+        val oldEmail: String = this.iSharedPreferences.getUserEmail()
+        val userImage: String = this.iSharedPreferences.getUserImage()
+        val username: String = this.iSharedPreferences.getUserUsername()
+        val fullName: String = this.iSharedPreferences.getUserName()
+
+        val updateEmailData: Data = Data.Builder()
             .putString(Constants.WORKER_WEB_KEY, key)
             .putString(Constants.WORKER_NEW_EMAIL, newEmail)
             .putString(Constants.WORKER_EMAIL, currentEmail)
             .putString(Constants.WORKER_PASSWORD, password)
             .build()
-        val request: OneTimeWorkRequest = OneTimeWorkRequest.Builder(UpdateEmailWorker::class.java)
-            .setInputData(keyData)
+
+        val updateUserInfoData: Data = Data.Builder()
+            .putString(Constants.WORKER_DB_AUTH_KEY, dbKey)
+            .putString(Constants.WORKER_EMAIL, newEmail)
+            .putString(Constants.WORKER_IMAGE_PATH, userImage)
+            .putString(Constants.WORKER_FULL_NAME, fullName)
+            .putString(Constants.WORKER_DISPLAY_NAME, username)
+            .putString(Constants.WORKER_OLD_EMAIL, oldEmail)
+            .build()
+        val updateUserInfoRequest: OneTimeWorkRequest = OneTimeWorkRequest.Builder(UpdateUserInfoWorker::class.java)
+            .setInputData(updateUserInfoData)
+            .build()
+        val updateEmailRequest: OneTimeWorkRequest = OneTimeWorkRequest.Builder(UpdateEmailWorker::class.java)
+            .setInputData(updateEmailData)
             .build()
         val workerManager: WorkManager = WorkManager.getInstance(this.context)
-        workerManager.beginWith(request).enqueue()
+        workerManager
+            .beginWith(updateEmailRequest)
+            .then(updateUserInfoRequest)
+            .enqueue()
 
-        this.workerLiveData = workerManager.getWorkInfoByIdLiveData(request.id)
+        this.workerLiveData = workerManager.getWorkInfoByIdLiveData(updateEmailRequest.id)
         this.workerLiveData?.observe(activity, workerObserver())
     }
     private fun workerObserver(): Observer<WorkInfo> {
