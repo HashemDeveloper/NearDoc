@@ -6,6 +6,8 @@ import java.util.regex.Pattern
 
 class Constants {
     companion object {
+        val SHARED_PREF_SEARCH_LIMIT = "SEARCH_LIMIT"
+        val SHARED_PREF_DISTANCE_RADIUS = "DISTANCE_RADIUS"
         val SHARED_PREF_IS_LOCATION_ENABLED = "LOCATION_ENABLED"
         val WORKER_LOCATION_LAT = "lat"
         val WORKER_LOCATION_LON = "lon"

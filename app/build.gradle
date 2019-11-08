@@ -89,6 +89,8 @@ dependencies {
 
     // Test helpers
     testImplementation "androidx.room:room-testing:$room_version"
+    androidTestImplementation "org.hamcrest:hamcrest-library:$hamcrest_version"
+    androidTestImplementation "androidx.test.ext:junit:$junit_version"
 
     // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-extensions:$lifeCycleExtensionVersion"
