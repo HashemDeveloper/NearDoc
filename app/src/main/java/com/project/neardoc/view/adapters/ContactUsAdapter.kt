@@ -17,5 +17,4 @@ class ContactUsAdapter constructor(private val context: Context): RecyclerView.A
     override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
-
 }

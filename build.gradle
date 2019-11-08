@@ -57,6 +57,8 @@ ext {
     circularImage = "2.2.0"
     multidex_version = "2.0.1"
     location_service = "17.0.0"
+    hamcrest_version = "2.2"
+    junit_version = "1.1.1"
 }
 task clean(type: Delete) {
     delete rootProject.buildDir

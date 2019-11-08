@@ -45,6 +45,7 @@ class DeleteUserInfoWorker @Inject constructor(context: Context, workerParameter
                     this.countDownLatch.countDown()
                 }, {onError ->
                     if (onError.localizedMessage != null) {
+                        isSuccess = false
                         Log.i("DeleteFromDbErr: ", onError.localizedMessage!!)
                         message = onError.localizedMessage!!
                     }
