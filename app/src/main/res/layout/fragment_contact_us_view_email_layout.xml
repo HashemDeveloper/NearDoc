@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+    <androidx.cardview.widget.CardView
+        android:id="@+id/fragment_contact_us_email_holder_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Widget.MaterialComponents.CardView"
+        app:cardBackgroundColor="@color/white"
+        app:cardElevation="8dp"
+        android:layout_marginBottom="8dp"
+        >
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/fragment_contact_us_view_email_email_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CompanyEmail"
+            android:textSize="18sp"
+            android:textColor="@color/blue_gray_400"
+            />
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>
