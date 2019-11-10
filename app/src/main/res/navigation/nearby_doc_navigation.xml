@@ -113,9 +113,6 @@
             android:id="@+id/actionContactUs"
             app:destination="@id/contactUs" />
         <action
-            android:id="@+id/actionSendFeedback"
-            app:destination="@id/sendFeedback" />
-        <action
             android:id="@+id/actionTermsAndCon"
             app:destination="@id/termsAndCondition" />
         <action
@@ -142,15 +139,6 @@
         android:name="com.project.neardoc.view.settings.ContactUs"
         android:label="fragment_contact_us"
         tools:layout="@layout/fragment_contact_us" >
-        <action
-            android:id="@+id/actionSettingsFragment"
-            app:destination="@id/settingsFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/sendFeedback"
-        android:name="com.project.neardoc.view.settings.SendFeedback"
-        android:label="fragment_send_feedback"
-        tools:layout="@layout/fragment_send_feedback" >
         <action
             android:id="@+id/actionSettingsFragment"
             app:destination="@id/settingsFragment" />

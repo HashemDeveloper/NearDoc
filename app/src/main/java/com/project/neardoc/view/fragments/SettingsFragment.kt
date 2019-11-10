@@ -48,7 +48,7 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
     }
     private fun addPrefKeys() {
         this.list = listOf("prefSignInSecKey" , "prefDistanceKey", "prefSetLimitKey",
-            "prefContactUsKey", "prefRateKey", "prefSendFeedbackKey", "prefTermsAndConditionKey", "prefPrivacyPolicyKey")
+            "prefContactUsKey", "prefRateKey", "prefTermsAndConditionKey", "prefPrivacyPolicyKey")
     }
     private fun getPrefKeys(): List<String>? {
         return if (this.list != null) {
@@ -59,6 +59,9 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
     }
     private fun setupPreferenceListeners() {
         val locationEnablePref: CustomSwitchPreference = findPreference<CustomSwitchPreference>("prefEnableCurrentLocationKey") as CustomSwitchPreference
+        val searchPrefCategory: PreferenceCategory = findPreference<PreferenceCategory>("searchPrefCategory") as PreferenceCategory
+        val helpPrefCategory: PreferenceCategory = findPreference<PreferenceCategory>("helpAndSupport") as PreferenceCategory
+
         if (Constants.ENABLE_LOCATION_SWITCH) {
             locationEnablePref.setOnPreferenceClickListener {
                 val sharedPref: SharedPreferences = it.sharedPreferences
@@ -66,7 +69,7 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
                 this.iSharedPrefService.isLocationEnabled(isChecked)
                 true }
         } else {
-            val searchPrefCategory: PreferenceCategory = findPreference<PreferenceCategory>("searchPrefCategory") as PreferenceCategory
+
             searchPrefCategory.removePreference(locationEnablePref)
         }
 
@@ -94,10 +97,7 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
                         contactUsFragment.navigate(R.id.contactUs)
                     }
                     it.key == "prefRateKey" -> Toast.makeText(context, "RateUs", Toast.LENGTH_SHORT).show()
-                    it.key == "prefSendFeedbackKey" -> {
-                        val sendFeedbackPage = findNavController()
-                        sendFeedbackPage.navigate(R.id.sendFeedback)
-                    }
+
                     it.key == "prefTermsAndConditionKey" -> {
                         val termsAndConditionPage = findNavController()
                         termsAndConditionPage.navigate(R.id.termsAndCondition)
