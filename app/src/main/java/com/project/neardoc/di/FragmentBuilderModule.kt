@@ -28,8 +28,6 @@ abstract class FragmentBuilderModule {
     @ContributesAndroidInjector
     abstract fun contributeContactUsFragment(): ContactUs
     @ContributesAndroidInjector
-    abstract fun contributeSendFeedbackFragment(): SendFeedback
-    @ContributesAndroidInjector
     abstract fun contributeTermsAndConditionPage(): TermsAndCondition
     @ContributesAndroidInjector
     abstract fun contributePrivacyPolicyPage(): PrivacyPolicy

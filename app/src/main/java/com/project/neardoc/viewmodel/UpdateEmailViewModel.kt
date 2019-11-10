@@ -80,8 +80,8 @@ class UpdateEmailViewModel @Inject constructor(): ViewModel() {
             .build()
         val workerManager: WorkManager = WorkManager.getInstance(this.context)
         workerManager
-            .beginWith(updateEmailRequest)
-            .then(updateUserInfoRequest)
+            .beginWith(updateUserInfoRequest)
+            .then(updateEmailRequest)
             .enqueue()
 
         this.workerLiveData = workerManager.getWorkInfoByIdLiveData(updateEmailRequest.id)

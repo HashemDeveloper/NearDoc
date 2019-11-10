@@ -42,7 +42,7 @@ class ContactUs : Fragment(), Injectable, ContactUsAdapter.ContactClickListener 
         this.contactUsAdapter = ContactUsAdapter(context!!, this)
         fragment_contact_us_recycler_view_id.layoutManager = LinearLayoutManager(context!!)
         fragment_contact_us_recycler_view_id.adapter = this.contactUsAdapter
-        val header = SignInSecurityHeaderModel("Via Email")
+        val header = SignInSecurityHeaderModel("Email Support")
         val contactEmail = "neardocapp@gmail.com"
         val dataList: List<Any> = arrayListOf(header, contactEmail)
         this.contactUsAdapter?.setData(dataList)

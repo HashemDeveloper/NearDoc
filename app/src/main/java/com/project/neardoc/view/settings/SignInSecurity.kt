@@ -210,6 +210,10 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
         return Observer { message ->
             if (message.isNotEmpty()) {
                 when (message) {
+                    "There is no user record corresponding to this identifier. The user may have been deleted." -> {
+                        val snackbar: Snackbar = Snackbar.make(view!!, R.string.no_user_found, Snackbar.LENGTH_LONG)
+                        this.iNearDockMessageViewer.displayMessage(snackbar, SnackbarType.INVALID_PASSWORD, true, "", true)
+                    }
                     "The password is invalid or the user does not have a password." -> {
                         val snackbar: Snackbar = Snackbar.make(view!!, R.string.login_invalid_password, Snackbar.LENGTH_LONG)
                         this.iNearDockMessageViewer.displayMessage(snackbar, SnackbarType.INVALID_PASSWORD, true, "", true)

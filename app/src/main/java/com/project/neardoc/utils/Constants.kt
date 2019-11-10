@@ -53,6 +53,7 @@ class Constants {
         const val SHARED_PREF_USER_EMAIL = "userEmail"
         const val SHARED_PREF_USER_USERNAME = "email"
         const val ENABLE_LOCATION_SWITCH = false
+        const val DISABLE_SEND_FEEDBACK = false
         fun encodeUserEmail(email: String): String {
             return email.replace(".", ",")
         }

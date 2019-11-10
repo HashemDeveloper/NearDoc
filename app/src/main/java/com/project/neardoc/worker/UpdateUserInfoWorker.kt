@@ -11,6 +11,7 @@ import com.project.neardoc.model.Users
 import com.project.neardoc.utils.Constants
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.CountDownLatch
 import javax.inject.Inject
 
 class UpdateUserInfoWorker @Inject constructor(context: Context, workerParameters: WorkerParameters): Worker(context, workerParameters) {
@@ -19,9 +20,11 @@ class UpdateUserInfoWorker @Inject constructor(context: Context, workerParameter
     lateinit var iSharedPrefService: ISharedPrefService
     @Inject
     lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
+    private val countDownLatch: CountDownLatch = CountDownLatch(1)
 
     override fun doWork(): Result {
         NearDocWorkerInjection.inject(this)
+        var isSuccess: Boolean? = false
         val dbKey: String = inputData.getString(Constants.WORKER_DB_AUTH_KEY)!!
         val username: String = inputData.getString(Constants.WORKER_DISPLAY_NAME)!!
         val userImage: String = inputData.getString(Constants.WORKER_IMAGE_PATH)!!
@@ -36,6 +39,7 @@ class UpdateUserInfoWorker @Inject constructor(context: Context, workerParameter
                 Log.i("OldInfo: ", "Deleted")
             }, {onDeleteError ->
                 Log.i("OnDeleteError: ", onDeleteError.localizedMessage!!)
+                this.countDownLatch.countDown()
                 Result.retry()
             }))
         this.compositeDisposable.add(this.iNearDocRemoteRepo.storeUsersInfo(Constants.encodeUserEmail(newEmail), dbKey, user)
@@ -47,10 +51,25 @@ class UpdateUserInfoWorker @Inject constructor(context: Context, workerParameter
                     this.iSharedPrefService.storeUserEmail(userResponse.email)
                     this.iSharedPrefService.storeUserImage(userResponse.image)
                 }
+                isSuccess = true
+                this.countDownLatch.countDown()
             }, {saveUserError ->
+                isSuccess = false
+                this.countDownLatch.countDown()
                 Log.i("SaveUserError: ", saveUserError.localizedMessage!!)
             }))
-        return Result.success()
+        try {
+            this.countDownLatch.await()
+        } catch (interruptedEx: InterruptedException) {
+            if (interruptedEx.localizedMessage != null) {
+                Log.i("Interrupted: ", interruptedEx.localizedMessage!!)
+            }
+        }
+        return if (isSuccess!!) {
+            Result.success()
+        } else {
+            Result.retry()
+        }
     }
 
     override fun onStopped() {

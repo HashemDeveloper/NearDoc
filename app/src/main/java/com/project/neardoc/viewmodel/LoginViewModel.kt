@@ -176,15 +176,8 @@ class LoginViewModel @Inject constructor() : ViewModel() {
             }))
     }
     private fun fetchUserInfoFromFirebaseDb(newEmail: String) {
-        val fullName: String = this.iSharedPrefService.getUserName()
-        val username: String = this.iSharedPrefService.getUserUsername()
-        val oldEmail: String = this.iSharedPrefService.getUserEmail()
         val dbKey: String = this.context.resources!!.getString(R.string.firebase_db_secret)
-        if (fullName.isEmpty() || fullName == ""
-            && username.isEmpty() || username == ""
-            && oldEmail.isEmpty() || oldEmail == "") {
-            fetchUserInfoProcessInBg(dbKey, newEmail)
-        }
+        fetchUserInfoProcessInBg(dbKey, newEmail)
     }
     private fun fetchUserInfoProcessInBg(dbKey: String, newEmail: String) {
         val keyData: Data = Data.Builder()
