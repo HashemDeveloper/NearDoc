@@ -71,6 +71,10 @@ interface INearDocRemoteApi {
     fun retrieveKnownConditions(@Url url: String, @Query("user_key") userKey: String, @Query("limit") limit: Int): Observable<KnownConditionRes>
 
     @Headers("Content-Type: application/json")
+    @GET
+    fun getInsuranceProviderAndPlans(@Url url: String, @Query("user_key") userKey: String)
+
+    @Headers("Content-Type: application/json")
     @POST
     fun updateUserEmail(
         @Url url: String, @Query("key") key: String, @Query("idToken") idToken: String, @Query("email") email: String, @Query(

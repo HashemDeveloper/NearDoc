@@ -33,6 +33,7 @@ class Constants {
         const val WORKER_OLD_EMAIL = "oldEmail"
         const val SEARCH_DOC_BY_DISEASE_ENDPOINT = "https://api.betterdoctor.com/2016-03-01/doctors"
         const val BETTER_DOC_API_HEALTH_ENDPOINT = "https://api.betterdoctor.com/2016-03-01/info"
+        const val BETTER_DOC_INSURANCE_ENDPOINT = "https://api.betterdoctor.com/2016-03-01/insurances"
         const val BETTER_DOC_KNOWN_CONDITIONS = "https://api.betterdoctor.com/2016-03-01/conditions"
         const val FIREBASE_AUTH_SIGN_UP_ENDPOINT = "https://identitytoolkit.googleapis.com/v1/accounts:signUp"
         const val FIREBASE_AUTH_EMAIL_VERIFICATION_ENDPOINT = "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode"
