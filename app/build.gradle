@@ -143,6 +143,4 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:$location_service"
     // seekBar
     implementation "com.ramotion.fluidslider:fluid-slider:$fluid_version"
-    // pre-built supports
-    implementation "androidx.leanback:leanback:$leanback_version"
 }
