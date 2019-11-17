@@ -59,6 +59,7 @@ ext {
     location_service = "17.0.0"
     hamcrest_version = "2.2"
     junit_version = "1.1.1"
+    fluid_version = "0.3.1"
 }
 task clean(type: Delete) {
     delete rootProject.buildDir

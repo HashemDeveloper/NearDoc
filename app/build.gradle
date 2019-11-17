@@ -142,5 +142,5 @@ dependencies {
     //location service
     implementation "com.google.android.gms:play-services-location:$location_service"
     // seekBar
-    implementation 'com.ramotion.fluidslider:fluid-slider:0.3.1'
+    implementation "com.ramotion.fluidslider:fluid-slider:$fluid_version"
 }

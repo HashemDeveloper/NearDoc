@@ -9,5 +9,5 @@ enum class PageType {
     PRIVACY_POLICY,
     TERMS_AND_CONDITION,
     CHANGE_EMAIL,
-    CHANGE_PASSWORD
+    CHANGE_PASSWORD,
 }
