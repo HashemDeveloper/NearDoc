@@ -1,17 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".view.fragments.AccountPage"
-    >
-    <FrameLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".view.fragments.AccountPage">
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/blue_gray_100"
         >
-        <TextView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/hello_blank_fragment" />
-
-    </FrameLayout>
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="48dp"
+            >
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                >
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/fragment_account_user_image_holder"
+                    android:layout_width="300dp"
+                    android:layout_height="300dp"
+                    android:layout_marginTop="@dimen/padding_16dp"
+                    android:layout_marginLeft="@dimen/padding_16dp"
+                    android:layout_marginRight="@dimen/padding_16dp"
+                    style="@style/Widget.MaterialComponents.CardView"
+                    app:cardUseCompatPadding="true"
+                    app:rippleColor="@color/blue_gray_400"
+                    app:cardCornerRadius="4dp"
+                    app:contentPadding="@dimen/padding_16dp"
+                    android:layout_gravity="center_horizontal"
+                    app:cardElevation="8dp"
+                    >
+                   <LinearLayout
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:orientation="vertical"
+                       android:layout_gravity="center_horizontal"
+                       >
+                       <com.google.android.material.textview.MaterialTextView
+                           android:id="@+id/fragment_account_user_name_id"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           style="@style/Widget.MaterialComponents.TextView"
+                           android:text="Abul Hashem Jr"
+                           android:gravity="center_horizontal"
+                           android:layout_marginTop="30dp"
+                           android:textSize="24sp"
+                           android:textColor="@color/blue_gray_400"
+                           android:layout_gravity="center_vertical|center_horizontal|top"
+                           />
+                       <com.google.android.material.textview.MaterialTextView
+                           android:id="@+id/fragment_account_user_email_view_id"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           style="@style/Widget.MaterialComponents.TextView"
+                           android:text="juniayulia@outlook.com"
+                           android:layout_gravity="center_horizontal"
+                           android:textSize="18sp"
+                           android:textColor="@color/blue_gray_400"
+                           />
+                      <LinearLayout
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:orientation="horizontal"
+                          android:layout_gravity="center_horizontal"
+                          >
+                          <androidx.appcompat.widget.AppCompatImageView
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:src="@drawable/ic_location_red_24dp"
+                              android:layout_gravity="center_vertical"
+                              />
+                          <com.google.android.material.textview.MaterialTextView
+                              android:id="@+id/fragment_account_user_location_view_id"
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              style="@style/Widget.MaterialComponents.TextView"
+                              android:layout_gravity="center_horizontal"
+                              android:text="New York"
+                              android:textSize="18sp"
+                              android:layout_marginTop="4dp"
+                              android:layout_marginLeft="4dp"
+                              android:layout_marginStart="4dp"
+                              android:textColor="@color/blue_gray_400"
+                              />
+                      </LinearLayout>
+                   </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </FrameLayout>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/fragment_account_user_image_view_id"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_user_black_24dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/circle_image_background"
+                app:civ_border_overlay="true"
+                app:civ_border_width="2dp"
+                app:civ_border_color="@color/blue_gray_100"
+                app:civ_circle_background_color="@color/blue_gray_100"
+                app:civ_fill_color="@color/blue_gray_400"
+                android:elevation="8dp"
+                />
+        </RelativeLayout>
+    </RelativeLayout>
 </layout>

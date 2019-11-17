@@ -292,6 +292,8 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
     fun onBottomBarEvent(event: BottomBarEvent) {
         if (!event.getIsBottomBarEnabled()) {
             enableBottomBar(false)
+        } else {
+            enableBottomBar(true)
         }
     }
     @Subscribe(threadMode = ThreadMode.ASYNC)
@@ -319,6 +321,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
             setSettingBar(false, event.getCurrentPage())
         }
     }
+
     override fun onSharedPreferenceChanged(pref: SharedPreferences?, key: String?) {
         runOnUiThread {
             when(key) {
