@@ -86,4 +86,6 @@
     <string name="no_user_found">There is on user record corresponding to this identifier.</string>
     <string name="location">Location</string>
     <string name="room_temperature">Room Temperature</string>
+    <string name="let_s_do_breathing_exercises">Let\'s do breathing exercises!</string>
+    <string name="start">Start</string>
 </resources>
