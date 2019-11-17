@@ -67,4 +67,19 @@ class ApplicationModule {
     fun provideNearDockSnackBar(nearDockMessageViewer: NearDockMessageViewer): INearDockMessageViewer {
         return nearDockMessageViewer
     }
+    @Singleton
+    @Provides
+    fun provideDeviceSensors(deviceSensors: DeviceSensors): IDeviceSensors {
+        return deviceSensors
+    }
+    @Singleton
+    @Provides
+    fun provideTemperatureSensor(tempSensor: TempSensor): ITempSensor {
+        return tempSensor
+    }
+    @Singleton
+    @Provides
+    fun provideLightSensor(lightSensor: LightSensor): ILightSensor {
+        return lightSensor
+    }
 }

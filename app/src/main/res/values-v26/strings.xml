@@ -85,4 +85,5 @@
     <string name="search_limit">Result to get back when search for doctors</string>
     <string name="no_user_found">There is on user record corresponding to this identifier.</string>
     <string name="location">Location</string>
+    <string name="room_temperature">Room Temperature</string>
 </resources>
