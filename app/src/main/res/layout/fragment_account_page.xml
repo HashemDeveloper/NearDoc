@@ -8,6 +8,17 @@
         android:layout_height="match_parent"
         android:background="@color/blue_gray_100"
         >
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/fragment_account_room_temp_view_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/room_temperature"
+            android:textSize="18sp"
+            android:textColor="@color/blue_gray_400"
+            app:drawableLeftCompat="@drawable/thermometer_2x"
+            android:layout_margin="8dp"
+            android:visibility="gone"
+            />
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
