@@ -36,6 +36,9 @@ class DeviceSensors @Inject constructor(private val context: Context): IDeviceSe
                        .registerListener(this.mSensorManager!!)
                    this.iLightSensor.getSensorEventLiveData().observe(activity, lightSensorEventObserver())
                }
+               Sensor.TYPE_STEP_COUNTER -> {
+
+               }
            }
         }
     }

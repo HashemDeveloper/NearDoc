@@ -13,8 +13,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/room_temperature"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
+            android:textSize="18sp"
+            android:textColor="@color/blue_gray_400"
+            app:drawableLeftCompat="@drawable/thermometer_2x"
             android:layout_margin="8dp"
             android:visibility="gone"
             />
