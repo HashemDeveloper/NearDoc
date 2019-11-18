@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
@@ -51,6 +52,10 @@ class AccountPage : Fragment(), Injectable {
         fragment_account_start_breathing_bt_id.setOnClickListener {
             this.accountPageViewModel.startAnimation(context!!, activity!!, fragment_account_breathing_image_view_id,
                 fragment_account_breath_guide_text_view_id)
+        }
+        fragment_account_go_back_bt_id.setOnClickListener {
+            EventBus.getDefault().postSticky(BottomBarEvent(true))
+            Navigation.findNavController(it).navigate(AccountPageDirections.actionHomePage())
         }
     }
 
