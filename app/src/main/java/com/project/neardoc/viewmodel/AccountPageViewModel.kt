@@ -12,11 +12,18 @@ import com.github.florent37.viewanimator.ViewAnimator
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textview.MaterialTextView
+import com.google.firebase.auth.FirebaseAuth
 import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
+import com.project.neardoc.events.BottomBarEvent
+import com.project.neardoc.events.LandInSettingPageEvent
+import com.project.neardoc.events.UserStateEvent
+import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.IDeviceSensors
+import com.project.neardoc.utils.PageType
 import com.ramotion.fluidslider.FluidSlider
 import de.hdodenhof.circleimageview.CircleImageView
+import org.greenrobot.eventbus.EventBus
 import java.text.MessageFormat
 import javax.inject.Inject
 
@@ -163,5 +170,21 @@ class AccountPageViewModel @Inject constructor(): ViewModel() {
 
     private fun getDrawableImage(context: Context, image: String): Int {
         return context.resources.getIdentifier(image, "drawable", context.packageName)
+    }
+
+    fun signOut() {
+        FirebaseAuth.getInstance().signOut()
+        EventBus.getDefault().postSticky(UserStateEvent(false))
+        EventBus.getDefault().postSticky(LandInSettingPageEvent(false, PageType.MAIN_PAGE))
+        EventBus.getDefault().postSticky(BottomBarEvent(false))
+        clearLocalStorage()
+    }
+    private fun clearLocalStorage() {
+        this.iSharedPrefService.removeItems(Constants.SHARED_PREF_USER_NAME)
+        this.iSharedPrefService.removeItems(Constants.SHARED_PREF_USER_EMAIL)
+        this.iSharedPrefService.removeItems(Constants.SHARED_PREF_USER_USERNAME)
+        this.iSharedPrefService.removeItems(Constants.SHARED_PREF_USER_CURRENT_STATE)
+        this.iSharedPrefService.removeItems(Constants.SHARED_PREF_USER_LOGIN_PROVIDER)
+        this.iSharedPrefService.removeItems(Constants.SHARED_PREF_USER_IMAGE)
     }
 }
