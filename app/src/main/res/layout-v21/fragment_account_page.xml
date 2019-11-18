@@ -173,19 +173,21 @@
                 android:layout_marginBottom="24dp"
                 />
         </FrameLayout>
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <com.linroid.filtermenu.library.FilterMenuLayout
+            android:id="@+id/fragment_account_menu_bt_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:elevation="8dp"
+            app:fm_expandedRadius="96dp"
+            app:fm_collapsedRadius="24dp"
+            app:fm_centerBottom="50dp"
+            app:fm_centerRight="50dp"
+            app:fm_primaryColor="@color/blue_gray_400"
+            app:fm_primaryDarkColor="@color/blue_gray_800"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            app:backgroundTint="@color/blue_gray_400"
-            app:fabSize="auto"
-            app:elevation="8dp"
-            app:useCompatPadding="true"
-            android:src="@drawable/ic_add_white_24dp"
-            app:tint="@color/white"
-            app:rippleColor="@color/blue_gray_100"
             />
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/fragment_account_go_back_bt_id"
             android:layout_width="wrap_content"
