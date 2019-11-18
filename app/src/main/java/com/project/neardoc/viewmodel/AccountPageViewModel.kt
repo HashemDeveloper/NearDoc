@@ -1,5 +1,6 @@
 package com.project.neardoc.viewmodel
 
+import android.os.SystemClock
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.FragmentActivity
@@ -7,12 +8,15 @@ import androidx.lifecycle.ViewModel
 import com.github.florent37.viewanimator.ViewAnimator
 import com.google.android.material.textview.MaterialTextView
 import com.project.neardoc.R
+import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.utils.IDeviceSensors
 import javax.inject.Inject
 
 class AccountPageViewModel @Inject constructor(): ViewModel() {
     @Inject
     lateinit var iSensors: IDeviceSensors
+    @Inject
+    lateinit var iSharedPrefService: ISharedPrefService
 
     fun setupDeviceSensor(activity: FragmentActivity, fragmentAccountRoomTempViewId: MaterialTextView?) {
         this.iSensors.setupDeviceSensor(activity, fragmentAccountRoomTempViewId!!)
@@ -62,6 +66,9 @@ class AccountPageViewModel @Inject constructor(): ViewModel() {
                     breathingGuideTextView!!.setText(R.string.good_job)
                     breathingImageView!!.scaleX = 1.0f
                     breathingImageView.scaleY = 1.0f
+                    this.iSharedPrefService.setBreathingSession(this.iSharedPrefService.getBreathingSession() + 1)
+                    this.iSharedPrefService.setBreath(this.iSharedPrefService.getBreath() + 1)
+                    this.iSharedPrefService.setBreathingDate(SystemClock.currentThreadTimeMillis())
                 }
             }
             .start()
