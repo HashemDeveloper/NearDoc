@@ -85,12 +85,13 @@
         android:layout_centerHorizontal="true"
         >
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/seekbar_ok_bt_id"
+            android:id="@+id/breathing_result_ok_bt_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:backgroundTint="@color/white"
             android:textColor="@color/blue_gray_400"
             android:text="@android:string/ok"
+            app:rippleColor="@color/blue_gray_400"
             />
     </LinearLayout>
 </RelativeLayout>

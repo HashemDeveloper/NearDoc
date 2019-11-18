@@ -35,6 +35,6 @@ interface ISharedPrefService {
     fun getBreathingSession(): Int
     fun setBreathingDate(date: Long)
     fun getBreathingDate(): String
-    fun setRepeatCount(count: Float)
-    fun getRepeatCount(): Float
+    fun setRepeatCount(count: Int)
+    fun getRepeatCount(): Int
 }
