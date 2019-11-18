@@ -195,4 +195,14 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
         }
         return "" + calender.get(Calendar.HOUR_OF_DAY) + ":" + calender.get(Calendar.MINUTE) + " " + ampOrPm
     }
+
+    override fun setRepeatCount(count: Float) {
+        pref?.edit(commit = true) {
+            putFloat(Constants.SHARED_PREF_BREATH_REPEAT_COUNT, count)
+        }
+    }
+
+    override fun getRepeatCount(): Float {
+        return pref?.getFloat(Constants.SHARED_PREF_BREATH_REPEAT_COUNT, 0f)!!
+    }
 }
