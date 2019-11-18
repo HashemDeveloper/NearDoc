@@ -1,6 +1,10 @@
 package com.project.neardoc.viewmodel
 
 import android.content.Context
+import android.location.Address
+import android.location.Geocoder
+import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
@@ -14,12 +18,20 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textview.MaterialTextView
 import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
+import com.project.neardoc.model.CurrentLocation
 import com.project.neardoc.utils.IDeviceSensors
 import com.ramotion.fluidslider.FluidSlider
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.near_by_main_layout.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import java.io.IOException
 import java.text.MessageFormat
+import java.util.*
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 class AccountPageViewModel @Inject constructor(): ViewModel() {
     companion object {
@@ -149,6 +161,7 @@ class AccountPageViewModel @Inject constructor(): ViewModel() {
         val userImageUri: String = this.iSharedPrefService.getUserImage()
         val userName: String = this.iSharedPrefService.getUserName()
         val userEmail: String = this.iSharedPrefService.getUserEmail()
+        val userCurrentStat: String = this.iSharedPrefService.getUserCurrentState()
 
         if (userImageUri.isNotEmpty()) {
             Glide.with(context).load(userImageUri).into(userImageView!!)
@@ -158,6 +171,7 @@ class AccountPageViewModel @Inject constructor(): ViewModel() {
         }
         userNameView!!.text = userName
         userEmailView!!.text = userEmail
+        userLocationView!!.text = userCurrentStat
     }
 
     private fun getDrawableImage(context: Context, image: String): Int {

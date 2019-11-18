@@ -18,7 +18,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
-import com.project.neardoc.events.LocationEnabledEvent
 import com.project.neardoc.events.LocationUpdateEvent
 import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.utils.ConnectionSettings
@@ -36,8 +35,8 @@ import javax.inject.Inject
 
 class HomePage: Fragment(), Injectable, IPermissionListener {
     companion object {
-        private val LOCATION_UPDATE_REQUEST_CODE = 34
-        private val ACCESS_COARSE_AND_FINE_LOCATION_CODE = 1
+        private const val LOCATION_UPDATE_REQUEST_CODE = 34
+        private const val ACCESS_COARSE_AND_FINE_LOCATION_CODE = 1
     }
     private var connectionSettings: ConnectionSettings?= null
     private var isInternetAvailable = false
@@ -114,10 +113,12 @@ class HomePage: Fragment(), Injectable, IPermissionListener {
                 displayLoading(false)
                 val lat: String = location.latitude.toString()
                 val lon: String = location.longitude.toString()
+                this.homePageViewModel.storeUserCurrentState(location.latitude, location.longitude)
                 EventBus.getDefault().postSticky(LocationUpdateEvent(lat, lon))
             }
         })
     }
+
 
     override fun onStop() {
         super.onStop()

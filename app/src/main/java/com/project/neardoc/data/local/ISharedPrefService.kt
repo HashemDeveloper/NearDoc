@@ -37,4 +37,6 @@ interface ISharedPrefService {
     fun getBreathingDate(): String
     fun setRepeatCount(count: Int)
     fun getRepeatCount(): Int
+    fun setUserCurrentState(currentState: String)
+    fun getUserCurrentState(): String
 }

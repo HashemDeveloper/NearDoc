@@ -205,4 +205,14 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
     override fun getRepeatCount(): Int {
         return pref?.getInt(Constants.SHARED_PREF_BREATH_REPEAT_COUNT, 0)!!
     }
+
+    override fun setUserCurrentState(currentState: String) {
+        pref?.edit(commit = true) {
+            putString(Constants.SHARED_PREF_USER_CURRENT_STATE, currentState)
+        }
+    }
+
+    override fun getUserCurrentState(): String {
+        return pref?.getString(Constants.SHARED_PREF_USER_CURRENT_STATE, "")!!
+    }
 }

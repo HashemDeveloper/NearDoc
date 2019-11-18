@@ -94,4 +94,6 @@
     <string name="your_progress"><u>Your Progress:</u></string>
     <string name="breath_50_times_to_unlock_heart_rate"><u>Breath 50 times to unlock heart rate!</u></string>
     <string name="increase_breath_count_for_next_round"><u>Increase breath count for next round</u></string>
+    <string name="home">HOME</string>
+    <string name="state">State</string>
 </resources>
