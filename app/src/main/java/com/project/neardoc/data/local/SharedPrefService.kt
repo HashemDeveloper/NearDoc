@@ -154,4 +154,34 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
     override fun getSearchLimit(): String {
        return pref?.getString(Constants.SHARED_PREF_SEARCH_LIMIT, "")!!
     }
+
+    override fun setBreath(breath: Int) {
+       pref?.edit(commit = true) {
+           putInt(Constants.SHARED_PREF_BREATHING_NUM, breath)
+       }
+    }
+
+    override fun getBreath(): Int {
+        return pref?.getInt(Constants.SHARED_PREF_BREATHING_NUM, 0)!!
+    }
+
+    override fun setBreathingSession(session: Int) {
+        pref?.edit(commit = true) {
+            putInt(Constants.SHARED_PREF_BREATHING_SESSION, session)
+        }
+    }
+
+    override fun getBreathingSession(): Int {
+        return pref?.getInt(Constants.SHARED_PREF_BREATHING_SESSION, 0)!!
+    }
+
+    override fun setBreathingDate(date: Long) {
+        pref?.edit(commit = true) {
+            putLong(Constants.SHARED_PREF_BREATHING_DATE, date)
+        }
+    }
+
+    override fun getBreathingDate(): Long {
+        return pref?.getLong(Constants.SHARED_PREF_BREATHING_DATE, 0L)!!
+    }
 }

@@ -29,4 +29,10 @@ interface ISharedPrefService {
     fun setSearchLimit(limit: String)
     fun getDistanceRadius(): String
     fun getSearchLimit(): String
+    fun setBreath(breath: Int)
+    fun getBreath(): Int
+    fun setBreathingSession(session: Int)
+    fun getBreathingSession(): Int
+    fun setBreathingDate(date: Long)
+    fun getBreathingDate(): Long
 }
