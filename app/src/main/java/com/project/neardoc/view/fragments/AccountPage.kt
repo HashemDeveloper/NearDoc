@@ -2,27 +2,29 @@ package com.project.neardoc.view.fragments
 
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
+import com.linroid.filtermenu.library.FilterMenu
+import com.linroid.filtermenu.library.FilterMenuLayout
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.BottomBarEvent
-import com.project.neardoc.events.LocationUpdateEvent
-import com.project.neardoc.model.CurrentLocation
-import com.project.neardoc.utils.IDeviceSensors
 import com.project.neardoc.viewmodel.AccountPageViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_account_page.*
 import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
-class AccountPage : Fragment(), Injectable {
+
+class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
+
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val accountPageViewModel: AccountPageViewModel by viewModels {
@@ -52,6 +54,42 @@ class AccountPage : Fragment(), Injectable {
             this.accountPageViewModel.startAnimation(context!!, activity!!, fragment_account_breathing_image_view_id,
                 fragment_account_breath_guide_text_view_id)
         }
+        fragment_account_go_back_bt_id.setOnClickListener {
+            EventBus.getDefault().postSticky(BottomBarEvent(true))
+            Navigation.findNavController(it).navigate(AccountPageDirections.actionHomePage())
+        }
+        attachMenu(fragment_account_menu_bt_id)
+    }
+
+    private fun attachMenu(layout: FilterMenuLayout?): FilterMenu? {
+        val signOutBt = AppCompatImageView(this.context)
+        signOutBt.setBackgroundResource(R.drawable.ic_exit_to_app_white_24dp)
+        signOutBt.id = R.id.account_signout_bt
+        val heartRate = AppCompatImageView(this.context)
+        heartRate.setBackgroundResource(R.drawable.heart_cardiogram_24_white)
+        heartRate.id = R.id.account_heart_rate_bt
+        return FilterMenu.Builder(this.context)
+            .addItem(signOutBt)
+            .addItem(heartRate)
+            .attach(layout)
+            .withListener(this)
+            .build()
+    }
+
+    override fun onMenuCollapse() {
+
+    }
+
+    override fun onMenuItemClick(view: View?, position: Int) {
+        if (view!!.id == R.id.account_signout_bt) {
+            Toast.makeText(this.context, "Sign out", Toast.LENGTH_SHORT).show()
+        } else if (view.id == R.id.account_heart_rate_bt) {
+            Toast.makeText(this.context, "Heart rate", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onMenuExpand() {
+
     }
 
     override fun onDestroy() {
@@ -76,4 +114,5 @@ class AccountPage : Fragment(), Injectable {
     override fun onStop() {
         super.onStop()
     }
+
 }

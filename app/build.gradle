@@ -145,5 +145,6 @@ dependencies {
     implementation "com.ramotion.fluidslider:fluid-slider:$fluid_version"
     // view animator
     implementation "com.github.florent37:viewanimator:$view_animator_version"
-
+    // filtered menu
+    implementation "com.linroid.filtermenu:library:$filter_menu_version"
 }
