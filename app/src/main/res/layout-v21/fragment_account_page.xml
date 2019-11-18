@@ -176,7 +176,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             app:backgroundTint="@color/blue_gray_400"
             app:fabSize="auto"
@@ -194,11 +193,9 @@
             android:src="@drawable/arrow_normal_left"
             app:tint="@color/blue_gray_400"
             android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:background="?android:attr/selectableItemBackground"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
-            android:layout_toStartOf="@+id/fragment_account_breathing_ui_holder_id"
-            android:layout_toLeftOf="@+id/fragment_account_breathing_ui_holder_id" />
+            android:layout_toStartOf="@+id/fragment_account_breathing_ui_holder_id"/>
     </RelativeLayout>
 </layout>

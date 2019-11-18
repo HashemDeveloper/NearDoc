@@ -6,6 +6,10 @@ import java.util.regex.Pattern
 
 class Constants {
     companion object {
+        const val SHARED_PREF_BREATH_REPEAT_COUNT: String = "breath_repeat_count"
+        const val SHARED_PREF_BREATHING_DATE: String = "breathing_date"
+        const val SHARED_PREF_BREATHING_SESSION: String = "breathing_session"
+        const val SHARED_PREF_BREATHING_NUM: String = "breathing"
         const val SHARED_PREF_SEARCH_LIMIT = "SEARCH_LIMIT"
         const val SHARED_PREF_DISTANCE_RADIUS = "DISTANCE_RADIUS"
         const val SHARED_PREF_IS_LOCATION_ENABLED = "LOCATION_ENABLED"

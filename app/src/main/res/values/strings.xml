@@ -87,5 +87,12 @@
     <string name="no_user_found">There is on user record corresponding to this identifier.</string>
     <string name="location">Location</string>
     <string name="room_temperature">Room Temperature</string>
-
+    <string name="let_s_do_breathing_exercises">Let\'s do breathing exercises!</string>
+    <string name="start">Start</string>
+    <string name="breath">Breath</string>
+    <string name="inhale_exhale">Inhale…Exhale</string>
+    <string name="good_job">Good Job!</string>
+    <string name="your_progress">Your Progress:</string>
+    <string name="breath_50_times_to_unlock_heart_rate"><u>Breath 50 times to unlock heart rate!</u></string>
+    <string name="increase_breath_count_for_next_round"><u>Increase breath count for next round</u></string>
 </resources>

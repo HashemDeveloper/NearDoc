@@ -6,10 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
+import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.BottomBarEvent
 import com.project.neardoc.utils.IDeviceSensors
+import com.project.neardoc.viewmodel.AccountPageViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_account_page.*
 import org.greenrobot.eventbus.EventBus
@@ -17,7 +20,10 @@ import javax.inject.Inject
 
 class AccountPage : Fragment(), Injectable {
     @Inject
-    lateinit var iSensors: IDeviceSensors
+    lateinit var viewModelFactory: ViewModelFactory
+    private val accountPageViewModel: AccountPageViewModel by viewModels {
+        this.viewModelFactory
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -34,7 +40,12 @@ class AccountPage : Fragment(), Injectable {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        this.iSensors.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id)
+        this.accountPageViewModel.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id)
+        this.accountPageViewModel.animateBreathingTitleView(fragment_account_breathing_ex_title_view_id)
+        fragment_account_start_breathing_bt_id.setOnClickListener {
+            this.accountPageViewModel.startAnimation(context!!, activity!!, fragment_account_breathing_image_view_id,
+                fragment_account_breath_guide_text_view_id)
+        }
     }
 
     override fun onDestroy() {
@@ -49,6 +60,6 @@ class AccountPage : Fragment(), Injectable {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        this.iSensors.clearObservers(fragment_account_room_temp_view_id)
+        this.accountPageViewModel.clearObservers(fragment_account_room_temp_view_id)
     }
 }

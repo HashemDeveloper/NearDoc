@@ -7,6 +7,7 @@ import androidx.preference.PreferenceManager
 import javax.inject.Inject
 import androidx.core.content.edit
 import com.project.neardoc.utils.Constants
+import java.util.*
 
 class SharedPrefService @Inject constructor(): ISharedPrefService {
 
@@ -153,5 +154,55 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
 
     override fun getSearchLimit(): String {
        return pref?.getString(Constants.SHARED_PREF_SEARCH_LIMIT, "")!!
+    }
+
+    override fun setBreath(breath: Int) {
+       pref?.edit(commit = true) {
+           putInt(Constants.SHARED_PREF_BREATHING_NUM, breath)
+       }
+    }
+
+    override fun getBreath(): Int {
+        return pref?.getInt(Constants.SHARED_PREF_BREATHING_NUM, 0)!!
+    }
+
+    override fun setBreathingSession(session: Int) {
+        pref?.edit(commit = true) {
+            putInt(Constants.SHARED_PREF_BREATHING_SESSION, session)
+        }
+    }
+
+    override fun getBreathingSession(): Int {
+        return pref?.getInt(Constants.SHARED_PREF_BREATHING_SESSION, 0)!!
+    }
+
+    override fun setBreathingDate(date: Long) {
+        pref?.edit(commit = true) {
+            putLong(Constants.SHARED_PREF_BREATHING_DATE, date)
+        }
+    }
+
+    override fun getBreathingDate(): String {
+        val milliDate: Long = pref?.getLong(Constants.SHARED_PREF_BREATHING_DATE, 0L)!!
+        val ampOrPm: String
+        val calender: Calendar = Calendar.getInstance()
+        calender.timeInMillis = milliDate
+        val am: Int = calender.get(Calendar.AM_PM)
+        ampOrPm = if (am == Calendar.AM) {
+            "AM"
+        } else {
+            "PM"
+        }
+        return "Last " + calender.get(Calendar.HOUR_OF_DAY) + ":" + calender.get(Calendar.MINUTE) + " " + ampOrPm
+    }
+
+    override fun setRepeatCount(count: Int) {
+        pref?.edit(commit = true) {
+            putInt(Constants.SHARED_PREF_BREATH_REPEAT_COUNT, count)
+        }
+    }
+
+    override fun getRepeatCount(): Int {
+        return pref?.getInt(Constants.SHARED_PREF_BREATH_REPEAT_COUNT, 0)!!
     }
 }
