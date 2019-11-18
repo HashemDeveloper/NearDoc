@@ -11,11 +11,15 @@ import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.BottomBarEvent
+import com.project.neardoc.events.LocationUpdateEvent
+import com.project.neardoc.model.CurrentLocation
 import com.project.neardoc.utils.IDeviceSensors
 import com.project.neardoc.viewmodel.AccountPageViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_account_page.*
 import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 class AccountPage : Fragment(), Injectable {
@@ -40,6 +44,8 @@ class AccountPage : Fragment(), Injectable {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        this.accountPageViewModel.setupUserProfile(context!!, fragment_account_user_image_view_id, fragment_account_user_name_id,
+            fragment_account_user_email_view_id, fragment_account_user_location_view_id)
         this.accountPageViewModel.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id)
         this.accountPageViewModel.animateBreathingTitleView(fragment_account_breathing_ex_title_view_id)
         fragment_account_start_breathing_bt_id.setOnClickListener {
@@ -61,5 +67,13 @@ class AccountPage : Fragment(), Injectable {
     override fun onDestroyView() {
         super.onDestroyView()
         this.accountPageViewModel.clearObservers(fragment_account_room_temp_view_id)
+    }
+
+    override fun onStart() {
+        super.onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
     }
 }

@@ -3,6 +3,8 @@ package com.project.neardoc.viewmodel
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
 import android.os.Build
 import android.util.Log
 import androidx.core.content.ContextCompat
@@ -18,11 +20,18 @@ import com.project.neardoc.utils.ILocationService
 import com.project.neardoc.utils.IPermissionListener
 import com.project.neardoc.view.fragments.HomePage
 import com.project.neardoc.worker.LocationUpdateWorker
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import java.io.IOException
 import java.time.Duration
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
-class HomePageViewModel @Inject constructor(): ViewModel() {
+class HomePageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     companion object {
         private val MINIMUM_INTERVAL = 15 * 60 * 1000L
         private val FLEX_INTERVAL = 5 * 60 * 1000L
@@ -34,6 +43,8 @@ class HomePageViewModel @Inject constructor(): ViewModel() {
     @Inject
     lateinit var context: Context
     private var workerLiveData: LiveData<WorkInfo>?= null
+    private val job = Job()
+    private var geoCoder: Geocoder?= null
 
     fun requestPermission(): Boolean {
         val foreGroundFineLocationState: Int = ContextCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -81,6 +92,28 @@ class HomePageViewModel @Inject constructor(): ViewModel() {
         super.onCleared()
         if (this.workerLiveData != null) {
             this.workerLiveData!!.removeObserver(locationUpdateObserver())
+        }
+    }
+
+    override val coroutineContext: CoroutineContext
+        get() = this.job + Dispatchers.IO
+
+    fun storeUserCurrentState(latitude: Double, longitude: Double) {
+        this.geoCoder = Geocoder(this.context, Locale.US)
+        launch {
+            try {
+                val addressList: MutableList<Address> = geoCoder?.getFromLocation(latitude, longitude, 10)!!
+                for (address in addressList) {
+                    if (address.locality != null && address.locality.isNotEmpty()) {
+                        val currentState: String = address.locality
+                        iSharedPrefService.setUserCurrentState(currentState)
+                    }
+                }
+            } catch (ioException: IOException) {
+                if (ioException.localizedMessage != null) {
+                    Log.i("IoException: ", ioException.localizedMessage!!)
+                }
+            }
         }
     }
 }
