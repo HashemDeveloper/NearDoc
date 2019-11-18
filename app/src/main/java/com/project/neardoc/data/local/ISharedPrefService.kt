@@ -34,5 +34,5 @@ interface ISharedPrefService {
     fun setBreathingSession(session: Int)
     fun getBreathingSession(): Int
     fun setBreathingDate(date: Long)
-    fun getBreathingDate(): Long
+    fun getBreathingDate(): String
 }

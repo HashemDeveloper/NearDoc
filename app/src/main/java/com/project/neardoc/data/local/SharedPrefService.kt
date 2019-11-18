@@ -7,6 +7,7 @@ import androidx.preference.PreferenceManager
 import javax.inject.Inject
 import androidx.core.content.edit
 import com.project.neardoc.utils.Constants
+import java.util.*
 
 class SharedPrefService @Inject constructor(): ISharedPrefService {
 
@@ -181,7 +182,17 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
         }
     }
 
-    override fun getBreathingDate(): Long {
-        return pref?.getLong(Constants.SHARED_PREF_BREATHING_DATE, 0L)!!
+    override fun getBreathingDate(): String {
+        val milliDate: Long = pref?.getLong(Constants.SHARED_PREF_BREATHING_DATE, 0L)!!
+        val ampOrPm: String
+        val calender: Calendar = Calendar.getInstance()
+        calender.timeInMillis = milliDate
+        val am: Int = calender.get(Calendar.AM_PM)
+        ampOrPm = if (am == Calendar.AM) {
+            "AM"
+        } else {
+            "PM"
+        }
+        return " " + calender.get(Calendar.HOUR_OF_DAY) + ":" + calender.get(Calendar.MINUTE) + " " + ampOrPm
     }
 }
