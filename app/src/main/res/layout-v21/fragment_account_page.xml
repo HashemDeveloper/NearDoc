@@ -147,6 +147,17 @@
                     android:layout_below="@+id/fragment_account_breathing_ex_title_view_id"
                     android:src="@drawable/breatheimg"
                     />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/fragment_account_breath_guide_text_view_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/fragment_account_breathing_image_view_id"
+                    android:text="@string/inhale_exhale"
+                    android:textColor="@color/blue_gray_800"
+                    android:fontFamily="@font/baloo_bhai"
+                    android:visibility="gone"
+                    />
             </RelativeLayout>
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/fragment_account_start_breathing_bt_id"

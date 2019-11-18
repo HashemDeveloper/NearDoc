@@ -89,5 +89,8 @@
     <string name="room_temperature">Room Temperature</string>
     <string name="let_s_do_breathing_exercises">Let\'s do breathing exercises!</string>
     <string name="start">Start</string>
+    <string name="breath">Breath</string>
+    <string name="inhale_exhale">Inhale...Exhale</string>
+    <string name="good_job">Good Job!!!</string>
 
 </resources>

@@ -45,4 +45,8 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(SignInSecViewModel::class)
     internal abstract fun provideSignInSecViewModel(signInSecViewModel: SignInSecViewModel): ViewModel
+    @Binds
+    @IntoMap
+    @ViewModelKey(AccountPageViewModel::class)
+    internal abstract fun provideAccountPageViewModel(accountPageViewModel: AccountPageViewModel): ViewModel
 }
