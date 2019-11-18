@@ -351,7 +351,6 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
 
     }
     private fun getDrawableImage(image: String): Int {
-        val drawableResourceId: Int = resources.getIdentifier(image, "drawable", this.packageName)
-        return drawableResourceId
+        return resources.getIdentifier(image, "drawable", packageName)
     }
 }

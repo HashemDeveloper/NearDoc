@@ -7,6 +7,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
+import com.bumptech.glide.Glide
 import com.github.florent37.viewanimator.ViewAnimator
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -15,6 +16,8 @@ import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.utils.IDeviceSensors
 import com.ramotion.fluidslider.FluidSlider
+import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.android.synthetic.main.near_by_main_layout.*
 import java.text.MessageFormat
 import javax.inject.Inject
 
@@ -135,5 +138,29 @@ class AccountPageViewModel @Inject constructor(): ViewModel() {
             this.iSharedPrefService.setRepeatCount(count)
             parentDialog.dismiss()
         }
+    }
+
+    fun setupUserProfile(context: Context,
+        userImageView: CircleImageView?,
+        userNameView: MaterialTextView?,
+        userEmailView: MaterialTextView?,
+        userLocationView: MaterialTextView?
+    ) {
+        val userImageUri: String = this.iSharedPrefService.getUserImage()
+        val userName: String = this.iSharedPrefService.getUserName()
+        val userEmail: String = this.iSharedPrefService.getUserEmail()
+
+        if (userImageUri.isNotEmpty()) {
+            Glide.with(context).load(userImageUri).into(userImageView!!)
+        } else {
+            val accountImageResId = getDrawableImage(context, "ic_account_circle_white_24dp")
+            Glide.with(context).load(accountImageResId).into(userImageView!!)
+        }
+        userNameView!!.text = userName
+        userEmailView!!.text = userEmail
+    }
+
+    private fun getDrawableImage(context: Context, image: String): Int {
+        return context.resources.getIdentifier(image, "drawable", context.packageName)
     }
 }

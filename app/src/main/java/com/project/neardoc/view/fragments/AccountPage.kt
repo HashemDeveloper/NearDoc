@@ -40,6 +40,7 @@ class AccountPage : Fragment(), Injectable {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        this.accountPageViewModel.setupUserProfile(context!!, fragment_account_user_image_view_id, fragment_account_user_name_id, fragment_account_user_email_view_id, fragment_account_user_location_view_id)
         this.accountPageViewModel.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id)
         this.accountPageViewModel.animateBreathingTitleView(fragment_account_breathing_ex_title_view_id)
         fragment_account_start_breathing_bt_id.setOnClickListener {
