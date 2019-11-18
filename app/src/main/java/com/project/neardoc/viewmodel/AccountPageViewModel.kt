@@ -1,11 +1,14 @@
 package com.project.neardoc.viewmodel
 
+import android.content.Context
 import android.os.SystemClock
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import com.github.florent37.viewanimator.ViewAnimator
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textview.MaterialTextView
 import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
@@ -39,7 +42,7 @@ class AccountPageViewModel @Inject constructor(): ViewModel() {
             .start()
     }
 
-    fun startAnimation(
+    fun startAnimation(context: Context, activity: FragmentActivity,
         breathingImageView: AppCompatImageView?,
         breathingGuideTextView: MaterialTextView?
     ) {
@@ -58,19 +61,27 @@ class AccountPageViewModel @Inject constructor(): ViewModel() {
             .thenAnimate(breathingImageView)
             .scale(0.02f, 1.5f, 0.02f)
             .rotation(360f)
-            .repeatCount(6)
+            .repeatCount(5)
             .accelerate()
             .duration(5000)
             .onStop { 
-                kotlin.run { 
-                    breathingGuideTextView!!.setText(R.string.good_job)
+                kotlin.run {
                     breathingImageView!!.scaleX = 1.0f
                     breathingImageView.scaleY = 1.0f
                     this.iSharedPrefService.setBreathingSession(this.iSharedPrefService.getBreathingSession() + 1)
                     this.iSharedPrefService.setBreath(this.iSharedPrefService.getBreath() + 1)
-                    this.iSharedPrefService.setBreathingDate(SystemClock.currentThreadTimeMillis())
+                    this.iSharedPrefService.setBreathingDate(System.currentTimeMillis())
+                    displayResultDialog(context, activity)
+                    breathingGuideTextView!!.visibility = View.GONE
                 }
             }
             .start()
+    }
+    private fun displayResultDialog(context: Context, activity: FragmentActivity) {
+        val viewGroup: ViewGroup = activity.window.decorView.rootView as ViewGroup
+        val resultView: View = activity.layoutInflater.inflate(R.layout.breathing_result_layout, viewGroup, false)
+        val resultDialog = MaterialAlertDialogBuilder(context)
+        resultDialog.setView(resultView)
+        resultDialog.show()
     }
 }

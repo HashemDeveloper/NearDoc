@@ -193,6 +193,6 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
         } else {
             "PM"
         }
-        return " " + calender.get(Calendar.HOUR_OF_DAY) + ":" + calender.get(Calendar.MINUTE) + " " + ampOrPm
+        return "" + calender.get(Calendar.HOUR_OF_DAY) + ":" + calender.get(Calendar.MINUTE) + " " + ampOrPm
     }
 }

@@ -43,7 +43,7 @@ class AccountPage : Fragment(), Injectable {
         this.accountPageViewModel.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id)
         this.accountPageViewModel.animateBreathingTitleView(fragment_account_breathing_ex_title_view_id)
         fragment_account_start_breathing_bt_id.setOnClickListener {
-            this.accountPageViewModel.startAnimation(fragment_account_breathing_image_view_id,
+            this.accountPageViewModel.startAnimation(context!!, activity!!, fragment_account_breathing_image_view_id,
                 fragment_account_breath_guide_text_view_id)
         }
     }
