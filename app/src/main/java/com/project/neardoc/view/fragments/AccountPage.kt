@@ -10,6 +10,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.linroid.filtermenu.library.FilterMenu
 import com.linroid.filtermenu.library.FilterMenuLayout
 import com.project.neardoc.R
@@ -82,10 +83,15 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
 
     override fun onMenuItemClick(view: View?, position: Int) {
         if (view!!.id == R.id.account_signout_bt) {
-            Toast.makeText(this.context, "Sign out", Toast.LENGTH_SHORT).show()
+            signOut()
         } else if (view.id == R.id.account_heart_rate_bt) {
             Toast.makeText(this.context, "Heart rate", Toast.LENGTH_SHORT).show()
         }
+    }
+    private fun signOut() {
+        this.accountPageViewModel.signOut()
+        val navigateToWelcome = findNavController()
+        navigateToWelcome.navigate(R.id.welcome)
     }
 
     override fun onMenuExpand() {
@@ -106,13 +112,4 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         super.onDestroyView()
         this.accountPageViewModel.clearObservers(fragment_account_room_temp_view_id)
     }
-
-    override fun onStart() {
-        super.onStart()
-    }
-
-    override fun onStop() {
-        super.onStop()
-    }
-
 }
