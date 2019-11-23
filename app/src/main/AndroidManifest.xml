@@ -51,6 +51,11 @@
                 <action android:name="USER_STATE_ACTION"/>
             </intent-filter>
         </receiver>
+        <service
+            android:name=".services.StepCounterService"
+            android:exported="false"
+            android:description="@string/step_counter_service_reason"
+            />
 <!--        <service-->
 <!--            android:name=".services.FirebaseTokenIdService"-->
 <!--            android:exported="false">-->
