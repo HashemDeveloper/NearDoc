@@ -2,6 +2,7 @@ package com.project.neardoc.view.fragments
 
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -28,7 +29,9 @@ import javax.inject.Inject
 
 
 class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
-
+    companion object {
+        const val ACTIVITY_RECOGNITION_REQ_CODE: Int = 2
+    }
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val accountPageViewModel: AccountPageViewModel by viewModels {
@@ -42,9 +45,10 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         requestActivityRecogPermission()
     }
 
+    @SuppressLint("InlinedApi")
     private fun requestActivityRecogPermission() {
         if (ActivityCompat.checkSelfPermission(activity!!, Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(Manifest.permission.ACTIVITY_RECOGNITION), 2)
+            requestPermissions(arrayOf(Manifest.permission.ACTIVITY_RECOGNITION), ACTIVITY_RECOGNITION_REQ_CODE)
         }
     }
 

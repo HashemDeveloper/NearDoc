@@ -8,4 +8,7 @@ interface IStepCountSensor {
         sensorManager: SensorManager
     )
     fun getSensorEvent(): LiveData<Int>
+    fun clearDisposable()
+    fun getDelayString(): String
+    fun flashStepCounter()
 }

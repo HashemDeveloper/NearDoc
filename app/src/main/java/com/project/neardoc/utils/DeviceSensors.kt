@@ -83,6 +83,7 @@ class DeviceSensors @Inject constructor(private val context: Context): IDeviceSe
                     this.iStepCountSensor.getSensorEvent().removeObserver(stepCountSensorEventObserver(stepCountView))
                 }
             }
+            this.iStepCountSensor.clearDisposable()
         }
     }
 }
