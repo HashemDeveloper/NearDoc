@@ -46,13 +46,6 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         EventBus.getDefault().postSticky(BottomBarEvent(false))
     }
 
-    @SuppressLint("InlinedApi")
-    private fun requestActivityRecogPermission() {
-        if (ActivityCompat.checkSelfPermission(activity!!, Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(Manifest.permission.ACTIVITY_RECOGNITION), ACTIVITY_RECOGNITION_REQ_CODE)
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -79,6 +72,13 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
             Navigation.findNavController(it).navigate(AccountPageDirections.actionHomePage())
         }
         attachMenu(fragment_account_menu_bt_id)
+    }
+
+    @SuppressLint("InlinedApi")
+    private fun requestActivityRecogPermission() {
+        if (ActivityCompat.checkSelfPermission(activity!!, Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(Manifest.permission.ACTIVITY_RECOGNITION), ACTIVITY_RECOGNITION_REQ_CODE)
+        }
     }
 
     private fun attachMenu(layout: FilterMenuLayout?): FilterMenu? {
