@@ -124,4 +124,8 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
         this.mEventData = 0
         this.mEventDelays = FloatArray(EVENT_QUEUE_LENGTH)
     }
+
+    override fun unRegisterCounterSensor(sensorManager: SensorManager) {
+        sensorManager.unregisterListener(this)
+    }
 }

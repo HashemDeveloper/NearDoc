@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import android.widget.TextView
 import com.project.neardoc.utils.Constants
 import dagger.android.AndroidInjection
 import javax.inject.Inject

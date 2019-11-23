@@ -11,4 +11,5 @@ interface IStepCountSensor {
     fun clearDisposable()
     fun getDelayString(): String
     fun flashStepCounter()
+    fun unRegisterCounterSensor(sensorManager: SensorManager)
 }

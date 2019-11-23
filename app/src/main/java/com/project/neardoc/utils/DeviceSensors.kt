@@ -86,4 +86,8 @@ class DeviceSensors @Inject constructor(private val context: Context): IDeviceSe
             this.iStepCountSensor.clearDisposable()
         }
     }
+
+    override fun unRegisterSensorListener() {
+        this.iStepCountSensor.unRegisterCounterSensor(this.mSensorManager!!)
+    }
 }
