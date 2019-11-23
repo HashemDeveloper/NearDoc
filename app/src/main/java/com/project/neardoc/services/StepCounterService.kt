@@ -23,6 +23,10 @@ class StepCounterService @Inject constructor(): IntentService(StepCounterService
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        return START_STICKY
+        return super.onStartCommand(intent, flags, startId)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }

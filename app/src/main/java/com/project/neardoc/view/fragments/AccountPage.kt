@@ -58,7 +58,11 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         this.accountPageViewModel.setupUserProfile(context!!, fragment_account_user_image_view_id, fragment_account_user_name_id,
             fragment_account_user_email_view_id, fragment_account_user_location_view_id)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            requestActivityRecogPermission()
+            if (!checkActivityRecognitionPermission()) {
+                requestActivityRecogPermission()
+            } else {
+                this.accountPageViewModel.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id, fragment_account_step_counter_view_id)
+            }
         } else {
             this.accountPageViewModel.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id, fragment_account_step_counter_view_id)
         }
@@ -79,6 +83,11 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         if (ActivityCompat.checkSelfPermission(activity!!, Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.ACTIVITY_RECOGNITION), ACTIVITY_RECOGNITION_REQ_CODE)
         }
+    }
+    @SuppressLint("InlinedApi")
+    private fun checkActivityRecognitionPermission(): Boolean {
+        val isActivityRecogGranted: Int = ActivityCompat.checkSelfPermission(activity!!, Manifest.permission.ACTIVITY_RECOGNITION)
+        return isActivityRecogGranted == PackageManager.PERMISSION_GRANTED
     }
 
     private fun attachMenu(layout: FilterMenuLayout?): FilterMenu? {
