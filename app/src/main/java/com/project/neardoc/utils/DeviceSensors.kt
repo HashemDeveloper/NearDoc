@@ -14,23 +14,26 @@ class DeviceSensors @Inject constructor(private val context: Context): IDeviceSe
     lateinit var iTempSensor: ITempSensor
     @Inject
     lateinit var iLightSensor: ILightSensor
+    @Inject
+    lateinit var iStepCountSensor: IStepCountSensor
 
     private val mSensorList: MutableList<Any> = arrayListOf()
     private var mSensorManager: SensorManager?= null
 
     override fun setupDeviceSensor(
         activity: FragmentActivity,
-        fragmentAccountRoomTempViewId: MaterialTextView
+        roomTempTextView: MaterialTextView,
+        stepCountView: MaterialTextView
     ) {
         for (sensorList in getListOfSensorsInDevice()) {
             Log.i("Sensors: ", sensorList.name)
            when (sensorList.type) {
                Sensor.TYPE_AMBIENT_TEMPERATURE -> {
                    this.mSensorList.add(this.iTempSensor)
-                   fragmentAccountRoomTempViewId.visibility = View.VISIBLE
+                   roomTempTextView.visibility = View.VISIBLE
                    this.iTempSensor.initiateTempSensor(this.mSensorManager!!)
                        .registerListener(this.mSensorManager!!)
-                   this.iTempSensor.getSensorEvent().observe(activity, tempSensorEventObserver(fragmentAccountRoomTempViewId))
+                   this.iTempSensor.getSensorEvent().observe(activity, tempSensorEventObserver(roomTempTextView))
                }
                Sensor.TYPE_LIGHT -> {
                    this.mSensorList.add(this.iLightSensor)
@@ -39,9 +42,18 @@ class DeviceSensors @Inject constructor(private val context: Context): IDeviceSe
                    this.iLightSensor.getSensorEventLiveData().observe(activity, lightSensorEventObserver())
                }
                Sensor.TYPE_STEP_COUNTER -> {
-
+                   stepCountView.visibility = View.VISIBLE
+                   this.mSensorList.add(this.iStepCountSensor)
+                   this.iStepCountSensor.initiateStepCounterSensor(this.mSensorManager!!)
+                   this.iStepCountSensor.getSensorEvent().observe(activity, stepCountSensorEventObserver(stepCountView))
                }
            }
+        }
+    }
+
+    private fun stepCountSensorEventObserver(view: MaterialTextView): Observer<Int> {
+        return Observer {
+            view.text = it.toString()
         }
     }
 
@@ -60,15 +72,18 @@ class DeviceSensors @Inject constructor(private val context: Context): IDeviceSe
         return mSensorManager?.getSensorList(Sensor.TYPE_ALL)!!
     }
 
-    override fun clearObservers(view: MaterialTextView) {
+    override fun clearObservers(view: MaterialTextView, stepCountView: MaterialTextView) {
         if (this.mSensorList.isNotEmpty()) {
             for (list in this.mSensorList) {
                 if (list is ITempSensor) {
                     this.iTempSensor.getSensorEvent().removeObserver(tempSensorEventObserver(view))
                 } else if (list is ILightSensor) {
                     this.iLightSensor.getSensorEventLiveData().removeObserver(lightSensorEventObserver())
+                } else if (list is IStepCountSensor) {
+                    this.iStepCountSensor.getSensorEvent().removeObserver(stepCountSensorEventObserver(stepCountView))
                 }
             }
+            this.iStepCountSensor.clearDisposable()
         }
     }
 }

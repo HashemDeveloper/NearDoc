@@ -82,4 +82,9 @@ class ApplicationModule {
     fun provideLightSensor(lightSensor: LightSensor): ILightSensor {
         return lightSensor
     }
+    @Singleton
+    @Provides
+    fun provideStepCountSensor(stepCounter: StepCountSensor): IStepCountSensor {
+        return stepCounter
+    }
 }

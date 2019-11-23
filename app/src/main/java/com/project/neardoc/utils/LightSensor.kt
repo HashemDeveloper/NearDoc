@@ -4,6 +4,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import javax.inject.Inject
@@ -14,13 +15,18 @@ class LightSensor @Inject constructor(): ILightSensor, SensorEventListener {
     private val sensorEventLiveData: MutableLiveData<SensorEvent>?= MutableLiveData()
 
     override fun initiateLightSensor(sensorManager: SensorManager): LightSensor {
-        this.mLightSensor = sensorManager.getDefaultSensor(SensorManager.SENSOR_DELAY_NORMAL)
+        this.mLightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
         return this
     }
 
     override fun registerListener(sensorManager: SensorManager) {
         if (this.mLightSensor != null) {
-            sensorManager.registerListener(this, this.mLightSensor, Sensor.TYPE_LIGHT)
+            val isRegistered: Boolean = sensorManager.registerListener(this, this.mLightSensor, SensorManager.SENSOR_DELAY_NORMAL)
+            if (isRegistered) {
+                Log.i("Reg: ", "Yes")
+            } else {
+                Log.i("Reg: ", "False")
+            }
         }
     }
 
