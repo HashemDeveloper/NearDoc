@@ -29,7 +29,7 @@ ext {
     lifecycle_version = "2.1.0"
     lifeCycleExtensionVersion = "2.1.0"
     retrofitVersion = "2.3.0"
-    daggerVersion = "2.16"
+    daggerVersion = "2.22.1"
     glideVersion = "4.8.0"
     glideTransformationVersion = "3.3.0"
     mockitoVersion = "2.11.0"
