@@ -37,7 +37,7 @@ class StepCountSensor @Inject constructor(private val context: Context): IStepCo
         val isRegistered: Boolean = sensorManager.registerListener(this, this.mStepSensor, SensorManager.SENSOR_DELAY_NORMAL, DEFAULT_LATENCY)
         if (isRegistered) {
             if (BuildConfig.DEBUG) {
-                Log.i("StepCountRegisteredAt: " + TAG, sensorManager.toString())
+                Log.i("StepCountRegisteredAt: $TAG", sensorManager.toString())
             }
         }
     }
@@ -47,8 +47,7 @@ class StepCountSensor @Inject constructor(private val context: Context): IStepCo
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, p1: Int) {
-        val s: Sensor = sensor!!
-        Log.i("Sensor: ", s.name)
+
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
@@ -75,14 +74,10 @@ class StepCountSensor @Inject constructor(private val context: Context): IStepCo
             if (sensor.type == Sensor.TYPE_STEP_COUNTER) {
                 val initialStep: Int = event.values[0].toInt()
                 if (this.mStepCounter < 1) {
-                    // get the initial value
                     this.mStepCounter = initialStep
                 }
-                // calculate step taken based on the first counter value received
-                this.mSteps = initialStep - this.mStepCounter
-                // add the number of steps previously taken otherwise counter will start at
-                // this will keep the counter consistent across rotation changes
-                this.mSteps = this.mSteps!! + this.mStepCounter
+                this.mSteps = initialStep - this.mStepCounter // calculate steps taken
+                this.mSteps = this.mSteps!! + this.mStepCounter // add previous step taken
             }
             this.mSteps
         }
