@@ -3,7 +3,9 @@ package com.project.neardoc.view.fragments
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -42,7 +44,6 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
         EventBus.getDefault().postSticky(BottomBarEvent(false))
-        requestActivityRecogPermission()
     }
 
     @SuppressLint("InlinedApi")
@@ -63,7 +64,11 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         super.onViewCreated(view, savedInstanceState)
         this.accountPageViewModel.setupUserProfile(context!!, fragment_account_user_image_view_id, fragment_account_user_name_id,
             fragment_account_user_email_view_id, fragment_account_user_location_view_id)
-        this.accountPageViewModel.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id, fragment_account_step_counter_view_id)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            requestActivityRecogPermission()
+        } else {
+            this.accountPageViewModel.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id, fragment_account_step_counter_view_id)
+        }
         this.accountPageViewModel.animateBreathingTitleView(fragment_account_breathing_ex_title_view_id)
         fragment_account_start_breathing_bt_id.setOnClickListener {
             this.accountPageViewModel.startAnimation(context!!, activity!!, fragment_account_breathing_image_view_id,
@@ -106,6 +111,20 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         this.accountPageViewModel.signOut()
         val navigateToWelcome = findNavController()
         navigateToWelcome.navigate(R.id.welcome)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+       if (requestCode == ACTIVITY_RECOGNITION_REQ_CODE) {
+           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+              if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                  this.accountPageViewModel.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id, fragment_account_step_counter_view_id)
+              }
+           }
+       }
     }
 
     override fun onMenuExpand() {
