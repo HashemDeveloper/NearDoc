@@ -40,12 +40,12 @@ class AccountPageViewModel @Inject constructor(): ViewModel() {
     private var seekBarHalveValue: Int?= null
     private var seekBarTotalValue: Int?= null
 
-    fun setupDeviceSensor(activity: FragmentActivity, fragmentAccountRoomTempViewId: MaterialTextView?) {
-        this.iSensors.setupDeviceSensor(activity, fragmentAccountRoomTempViewId!!)
+    fun setupDeviceSensor(activity: FragmentActivity, fragmentAccountRoomTempViewId: MaterialTextView?, stepCountView: MaterialTextView?) {
+        this.iSensors.setupDeviceSensor(activity, fragmentAccountRoomTempViewId!!, stepCountView!!)
     }
 
-    fun clearObservers(tempView: MaterialTextView?) {
-        this.iSensors.clearObservers(tempView!!)
+    fun clearObservers(tempView: MaterialTextView?, stepCountView: MaterialTextView?) {
+        this.iSensors.clearObservers(tempView!!, stepCountView!!)
     }
 
     fun animateBreathingTitleView(breathingTitleView: MaterialTextView?) {

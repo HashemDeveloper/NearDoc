@@ -6,7 +6,8 @@ import com.google.android.material.textview.MaterialTextView
 interface IDeviceSensors {
     fun setupDeviceSensor(
         activity: FragmentActivity,
-        fragmentAccountRoomTempViewId: MaterialTextView
+        roomTempTextView: MaterialTextView,
+        stepCountView: MaterialTextView
     )
-    fun clearObservers(view: MaterialTextView)
+    fun clearObservers(view: MaterialTextView, stepCountView: MaterialTextView)
 }

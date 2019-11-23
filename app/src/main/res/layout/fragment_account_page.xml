@@ -9,6 +9,17 @@
         android:background="@color/blue_gray_100"
         >
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/fragment_account_step_counter_view_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3000"
+            android:layout_alignParentEnd="true"
+            app:drawableTopCompat="@drawable/ic_walk_2x"
+            android:layout_margin="8dp"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            android:layout_alignParentRight="true" />
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/fragment_account_room_temp_view_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -18,7 +29,10 @@
             app:drawableLeftCompat="@drawable/thermometer_2x"
             android:layout_margin="8dp"
             android:visibility="gone"
-            />
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/fragment_account_step_counter_view_id"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@+id/fragment_account_step_counter_view_id" />
         <RelativeLayout
             android:id="@+id/fragment_account_profile_holder_id"
             android:layout_width="match_parent"
