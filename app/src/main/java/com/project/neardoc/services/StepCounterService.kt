@@ -1,19 +1,30 @@
 package com.project.neardoc.services
 
 import android.app.IntentService
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Binder
 import android.os.IBinder
-import com.project.neardoc.di.backgroundservice.ServiceInjection
+import android.util.Log
+import com.project.neardoc.broadcast.NearDocBroadcastReceiver
+import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.IStepCountSensor
+import dagger.android.AndroidInjection
+import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class StepCounterService @Inject constructor(): IntentService(StepCounterService::class.java.canonicalName) {
+    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     @Inject
     lateinit var iStepCounterSensor: IStepCountSensor
+    @Inject
+    lateinit var nearDocBroadcastReceiver: NearDocBroadcastReceiver
+    @Inject
+    lateinit var context: Context
 
     override fun onCreate() {
-        ServiceInjection.inject(this)
+        AndroidInjection.inject(this)
         super.onCreate()
     }
 
@@ -22,10 +33,14 @@ class StepCounterService @Inject constructor(): IntentService(StepCounterService
     }
 
     override fun onHandleIntent(intent: Intent?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val stepCounterIntent = Intent()
+        stepCounterIntent.action = Constants.STEP_COUNTER_SERVICE_ACTION
+
+        sendBroadcast(stepCounterIntent)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        this.context.registerReceiver(this.nearDocBroadcastReceiver, IntentFilter(Constants.STEP_COUNTER_SERVICE_ACTION))
         return super.onStartCommand(intent, flags, startId)
     }
 

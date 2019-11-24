@@ -1,8 +1,7 @@
 package com.project.neardoc.di
 
 import com.project.neardoc.NearDocApp
-import com.project.neardoc.di.backgroundservice.ServiceInjectionModule
-import com.project.neardoc.di.backgroundservice.ServiceModule
+import com.project.neardoc.di.backgroundservice.ServiceBuilderModule
 import com.project.neardoc.di.networking.BroadcastReceiverModule
 import com.project.neardoc.di.networking.NearDocNetServiceModule
 import com.project.neardoc.di.viewmodel.ViewModelModule
@@ -15,8 +14,7 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [AndroidSupportInjectionModule::class, NearDocMainActivityModule::class, ApplicationModule::class, NearDocNetServiceModule::class,
-ViewModelModule::class, GoogleApiModule::class, BroadcastReceiverModule::class, NearDocWorkerInjectionModule::class, WorkerModule::class,
-ServiceInjectionModule::class, ServiceModule::class])
+ViewModelModule::class, GoogleApiModule::class, BroadcastReceiverModule::class, NearDocWorkerInjectionModule::class, WorkerModule::class, ServiceBuilderModule::class])
 interface ApplicationComponent {
     @Component.Builder
     interface Builder {

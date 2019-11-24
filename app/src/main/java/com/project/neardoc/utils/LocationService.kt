@@ -12,13 +12,13 @@ import android.os.Build
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
-import com.project.neardoc.broadcast.ConnectionBroadcastReceiver
+import com.project.neardoc.broadcast.NearDocBroadcastReceiver
 import javax.inject.Inject
 
 class LocationService @Inject constructor(private val context: Context): LiveData<Location>(), ILocationService, LocationListener {
 
     @Inject
-    lateinit var connectionBroadcastReceiver: ConnectionBroadcastReceiver
+    lateinit var nearDocBroadcastReceiver: NearDocBroadcastReceiver
     private var locationManager: LocationManager?= null
     private var iPermissionListener: IPermissionListener?= null
     private var isRegister = false
@@ -34,7 +34,7 @@ class LocationService @Inject constructor(private val context: Context): LiveDat
             requestPermission()
         } else {
             this.locationManager?.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, this)
-            this.context.registerReceiver(this.connectionBroadcastReceiver, IntentFilter(Constants.LOCATION_SERVICE_ACTION))
+            this.context.registerReceiver(this.nearDocBroadcastReceiver, IntentFilter(Constants.LOCATION_SERVICE_ACTION))
             this.isRegister = true
         }
     }
@@ -42,7 +42,7 @@ class LocationService @Inject constructor(private val context: Context): LiveDat
     override fun onInactive() {
         super.onInactive()
         if (this.isRegister) {
-            this.context.unregisterReceiver(this.connectionBroadcastReceiver)
+            this.context.unregisterReceiver(this.nearDocBroadcastReceiver)
         }
     }
 
@@ -83,7 +83,7 @@ class LocationService @Inject constructor(private val context: Context): LiveDat
     @SuppressLint("MissingPermission")
     override fun registerBroadcastListener(b: Boolean) {
         if (b) {
-            this.context.registerReceiver(this.connectionBroadcastReceiver, IntentFilter(Constants.LOCATION_SERVICE_ACTION))
+            this.context.registerReceiver(this.nearDocBroadcastReceiver, IntentFilter(Constants.LOCATION_SERVICE_ACTION))
             this.locationManager?.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, this)
         }
     }

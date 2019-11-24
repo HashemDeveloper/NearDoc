@@ -1,12 +1,16 @@
 package com.project.neardoc.utils
 
 import android.content.Context
+import android.content.Intent
 import android.hardware.*
+import android.os.Parcel
+import android.os.Parcelable
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import com.google.android.material.textview.MaterialTextView
+import com.project.neardoc.services.StepCounterService
 import javax.inject.Inject
 
 class DeviceSensors @Inject constructor(private val context: Context): IDeviceSensors {
@@ -43,9 +47,8 @@ class DeviceSensors @Inject constructor(private val context: Context): IDeviceSe
                }
                Sensor.TYPE_STEP_COUNTER -> {
                    stepCountView.visibility = View.VISIBLE
-                   this.mSensorList.add(this.iStepCountSensor)
-                   this.iStepCountSensor.initiateStepCounterSensor(this.mSensorManager!!)
-                   this.iStepCountSensor.getSensorEvent().observe(activity, stepCountSensorEventObserver(stepCountView))
+                   val stepCountServiceIntent = Intent(this.context, StepCounterService::class.java)
+                   activity.startService(stepCountServiceIntent)
                }
            }
         }
