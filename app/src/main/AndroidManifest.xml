@@ -40,7 +40,7 @@
             android:permission="com.google.firebase.auth.api.gms.permission.LAUNCH_FEDERATED_SIGN_IN"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             tools:replace="android:launchMode" />
-        <receiver android:name=".broadcast.ConnectionBroadcastReceiver">
+        <receiver android:name=".broadcast.NearDocBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
@@ -50,7 +50,15 @@
             <intent-filter>
                 <action android:name="USER_STATE_ACTION"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="STEP_COUNTER_ACTION"/>
+            </intent-filter>
         </receiver>
+        <service
+            android:name=".services.StepCounterService"
+            android:exported="false"
+            android:description="@string/step_counter_service_reason"
+            />
 <!--        <service-->
 <!--            android:name=".services.FirebaseTokenIdService"-->
 <!--            android:exported="false">-->

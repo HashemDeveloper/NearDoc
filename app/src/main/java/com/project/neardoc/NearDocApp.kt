@@ -2,6 +2,8 @@ package com.project.neardoc
 
 import android.app.Activity
 import android.app.Application
+import android.app.IntentService
+import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.util.Log
@@ -13,7 +15,7 @@ import com.project.neardoc.di.workermanager.HasWorkerInjector
 import dagger.android.*
 import javax.inject.Inject
 
-class NearDocApp: Application(), HasActivityInjector, HasBroadcastReceiverInjector, HasWorkerInjector, Configuration.Provider {
+class NearDocApp: Application(), HasActivityInjector, HasBroadcastReceiverInjector, HasWorkerInjector, Configuration.Provider, HasServiceInjector {
 
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Activity>
@@ -21,6 +23,8 @@ class NearDocApp: Application(), HasActivityInjector, HasBroadcastReceiverInject
     lateinit var receiverInjector: DispatchingAndroidInjector<BroadcastReceiver>
     @Inject
     lateinit var dispatchingWorkerInjector: DispatchingAndroidInjector<Worker>
+    @Inject
+    lateinit var dispatchServiceInjector: DispatchingAndroidInjector<Service>
 
     override fun onCreate() {
         super.onCreate()
@@ -42,6 +46,10 @@ class NearDocApp: Application(), HasActivityInjector, HasBroadcastReceiverInject
 
     override fun workerInjector(): AndroidInjector<Worker> {
         return this.dispatchingWorkerInjector
+    }
+
+    override fun serviceInjector(): AndroidInjector<Service> {
+        return this.dispatchServiceInjector
     }
 
     override fun attachBaseContext(base: Context?) {

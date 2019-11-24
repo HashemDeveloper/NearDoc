@@ -10,10 +10,15 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.project.neardoc.BuildConfig
+import com.project.neardoc.data.local.ISharedPrefService
+import com.project.neardoc.events.StepCounterEvent
+import io.reactivex.Observer
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 import kotlin.math.min
 
@@ -34,7 +39,8 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
     private var mEventLength: Int = 0
     private var mEventData: Int = 0
     private var mDelayStringBuffer: StringBuffer = StringBuffer()
-
+    @Inject
+    lateinit var iSharedPrefService: ISharedPrefService
 
     @RequiresApi(VERSION_CODES.KITKAT)
     override fun initiateStepCounterSensor(
@@ -58,13 +64,17 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        Log.i("Event: ", "${event!!.values}")
+        if (BuildConfig.DEBUG) {
+            Log.i("Event: ", "${event!!.values}")
+        }
         this.compositeDisposable.add(calculateSteps(event)!!
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({values ->
                 run {
-                    this.sensorEventLiveData!!.value = values
+                    this.iSharedPrefService.storeLastValueOfStepTaken(values)
+                    EventBus.getDefault().postSticky(StepCounterEvent(values))
+                    this.sensorEventLiveData!!.value == values
                 }
             }, { error ->
                 run {
@@ -123,5 +133,9 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
         this.mEventLength = 0
         this.mEventData = 0
         this.mEventDelays = FloatArray(EVENT_QUEUE_LENGTH)
+    }
+
+    override fun unRegisterCounterSensor(sensorManager: SensorManager) {
+        sensorManager.unregisterListener(this)
     }
 }

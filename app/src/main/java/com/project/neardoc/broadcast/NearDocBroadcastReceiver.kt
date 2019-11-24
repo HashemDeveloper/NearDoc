@@ -8,11 +8,11 @@ import com.project.neardoc.utils.Constants
 import dagger.android.AndroidInjection
 import javax.inject.Inject
 
-class ConnectionBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
+class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
 
-    override fun onReceive(p0: Context?, p1: Intent?) {
-       AndroidInjection.inject(this, p0)
-        when (p1!!.action) {
+    override fun onReceive(context: Context?, intent: Intent?) {
+       AndroidInjection.inject(this, context)
+        when (intent!!.action) {
             Constants.CONNECTIVITY_ACTION -> {
                 //do nothing
             }
@@ -21,6 +21,9 @@ class ConnectionBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
             }
             Constants.USER_STATE_ACTION -> {
                 Log.i("Good: ", "Yes")
+            }
+            Constants.STEP_COUNTER_SERVICE_ACTION -> {
+
             }
         }
     }

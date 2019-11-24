@@ -5,19 +5,18 @@ import android.content.IntentFilter
 import android.net.*
 import android.os.Build
 import android.os.Handler
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.project.neardoc.R
-import com.project.neardoc.broadcast.ConnectionBroadcastReceiver
+import com.project.neardoc.broadcast.NearDocBroadcastReceiver
 import javax.inject.Inject
 
 class ConnectionStateMonitor @Inject constructor(private val context: Context) : LiveData<Boolean>(), IConnectionStateMonitor {
 
     @Inject
-    lateinit var connectionBroadcastReceiver: ConnectionBroadcastReceiver
+    lateinit var nearDocBroadcastReceiver: NearDocBroadcastReceiver
     private var networkCallback: ConnectivityManager.NetworkCallback?= null
     private var connectivityManager: ConnectivityManager?= null
     private val wifiConnectedLiveData: MutableLiveData<Boolean> = MutableLiveData()
@@ -44,7 +43,7 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
                 .build()
             this.connectivityManager?.registerNetworkCallback(networkRequest, this.networkCallback!!)
         } else {
-            context.registerReceiver(this.connectionBroadcastReceiver, IntentFilter(Constants.CONNECTIVITY_ACTION))
+            context.registerReceiver(this.nearDocBroadcastReceiver, IntentFilter(Constants.CONNECTIVITY_ACTION))
         }
     }
 
@@ -53,7 +52,7 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             this.connectivityManager?.unregisterNetworkCallback(this.networkCallback!!)
         } else {
-            context.unregisterReceiver(this.connectionBroadcastReceiver)
+            context.unregisterReceiver(this.nearDocBroadcastReceiver)
         }
     }
 
