@@ -12,7 +12,6 @@
             android:id="@+id/fragment_account_step_counter_view_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="3000"
             android:layout_alignParentEnd="true"
             app:drawableTopCompat="@drawable/ic_walk_2x"
             android:layout_margin="8dp"

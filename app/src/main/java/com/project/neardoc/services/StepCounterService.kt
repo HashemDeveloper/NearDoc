@@ -1,30 +1,46 @@
 package com.project.neardoc.services
 
 import android.app.IntentService
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.hardware.SensorManager
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
+import androidx.lifecycle.Observer
 import com.project.neardoc.broadcast.NearDocBroadcastReceiver
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.IStepCountSensor
 import dagger.android.AndroidInjection
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
-class StepCounterService @Inject constructor(): IntentService(StepCounterService::class.java.canonicalName) {
-    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
+class StepCounterService @Inject constructor(): Service(), CoroutineScope {
     @Inject
     lateinit var iStepCounterSensor: IStepCountSensor
     @Inject
     lateinit var nearDocBroadcastReceiver: NearDocBroadcastReceiver
     @Inject
     lateinit var context: Context
+    private var sensorManager: SensorManager?= null
+    private var job = Job()
+
+    override val coroutineContext: CoroutineContext
+        get() = this.job + Dispatchers.IO
 
     override fun onCreate() {
         AndroidInjection.inject(this)
+        launch {
+            sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+            iStepCounterSensor.initiateStepCounterSensor(sensorManager!!)
+        }
         super.onCreate()
     }
 
@@ -32,16 +48,8 @@ class StepCounterService @Inject constructor(): IntentService(StepCounterService
        return Binder()
     }
 
-    override fun onHandleIntent(intent: Intent?) {
-        val stepCounterIntent = Intent()
-        stepCounterIntent.action = Constants.STEP_COUNTER_SERVICE_ACTION
-
-        sendBroadcast(stepCounterIntent)
-    }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        this.context.registerReceiver(this.nearDocBroadcastReceiver, IntentFilter(Constants.STEP_COUNTER_SERVICE_ACTION))
-        return super.onStartCommand(intent, flags, startId)
+        return START_STICKY
     }
 
     override fun onDestroy() {

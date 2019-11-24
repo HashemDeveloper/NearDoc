@@ -39,4 +39,6 @@ interface ISharedPrefService {
     fun getRepeatCount(): Int
     fun setUserCurrentState(currentState: String)
     fun getUserCurrentState(): String
+    fun storeLastValueOfStepTaken(values: Int?)
+    fun getLastStepCountValue(): Int
 }

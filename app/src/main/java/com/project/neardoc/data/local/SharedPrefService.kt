@@ -215,4 +215,14 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
     override fun getUserCurrentState(): String {
         return pref?.getString(Constants.SHARED_PREF_USER_CURRENT_STATE, "")!!
     }
+
+    override fun storeLastValueOfStepTaken(values: Int?) {
+        pref?.edit(commit = true) {
+            putInt(Constants.STEP_COUNT_VALUE, values!!)
+        }
+    }
+
+    override fun getLastStepCountValue(): Int {
+        return pref?.getInt(Constants.STEP_COUNT_VALUE, 0)!!
+    }
 }

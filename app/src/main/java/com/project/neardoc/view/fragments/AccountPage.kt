@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,18 +16,24 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.linroid.filtermenu.library.FilterMenu
 import com.linroid.filtermenu.library.FilterMenuLayout
 import com.project.neardoc.R
+import com.project.neardoc.broadcast.NearDocBroadcastReceiver
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.BottomBarEvent
+import com.project.neardoc.events.StepCounterEvent
+import com.project.neardoc.utils.IStepCountSensor
 import com.project.neardoc.viewmodel.AccountPageViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_account_page.*
 import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 
@@ -34,6 +41,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     companion object {
         const val ACTIVITY_RECOGNITION_REQ_CODE: Int = 2
     }
+
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val accountPageViewModel: AccountPageViewModel by viewModels {
@@ -43,6 +51,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
+        EventBus.getDefault().register(this)
         EventBus.getDefault().postSticky(BottomBarEvent(false))
     }
 
@@ -57,6 +66,8 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         super.onViewCreated(view, savedInstanceState)
         this.accountPageViewModel.setupUserProfile(context!!, fragment_account_user_image_view_id, fragment_account_user_name_id,
             fragment_account_user_email_view_id, fragment_account_user_location_view_id)
+        val lastStepCountValue: Int = this.accountPageViewModel.getLastStepCountValue()
+        fragment_account_step_counter_view_id.text = lastStepCountValue.toString()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             if (!checkActivityRecognitionPermission()) {
                 requestActivityRecogPermission()
@@ -140,7 +151,15 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
 
     }
 
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun onStepCountEvent(event: StepCounterEvent) {
+        if (event.getStepCount() != 0) {
+            fragment_account_step_counter_view_id.text = event.getStepCount().toString()
+        }
+    }
+
     override fun onDestroy() {
+        EventBus.getDefault().unregister(this)
         EventBus.getDefault().postSticky(BottomBarEvent(true))
         super.onDestroy()
     }
@@ -148,6 +167,10 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     override fun onResume() {
         super.onResume()
         EventBus.getDefault().postSticky(BottomBarEvent(false))
+    }
+
+    override fun onStart() {
+        super.onStart()
     }
 
     override fun onDestroyView() {
