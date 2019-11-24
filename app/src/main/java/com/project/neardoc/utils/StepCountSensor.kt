@@ -74,6 +74,7 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
                 run {
                     this.iSharedPrefService.storeLastValueOfStepTaken(values)
                     EventBus.getDefault().postSticky(StepCounterEvent(values))
+                    this.sensorEventLiveData!!.value == values
                 }
             }, { error ->
                 run {
