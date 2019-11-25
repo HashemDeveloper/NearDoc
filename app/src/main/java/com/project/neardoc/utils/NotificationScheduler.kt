@@ -12,18 +12,14 @@ import javax.inject.Inject
 class NotificationScheduler @Inject constructor(private val context: Context) :
     INotificationScheduler {
 
-    override fun scheduleJob(action: String, requestCode: Int,  min: Int, hr: Int) {
+    override fun scheduleJob(action: String, requestCode: Int,  min: Int, hr: Int, result: Int) {
         val calendar: Calendar = Calendar.getInstance()
-        val setCalendar: Calendar = Calendar.getInstance()
-        setCalendar.set(Calendar.HOUR_OF_DAY, hr)
-        setCalendar.set(Calendar.MINUTE, min)
-        setCalendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.HOUR_OF_DAY, hr)
+        calendar.set(Calendar.MINUTE, min)
+        calendar.set(Calendar.SECOND, 0)
         cancelJob(action, requestCode)
-        if (setCalendar.before(calendar)) {
-            setCalendar.add(Calendar.DATE, 1)
-        }
-
         val broadCastIntent = Intent(this.context, NearDocBroadcastReceiver::class.java)
+            .putExtra(Constants.STEP_COUNT_VALUE, result)
             .setAction(action)
         val pendingIntent: PendingIntent = PendingIntent.getBroadcast(
             this.context,

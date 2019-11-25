@@ -15,9 +15,6 @@ import javax.inject.Inject
 class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
     @Inject
     lateinit var iNotificationBuilder: INotificationBuilder
-    @Inject
-    lateinit var iSharedPrefService: ISharedPrefService
-
     override fun onReceive(context: Context?, intent: Intent?) {
        AndroidInjection.inject(this, context)
         when (intent!!.action) {
@@ -31,12 +28,11 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
                 Log.i("Good: ", "Yes")
             }
             Constants.STEP_COUNTER_SERVICE_ACTION -> {
-                val counterValue: Int = this.iSharedPrefService.getLastStepCountValue()
-                //TODO: Calucate calories from this value and display
+                val result: Int = intent.getIntExtra(Constants.STEP_COUNT_VALUE, 0)
                 this.iNotificationBuilder.createNotification(StepCounterService.STEP_COUNT_NOTIFICATION_REQ_CODE, "STEP_COUNT",
                     123,
                     com.project.neardoc.R.drawable.ic_walk_2x,
-                    com.project.neardoc.R.drawable.ic_walk_2x, "You have walked: ", counterValue.toString())
+                    com.project.neardoc.R.drawable.ic_walk_2x, "You have walked: ", result.toString())
             }
         }
     }
