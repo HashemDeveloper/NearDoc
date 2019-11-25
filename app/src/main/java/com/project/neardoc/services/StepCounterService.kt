@@ -20,8 +20,6 @@ import kotlin.coroutines.CoroutineContext
 
 class StepCounterService @Inject constructor(): Service(), CoroutineScope {
     companion object {
-        @JvmStatic val MIN_PERIODIC_INTERVAL: Long = 15 * 60 * 1000L
-        @JvmStatic val MIN_PERIODIC_FLEX_INTERVAL: Long = 5 * 60 * 1000L
         @JvmStatic val STEP_COUNT_NOTIFICATION_REQ_CODE = 100
     }
     @Inject
