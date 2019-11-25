@@ -55,10 +55,6 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
         }
     }
 
-    override fun getSensorEvent(): LiveData<Int> {
-        return this.sensorEventLiveData!!
-    }
-
     override fun onAccuracyChanged(sensor: Sensor?, p1: Int) {
 
     }
@@ -74,7 +70,7 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
                 run {
                     this.iSharedPrefService.storeLastValueOfStepTaken(values)
                     EventBus.getDefault().postSticky(StepCounterEvent(values))
-                    this.sensorEventLiveData!!.value == values
+                    this.sensorEventLiveData!!.value = values
                 }
             }, { error ->
                 run {
@@ -83,6 +79,10 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
                     }
                 }
             }))
+    }
+
+    override fun getSensorEvent(): LiveData<Int> {
+        return this.sensorEventLiveData!!
     }
 
     private fun calculateSteps(event: SensorEvent?): Single<Int>? {
