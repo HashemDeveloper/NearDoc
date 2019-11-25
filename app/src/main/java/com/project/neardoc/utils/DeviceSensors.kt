@@ -85,8 +85,6 @@ class DeviceSensors @Inject constructor(private val context: Context): IDeviceSe
                     this.iTempSensor.getSensorEvent().removeObserver(tempSensorEventObserver(view))
                 } else if (list is ILightSensor) {
                     this.iLightSensor.getSensorEventLiveData().removeObserver(lightSensorEventObserver())
-                } else if (list is IStepCountSensor) {
-                    this.iStepCountSensor.getSensorEvent().removeObserver(stepCountSensorEventObserver(stepCountView))
                 }
             }
             this.iStepCountSensor.clearDisposable()

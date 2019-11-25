@@ -87,4 +87,14 @@ class ApplicationModule {
     fun provideStepCountSensor(stepCounter: StepCountSensor): IStepCountSensor {
         return stepCounter
     }
+    @Singleton
+    @Provides
+    fun provideNotificationScheduler(notificationScheduler: NotificationScheduler): INotificationScheduler {
+        return notificationScheduler
+    }
+    @Singleton
+    @Provides
+    fun provideNotificationBuilder(notificationBuilder: NotificationBuilderBuilder): INotificationBuilder {
+        return notificationBuilder
+    }
 }

@@ -52,5 +52,4 @@ abstract class WorkerModule {
     @IntoMap
     @WorkerKey(LocationUpdateWorker::class)
     abstract fun buildLocationUpdateWorkerFactory(locationUpdateWorkerComponent: LocationUpdateWorkerComponent.Builder): AndroidInjector.Factory<out Worker>
-
 }
