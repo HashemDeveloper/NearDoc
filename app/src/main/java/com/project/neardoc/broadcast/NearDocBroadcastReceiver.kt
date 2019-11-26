@@ -15,6 +15,7 @@ import javax.inject.Inject
 class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
     @Inject
     lateinit var iNotificationBuilder: INotificationBuilder
+
     override fun onReceive(context: Context?, intent: Intent?) {
        AndroidInjection.inject(this, context)
         when (intent!!.action) {
@@ -32,7 +33,9 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
                 this.iNotificationBuilder.createNotification(StepCounterService.STEP_COUNT_NOTIFICATION_REQ_CODE, "STEP_COUNT",
                     123,
                     com.project.neardoc.R.drawable.ic_walk_2x,
-                    com.project.neardoc.R.drawable.ic_walk_2x, "You have walked: ", result.toString())
+                    com.project.neardoc.R.drawable.heart, "You have burned: ",
+                    "$result calories today! Good Job!"
+                )
             }
         }
     }

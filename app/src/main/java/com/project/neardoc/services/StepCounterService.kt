@@ -6,23 +6,17 @@ import android.content.Intent
 import android.hardware.SensorManager
 import android.os.Binder
 import android.os.IBinder
-import android.util.Log
-import androidx.work.Data
-import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkInfo
-import androidx.work.WorkManager
 import com.project.neardoc.broadcast.NearDocBroadcastReceiver
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.utils.Constants
+import com.project.neardoc.utils.ICalorieBurnedCalculator
 import com.project.neardoc.utils.INotificationScheduler
 import com.project.neardoc.utils.IStepCountSensor
 import dagger.android.AndroidInjection
-import io.reactivex.Observer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -41,6 +35,8 @@ class StepCounterService @Inject constructor(): Service(), CoroutineScope {
     lateinit var iNotificationScheduler: INotificationScheduler
     @Inject
     lateinit var iSharedPrefService: ISharedPrefService
+    @Inject
+    lateinit var iCalorieBurnedCalculator: ICalorieBurnedCalculator
 
     private var job = Job()
 
@@ -62,9 +58,13 @@ class StepCounterService @Inject constructor(): Service(), CoroutineScope {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        val result: Int = this.iSharedPrefService.getLastStepCountValue()
-        this.iNotificationScheduler.scheduleJob(Constants.STEP_COUNTER_SERVICE_ACTION, STEP_COUNT_NOTIFICATION_REQ_CODE,
-            1, 0, result)
+        launch {
+            val stepCount: Int = iSharedPrefService.getLastStepCountValue()
+            val burnedCalories: Double = iCalorieBurnedCalculator.calculateCalorieBurned(178.0, 67.8, stepCount)
+            iNotificationScheduler.scheduleJob(Constants.STEP_COUNTER_SERVICE_ACTION, STEP_COUNT_NOTIFICATION_REQ_CODE,
+                1, 0, burnedCalories.toInt())
+        }
+
         return START_STICKY
     }
     override fun onDestroy() {

@@ -94,7 +94,12 @@ class ApplicationModule {
     }
     @Singleton
     @Provides
-    fun provideNotificationBuilder(notificationBuilder: NotificationBuilderBuilder): INotificationBuilder {
+    fun provideNotificationBuilder(notificationBuilder: NotificationBuilder): INotificationBuilder {
         return notificationBuilder
+    }
+    @Singleton
+    @Provides
+    fun provideCalorieBurnCalculator(calorieBurnedCalculator: CalorieBurnedCalculator): ICalorieBurnedCalculator {
+        return calorieBurnedCalculator
     }
 }

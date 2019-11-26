@@ -66,11 +66,14 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
         this.compositeDisposable.add(calculateSteps(event)!!
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess { values ->
+                EventBus.getDefault().postSticky(StepCounterEvent(values))
+                this.sensorEventLiveData!!.value = values
+            }
+            .subscribeOn(Schedulers.newThread())
             .subscribe({values ->
                 run {
                     this.iSharedPrefService.storeLastValueOfStepTaken(values)
-                    EventBus.getDefault().postSticky(StepCounterEvent(values))
-                    this.sensorEventLiveData!!.value = values
                 }
             }, { error ->
                 run {

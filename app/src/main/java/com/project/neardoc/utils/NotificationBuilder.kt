@@ -14,7 +14,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.project.neardoc.NearDocMainActivity
 import javax.inject.Inject
 
-class NotificationBuilderBuilder @Inject constructor(): INotificationBuilder {
+class NotificationBuilder @Inject constructor(): INotificationBuilder {
 
     @Inject
     lateinit var context: Context
