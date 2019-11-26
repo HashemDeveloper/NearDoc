@@ -138,6 +138,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
 
     override fun onStop() {
         super.onStop()
+        removeObservers()
     }
     private fun monitorLocationUpdate() {
         this.iLocationService.getObserver().observe(this, Observer {
@@ -191,19 +192,9 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
     private fun monitorConnectionSetting() {
         this.iConnectionStateMonitor.getObserver().observe(this, Observer {isNetAvailable ->
            if (isNetAvailable) {
-               this.iConnectionStateMonitor.isConnectedNoInternetLiveData().observe(this, Observer { noInternet ->
-
-               })
-               this.iConnectionStateMonitor.isUsingWifiLiveData().observe(this, Observer {isWifi ->
-                   if (isWifi) {
-                       this.isWifiConnected = true
-                   }
-               })
-               this.iConnectionStateMonitor.isUsingMobileData().observe(this, Observer {isMobileData ->
-                   if (isMobileData) {
-                       this.isWifiConnected = false
-                   }
-               })
+               this.iConnectionStateMonitor.isConnectedNoInternetLiveData().observe(this, observeNotInternetConnectedLiveData())
+               this.iConnectionStateMonitor.isUsingWifiLiveData().observe(this, observeUsingWifiLiveData())
+               this.iConnectionStateMonitor.isUsingMobileData().observe(this, observeUsingMobileDataLiveData())
                if (isWifiConnected) {
                    EventBus.getDefault().postSticky(NetworkStateEvent(true, NearDocNetworkType.WIFI_DATA))
                } else {
@@ -214,6 +205,32 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
                Toast.makeText(this, "Connection lost", Toast.LENGTH_SHORT).show()
            }
         })
+    }
+    private fun removeObservers() {
+        this.iConnectionStateMonitor.isConnectedNoInternetLiveData().removeObserver(observeNotInternetConnectedLiveData())
+        this.iConnectionStateMonitor.isUsingWifiLiveData().removeObserver(observeUsingWifiLiveData())
+        this.iConnectionStateMonitor.isUsingMobileData().removeObserver(observeUsingMobileDataLiveData())
+    }
+    private fun observeUsingWifiLiveData(): Observer<Boolean> {
+        return Observer {isWifi ->
+            if (isWifi) {
+                this.isWifiConnected = true
+            }
+        }
+    }
+    private fun observeUsingMobileDataLiveData(): Observer<Boolean> {
+        return Observer {isMobileData ->
+            if (isMobileData) {
+                this.isWifiConnected = false
+            }
+        }
+    }
+    private fun observeNotInternetConnectedLiveData(): Observer<Boolean> {
+        return Observer {
+            if (BuildConfig.DEBUG) {
+                Log.i("No Internet", it.toString())
+            }
+        }
     }
     private fun setSettingBar(
         isSetting: Boolean,
@@ -287,7 +304,14 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
         super.onDestroy()
         this.iSharedPrefService.unregisterSharedPrefListener(this)
         EventBus.getDefault().unregister(this)
+        removeObservers()
     }
+
+    override fun onPause() {
+        super.onPause()
+        removeObservers()
+    }
+
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onBottomBarEvent(event: BottomBarEvent) {
         if (!event.getIsBottomBarEnabled()) {

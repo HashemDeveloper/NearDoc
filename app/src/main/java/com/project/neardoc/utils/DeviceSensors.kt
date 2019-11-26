@@ -70,7 +70,9 @@ class DeviceSensors @Inject constructor(private val context: Context): IDeviceSe
     }
     private fun lightSensorEventObserver(): Observer<SensorEvent> {
         return Observer {
-
+            if (BuildConfig.DEBUG) {
+                Log.i("LigtSensor: ", it.values[0].toString())
+            }
         }
     }
     private fun getListOfSensorsInDevice(): List<Sensor> {
