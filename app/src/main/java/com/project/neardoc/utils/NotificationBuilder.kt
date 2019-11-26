@@ -4,14 +4,18 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
+import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.navigation.NavDeepLinkBuilder
 import com.project.neardoc.NearDocMainActivity
+import com.project.neardoc.R
 import javax.inject.Inject
 
 class NotificationBuilder @Inject constructor(): INotificationBuilder {
@@ -25,7 +29,14 @@ class NotificationBuilder @Inject constructor(): INotificationBuilder {
         val intent: Intent = Intent(this.context, NearDocMainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this.context, requestCode, intent, 0)
+//        val pendingIntent: PendingIntent = PendingIntent.getActivity(this.context, requestCode, intent, 0)
+        val data = Bundle()
+        data.putString(Constants.STEP_COUNT_VALUE, description)
+        val pendingIntent: PendingIntent = NavDeepLinkBuilder(this.context)
+            .setGraph(R.navigation.nearby_doc_navigation)
+            .setDestination(R.id.accountPage)
+            .setArguments(data)
+            .createPendingIntent()
         val bigPicture: Bitmap = BitmapFactory.decodeResource(this.context.resources, bigIcon)
         val notification: Notification = NotificationCompat.Builder(this.context, chanelId)
             .setSmallIcon(smallIcon)

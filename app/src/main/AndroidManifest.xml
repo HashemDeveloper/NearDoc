@@ -17,7 +17,6 @@
 
     <application
         android:name=".NearDocApp"
-        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -28,8 +27,16 @@
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+                <!--accepts google chrome-->
+                <data android:scheme="http"/>
+                <data android:scheme="https"/>
+                <data android:host="wwww.neardocapp.com"/>
+                <data android:pathPrefix="/homepage"/>
+                <data android:pathPattern=".*"/>
             </intent-filter>
         </activity>
         <activity
