@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.RippleDrawable
 import android.os.Build
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Switch
@@ -15,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.preference.PreferenceViewHolder
 import androidx.preference.SwitchPreference
+import com.project.neardoc.BuildConfig
 import com.project.neardoc.R
 
 
@@ -90,8 +92,12 @@ class NotificationSwitchPref constructor(context: Context, attributeSet: Attribu
                     ColorStateList(states, trackColors)
                 )
             }
-        } catch (e: NullPointerException) {
-            e.printStackTrace()
+        } catch (e: Exception) {
+           if (BuildConfig.DEBUG) {
+               if (e.localizedMessage != null) {
+                   Log.i("Exception: ", e.localizedMessage!!)
+               }
+           }
         }
     }
 
