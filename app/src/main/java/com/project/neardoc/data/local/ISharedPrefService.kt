@@ -41,4 +41,6 @@ interface ISharedPrefService {
     fun getUserCurrentState(): String
     fun storeLastValueOfStepTaken(values: Int?)
     fun getLastStepCountValue(): Int
+    fun setNotificationEnabled(checked: Boolean)
+    fun getIsNotificationEnabled(): Boolean
 }

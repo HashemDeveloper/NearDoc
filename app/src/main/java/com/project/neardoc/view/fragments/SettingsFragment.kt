@@ -21,6 +21,7 @@ import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.PageType
 import com.project.neardoc.view.widgets.CustomPreference
 import com.project.neardoc.view.widgets.CustomSwitchPreference
+import com.project.neardoc.view.widgets.NotificationSwitchPref
 import com.ramotion.fluidslider.FluidSlider
 import dagger.android.support.AndroidSupportInjection
 import org.greenrobot.eventbus.EventBus
@@ -61,7 +62,15 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
         val locationEnablePref: CustomSwitchPreference = findPreference<CustomSwitchPreference>("prefEnableCurrentLocationKey") as CustomSwitchPreference
         val searchPrefCategory: PreferenceCategory = findPreference<PreferenceCategory>("searchPrefCategory") as PreferenceCategory
         val helpPrefCategory: PreferenceCategory = findPreference<PreferenceCategory>("helpAndSupport") as PreferenceCategory
+        val notificationPref: NotificationSwitchPref = findPreference<NotificationSwitchPref>("notificationSwitchPref") as NotificationSwitchPref
 
+        notificationPref.setOnPreferenceClickListener {
+            val sharedPref: SharedPreferences = it.sharedPreferences
+            val isChecked: Boolean = sharedPref.getBoolean("notificationSwitchPref", false)
+            Toast.makeText(this.context, "Checked: $isChecked", Toast.LENGTH_SHORT).show()
+            this.iSharedPrefService.setNotificationEnabled(isChecked)
+            true
+        }
         if (Constants.ENABLE_LOCATION_SWITCH) {
             locationEnablePref.setOnPreferenceClickListener {
                 val sharedPref: SharedPreferences = it.sharedPreferences
@@ -72,6 +81,7 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
 
             searchPrefCategory.removePreference(locationEnablePref)
         }
+
 
         for (keys in this.getPrefKeys()!!) {
             val prefSignAndSec: CustomPreference = findPreference<CustomPreference>(keys) as CustomPreference

@@ -225,4 +225,14 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
     override fun getLastStepCountValue(): Int {
         return pref?.getInt(Constants.STEP_COUNT_VALUE, 0)!!
     }
+
+    override fun setNotificationEnabled(checked: Boolean) {
+        pref?.edit(commit = true) {
+            putBoolean(Constants.NOTIFICATION_ENABLED, checked)
+        }
+    }
+
+    override fun getIsNotificationEnabled(): Boolean {
+        return pref?.getBoolean(Constants.NOTIFICATION_ENABLED, false)!!
+    }
 }

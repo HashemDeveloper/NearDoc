@@ -6,6 +6,7 @@ import java.util.regex.Pattern
 
 class Constants {
     companion object {
+        const val NOTIFICATION_ENABLED: String = "NOTIFICATION_ENABLED"
         const val STEP_COUNT_NOTIFICATION = "STEP_COUNT_NOTIFICATION"
         const val STEP_COUNT_VALUE: String = "STEP_COUNT_VALUE"
         const val STEP_COUNTER_SERVICE_ACTION: String = "STEP_COUNTER_ACTION"
