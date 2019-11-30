@@ -35,6 +35,8 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
     private var seekBarHalveValue: Int?= null
     private var seekBarTotalValue: Int?= null
     private var list: List<String>? = null
+    private var isNotificationEnabled: Boolean?= null
+    private var notificationPref: NotificationSwitchPref?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,13 +60,21 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
             null
         }
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        this.isNotificationEnabled = this.iSharedPrefService.getIsNotificationEnabled()
+        if (this.notificationPref != null) {
+            this.notificationPref!!.setDefaultValue(this.isNotificationEnabled)
+        }
+    }
+
     private fun setupPreferenceListeners() {
         val locationEnablePref: CustomSwitchPreference = findPreference<CustomSwitchPreference>("prefEnableCurrentLocationKey") as CustomSwitchPreference
         val searchPrefCategory: PreferenceCategory = findPreference<PreferenceCategory>("searchPrefCategory") as PreferenceCategory
         val helpPrefCategory: PreferenceCategory = findPreference<PreferenceCategory>("helpAndSupport") as PreferenceCategory
-        val notificationPref: NotificationSwitchPref = findPreference<NotificationSwitchPref>("notificationSwitchPref") as NotificationSwitchPref
-
-        notificationPref.setOnPreferenceClickListener {
+        notificationPref = findPreference<NotificationSwitchPref>("notificationSwitchPref") as NotificationSwitchPref
+        notificationPref!!.setOnPreferenceClickListener {
             val sharedPref: SharedPreferences = it.sharedPreferences
             val isChecked: Boolean = sharedPref.getBoolean("notificationSwitchPref", false)
             Toast.makeText(this.context, "Checked: $isChecked", Toast.LENGTH_SHORT).show()
