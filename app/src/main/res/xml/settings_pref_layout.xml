@@ -10,6 +10,15 @@
             app:layout="@layout/pref_credential_layout"
             android:selectable="true"
             />
+        <com.project.neardoc.view.widgets.NotificationSwitchPref
+            android:key="notificationSwitchPref"
+            android:title="Notification"
+            android:icon="@drawable/ic_notifications_on_gray600_24dp"
+            android:defaultValue="true"
+            app:singleLineTitle="true"
+            app:iconSpaceReserved="true"
+            app:allowDividerBelow="true"
+            />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="searchPrefCategory"

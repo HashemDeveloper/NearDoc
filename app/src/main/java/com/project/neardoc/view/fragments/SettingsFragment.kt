@@ -81,7 +81,6 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
                         val signInSecFragment = findNavController()
                         signInSecFragment.navigate(R.id.signInSecurity)
                     }
-
                     it.key == "prefDistanceKey" -> {
                         activity!!.runOnUiThread {
                             initSeekBar(SeekBarType.SET_DISTANCE)
