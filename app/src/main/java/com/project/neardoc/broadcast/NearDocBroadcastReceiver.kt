@@ -20,6 +20,8 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
     @Inject
     lateinit var iNotificationBuilder: INotificationBuilder
     private var sensorManager: SensorManager?= null
+    @Inject
+    lateinit var iSharedPrefService: ISharedPrefService
 
     override fun onReceive(context: Context?, intent: Intent?) {
        AndroidInjection.inject(this, context)
@@ -34,15 +36,18 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
                 Log.i("Good: ", "Yes")
             }
             Constants.STEP_COUNTER_SERVICE_ACTION -> {
-                sensorManager = context!!.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-                iStepCounterSensor.initiateStepCounterSensor(sensorManager!!)
-                val result: Int = intent.getIntExtra(Constants.STEP_COUNT_VALUE, 0)
-                this.iNotificationBuilder.createNotification(StepCounterService.STEP_COUNT_NOTIFICATION_REQ_CODE, "STEP_COUNT",
-                    123,
-                    com.project.neardoc.R.drawable.ic_walk_2x,
-                    com.project.neardoc.R.drawable.heart, "You have burned: ",
-                    "$result calories today! Good Job!"
-                )
+                val isNotificationOn: Boolean = this.iSharedPrefService.getIsNotificationEnabled()
+                if (isNotificationOn) {
+                    sensorManager = context!!.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+                    iStepCounterSensor.initiateStepCounterSensor(sensorManager!!)
+                    val result: Int = intent.getIntExtra(Constants.STEP_COUNT_VALUE, 0)
+                    this.iNotificationBuilder.createNotification(StepCounterService.STEP_COUNT_NOTIFICATION_REQ_CODE, "STEP_COUNT",
+                        123,
+                        com.project.neardoc.R.drawable.ic_walk_2x,
+                        com.project.neardoc.R.drawable.heart, "You have burned: ",
+                        "$result calories today! Good Job!"
+                    )
+                }
             }
         }
     }
