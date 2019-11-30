@@ -6,17 +6,24 @@ import android.graphics.drawable.RippleDrawable
 import android.os.Build
 import android.util.AttributeSet
 import android.view.View
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.project.neardoc.R
 
+
 class CustomPreference constructor(context: Context, attr: AttributeSet): Preference(context, attr) {
+    private var notificationBt: SwitchMaterial?= null
+
+
     override fun onBindViewHolder(holder: PreferenceViewHolder?) {
         super.onBindViewHolder(holder)
         val view: View = holder!!.itemView
         rippleEffect(view)
     }
+
     private fun rippleEffect(view: View) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val rippleDrawable: RippleDrawable = this.context.getDrawable(R.drawable.dr_pref_ripple_effect) as RippleDrawable

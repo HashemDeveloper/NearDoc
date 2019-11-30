@@ -7,7 +7,9 @@ import android.hardware.SensorManager
 import android.os.Binder
 import android.os.IBinder
 import com.project.neardoc.broadcast.NearDocBroadcastReceiver
+import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.utils.Constants
+import com.project.neardoc.utils.ICalorieBurnedCalculator
 import com.project.neardoc.utils.INotificationScheduler
 import com.project.neardoc.utils.IStepCountSensor
 import dagger.android.AndroidInjection
@@ -20,8 +22,6 @@ import kotlin.coroutines.CoroutineContext
 
 class StepCounterService @Inject constructor(): Service(), CoroutineScope {
     companion object {
-        @JvmStatic val MIN_PERIODIC_INTERVAL: Long = 15 * 60 * 1000L
-        @JvmStatic val MIN_PERIODIC_FLEX_INTERVAL: Long = 5 * 60 * 1000L
         @JvmStatic val STEP_COUNT_NOTIFICATION_REQ_CODE = 100
     }
     @Inject
@@ -33,6 +33,10 @@ class StepCounterService @Inject constructor(): Service(), CoroutineScope {
     private var sensorManager: SensorManager?= null
     @Inject
     lateinit var iNotificationScheduler: INotificationScheduler
+    @Inject
+    lateinit var iSharedPrefService: ISharedPrefService
+    @Inject
+    lateinit var iCalorieBurnedCalculator: ICalorieBurnedCalculator
 
     private var job = Job()
 
@@ -54,8 +58,13 @@ class StepCounterService @Inject constructor(): Service(), CoroutineScope {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        this.iNotificationScheduler.scheduleJob(Constants.STEP_COUNTER_SERVICE_ACTION, STEP_COUNT_NOTIFICATION_REQ_CODE,
-            1, 0)
+        launch {
+            val stepCount: Int = iSharedPrefService.getLastStepCountValue()
+            val burnedCalories: Double = iCalorieBurnedCalculator.calculateCalorieBurned(178.0, 67.8, stepCount)
+            iNotificationScheduler.scheduleJob(Constants.STEP_COUNTER_SERVICE_ACTION, STEP_COUNT_NOTIFICATION_REQ_CODE,
+                1, 0, burnedCalories.toInt())
+        }
+
         return START_STICKY
     }
     override fun onDestroy() {

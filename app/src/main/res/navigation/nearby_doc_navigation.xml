@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nearby_doc_navigation"
     app:startDestination="@id/welcome">
-
     <fragment
         android:id="@+id/welcome"
         android:name="com.project.neardoc.view.fragments.Welcome"
@@ -59,6 +58,7 @@
         android:id="@+id/homePage"
         android:name="com.project.neardoc.view.fragments.HomePage"
         android:label="HomePage" >
+        <deepLink app:uri="www.neardocapp.com/homePage"/>
         <action
             android:id="@+id/actionWelcomePage"
             app:destination="@id/welcome" />
@@ -75,7 +75,8 @@
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@+id/accountPage" />
     </fragment>
     <fragment
         android:id="@+id/searchPage"

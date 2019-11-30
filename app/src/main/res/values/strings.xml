@@ -97,4 +97,5 @@
     <string name="increase_breath_count_for_next_round"><u>Increase breath count for next round</u></string>
     <string name="home">HOME</string>
     <string name="state">State</string>
+    <string name="notification">Notifications</string>
 </resources>

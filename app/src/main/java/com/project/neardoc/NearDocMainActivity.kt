@@ -1,5 +1,6 @@
 package com.project.neardoc
 
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -56,6 +57,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
         EventBus.getDefault().register(this)
         this.view = findViewById(R.id.container)
         this.navController = Navigation.findNavController(this, R.id.container)
+        this.navController.setGraph(R.navigation.nearby_doc_navigation)
         main_layout_menu_bar_id.setOnClickListener{
             val navigateToSettingPage = findNavController(R.id.container)
             navigateToSettingPage.navigate(R.id.settingsFragment)
@@ -138,6 +140,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
 
     override fun onStop() {
         super.onStop()
+        removeObservers()
     }
     private fun monitorLocationUpdate() {
         this.iLocationService.getObserver().observe(this, Observer {
@@ -177,13 +180,15 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
             fragment_main_bottom_bar_id.visibility = View.VISIBLE
             val userImage: String = this.iSharedPrefService.getUserImage()
             val username: String = this.iSharedPrefService.getUserUsername()
-            if (userImage.isNotEmpty()) {
-                Glide.with(this).load(userImage).into(fragment_main_bottom_bar_profile_image_id)
-            } else {
-                val accountImageResId = getDrawableImage("ic_account_circle_white_24dp")
-                Glide.with(this).load(accountImageResId).into(fragment_main_bottom_bar_profile_image_id)
+            if (!isFinishing) {
+                if (userImage.isNotEmpty()) {
+                    Glide.with(this).load(userImage).into(fragment_main_bottom_bar_profile_image_id)
+                } else {
+                    val accountImageResId = getDrawableImage("ic_account_circle_white_24dp")
+                    Glide.with(this).load(accountImageResId).into(fragment_main_bottom_bar_profile_image_id)
+                }
+                fragment_main_bottom_bar_username_view_id.text = username
             }
-            fragment_main_bottom_bar_username_view_id.text = username
         } else {
             fragment_main_bottom_bar_id.visibility = View.GONE
         }
@@ -191,19 +196,9 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
     private fun monitorConnectionSetting() {
         this.iConnectionStateMonitor.getObserver().observe(this, Observer {isNetAvailable ->
            if (isNetAvailable) {
-               this.iConnectionStateMonitor.isConnectedNoInternetLiveData().observe(this, Observer { noInternet ->
-
-               })
-               this.iConnectionStateMonitor.isUsingWifiLiveData().observe(this, Observer {isWifi ->
-                   if (isWifi) {
-                       this.isWifiConnected = true
-                   }
-               })
-               this.iConnectionStateMonitor.isUsingMobileData().observe(this, Observer {isMobileData ->
-                   if (isMobileData) {
-                       this.isWifiConnected = false
-                   }
-               })
+               this.iConnectionStateMonitor.isConnectedNoInternetLiveData().observe(this, observeNotInternetConnectedLiveData())
+               this.iConnectionStateMonitor.isUsingWifiLiveData().observe(this, observeUsingWifiLiveData())
+               this.iConnectionStateMonitor.isUsingMobileData().observe(this, observeUsingMobileDataLiveData())
                if (isWifiConnected) {
                    EventBus.getDefault().postSticky(NetworkStateEvent(true, NearDocNetworkType.WIFI_DATA))
                } else {
@@ -214,6 +209,32 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
                Toast.makeText(this, "Connection lost", Toast.LENGTH_SHORT).show()
            }
         })
+    }
+    private fun removeObservers() {
+        this.iConnectionStateMonitor.isConnectedNoInternetLiveData().removeObserver(observeNotInternetConnectedLiveData())
+        this.iConnectionStateMonitor.isUsingWifiLiveData().removeObserver(observeUsingWifiLiveData())
+        this.iConnectionStateMonitor.isUsingMobileData().removeObserver(observeUsingMobileDataLiveData())
+    }
+    private fun observeUsingWifiLiveData(): Observer<Boolean> {
+        return Observer {isWifi ->
+            if (isWifi) {
+                this.isWifiConnected = true
+            }
+        }
+    }
+    private fun observeUsingMobileDataLiveData(): Observer<Boolean> {
+        return Observer {isMobileData ->
+            if (isMobileData) {
+                this.isWifiConnected = false
+            }
+        }
+    }
+    private fun observeNotInternetConnectedLiveData(): Observer<Boolean> {
+        return Observer {
+            if (BuildConfig.DEBUG) {
+                Log.i("No Internet", it.toString())
+            }
+        }
     }
     private fun setSettingBar(
         isSetting: Boolean,
@@ -287,7 +308,14 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
         super.onDestroy()
         this.iSharedPrefService.unregisterSharedPrefListener(this)
         EventBus.getDefault().unregister(this)
+        removeObservers()
     }
+
+    override fun onPause() {
+        super.onPause()
+        removeObservers()
+    }
+
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onBottomBarEvent(event: BottomBarEvent) {
         if (!event.getIsBottomBarEnabled()) {

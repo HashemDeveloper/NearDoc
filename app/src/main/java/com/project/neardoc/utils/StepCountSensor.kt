@@ -66,11 +66,14 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
         this.compositeDisposable.add(calculateSteps(event)!!
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess { values ->
+                EventBus.getDefault().postSticky(StepCounterEvent(values))
+                this.sensorEventLiveData!!.value = values
+            }
+            .subscribeOn(Schedulers.newThread())
             .subscribe({values ->
                 run {
                     this.iSharedPrefService.storeLastValueOfStepTaken(values)
-                    EventBus.getDefault().postSticky(StepCounterEvent(values))
-                    this.sensorEventLiveData!!.value = values
                 }
             }, { error ->
                 run {
@@ -90,11 +93,10 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
             val sensor: Sensor = event?.sensor!!
             recordEvent(event)
             if (sensor.type == Sensor.TYPE_STEP_COUNTER) {
-                val initialStep: Int = event.values[0].toInt()
                 if (this.mStepCounter < 1) {
-                    this.mStepCounter = initialStep
+                    this.mStepCounter = event.values[0].toInt()
                 }
-                this.mSteps = initialStep - this.mStepCounter // calculate steps taken
+                this.mSteps = event.values[0].toInt() - this.mStepCounter // calculate steps taken
                 this.mSteps = this.mSteps!! + this.mStepCounter // add previous step taken
             }
             this.mSteps

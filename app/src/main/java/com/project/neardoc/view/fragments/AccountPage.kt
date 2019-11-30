@@ -173,6 +173,16 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         super.onStart()
     }
 
+    override fun onPause() {
+        super.onPause()
+        this.accountPageViewModel.clearObservers(fragment_account_room_temp_view_id, fragment_account_step_counter_view_id)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        this.accountPageViewModel.clearObservers(fragment_account_room_temp_view_id, fragment_account_step_counter_view_id)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         this.accountPageViewModel.clearObservers(fragment_account_room_temp_view_id, fragment_account_step_counter_view_id)
