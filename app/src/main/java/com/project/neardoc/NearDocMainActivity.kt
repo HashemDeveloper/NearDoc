@@ -1,5 +1,6 @@
 package com.project.neardoc
 
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -56,6 +57,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
         EventBus.getDefault().register(this)
         this.view = findViewById(R.id.container)
         this.navController = Navigation.findNavController(this, R.id.container)
+        this.navController.setGraph(R.navigation.nearby_doc_navigation)
         main_layout_menu_bar_id.setOnClickListener{
             val navigateToSettingPage = findNavController(R.id.container)
             navigateToSettingPage.navigate(R.id.settingsFragment)
@@ -178,13 +180,15 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
             fragment_main_bottom_bar_id.visibility = View.VISIBLE
             val userImage: String = this.iSharedPrefService.getUserImage()
             val username: String = this.iSharedPrefService.getUserUsername()
-            if (userImage.isNotEmpty()) {
-                Glide.with(this).load(userImage).into(fragment_main_bottom_bar_profile_image_id)
-            } else {
-                val accountImageResId = getDrawableImage("ic_account_circle_white_24dp")
-                Glide.with(this).load(accountImageResId).into(fragment_main_bottom_bar_profile_image_id)
+            if (!isFinishing) {
+                if (userImage.isNotEmpty()) {
+                    Glide.with(this).load(userImage).into(fragment_main_bottom_bar_profile_image_id)
+                } else {
+                    val accountImageResId = getDrawableImage("ic_account_circle_white_24dp")
+                    Glide.with(this).load(accountImageResId).into(fragment_main_bottom_bar_profile_image_id)
+                }
+                fragment_main_bottom_bar_username_view_id.text = username
             }
-            fragment_main_bottom_bar_username_view_id.text = username
         } else {
             fragment_main_bottom_bar_id.visibility = View.GONE
         }

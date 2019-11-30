@@ -13,9 +13,12 @@ import android.os.Build
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.navigation.NavController
 import androidx.navigation.NavDeepLinkBuilder
+import androidx.navigation.Navigation
 import com.project.neardoc.NearDocMainActivity
 import com.project.neardoc.R
+import com.project.neardoc.view.fragments.AccountPage
 import javax.inject.Inject
 
 class NotificationBuilder @Inject constructor(): INotificationBuilder {
@@ -26,12 +29,8 @@ class NotificationBuilder @Inject constructor(): INotificationBuilder {
     override fun createNotification(requestCode: Int, chanelId:
     String, notificationId: Int, smallIcon: Int, bigIcon: Int, title: String, description: String) {
         createNotificationChanel(chanelId)
-        val intent: Intent = Intent(this.context, NearDocMainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-//        val pendingIntent: PendingIntent = PendingIntent.getActivity(this.context, requestCode, intent, 0)
         val data = Bundle()
-        data.putString(Constants.STEP_COUNT_VALUE, description)
+        data.putString(Constants.STEP_COUNT_NOTIFICATION, "STEP_NOTIFICATION")
         val contentComponentName = ComponentName(this.context, NearDocMainActivity::class.java)
         val pendingIntent: PendingIntent = NavDeepLinkBuilder(this.context)
             .setComponentName(contentComponentName)
@@ -45,11 +44,12 @@ class NotificationBuilder @Inject constructor(): INotificationBuilder {
             .setLargeIcon(bigPicture)
             .setContentTitle(title)
             .setContentText(description)
+            .setAutoCancel(true)
             .setStyle(NotificationCompat.BigPictureStyle()
                 .bigPicture(bigPicture)
                 .bigLargeIcon(null))
             .setContentIntent(pendingIntent)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
         NotificationManagerCompat.from(this.context).notify(notificationId, notification)
     }
@@ -57,7 +57,7 @@ class NotificationBuilder @Inject constructor(): INotificationBuilder {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name: String = chanelId
             val desc = "Chanel Description"
-            val importance: Int = NotificationManager.IMPORTANCE_DEFAULT
+            val importance: Int = NotificationManager.IMPORTANCE_HIGH
             val chanel: NotificationChannel = NotificationChannel(chanelId, name, importance).apply {
                 description = desc
             }

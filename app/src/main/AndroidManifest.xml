@@ -28,16 +28,9 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
-                <!--accepts google chrome-->
-                <data android:scheme="http"/>
-                <data android:scheme="https"/>
-                <data android:host="wwww.neardocapp.com"/>
-                <data android:pathPrefix="/homepage"/>
-                <data android:pathPattern=".*"/>
             </intent-filter>
+            <nav-graph android:value="@navigation/nearby_doc_navigation"/>
         </activity>
         <activity
             android:name="com.google.firebase.auth.internal.FederatedSignInActivity"
