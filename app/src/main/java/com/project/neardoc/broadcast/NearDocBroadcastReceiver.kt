@@ -22,7 +22,6 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
     private var sensorManager: SensorManager? = null
     @Inject
     lateinit var iSharedPrefService: ISharedPrefService
-    private val listOfDays: MutableList<String> = arrayListOf()
 
     override fun onReceive(context: Context?, intent: Intent?) {
         AndroidInjection.inject(this, context)
