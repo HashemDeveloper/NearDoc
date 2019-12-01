@@ -46,7 +46,8 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
                         123,
                         com.project.neardoc.R.drawable.ic_walk_2x,
                         com.project.neardoc.R.drawable.heart, "Hi $name!",
-                        getMessage()
+                        getMessage(),
+                        result
                      )
                 }
             }

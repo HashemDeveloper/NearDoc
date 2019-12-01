@@ -6,19 +6,15 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.navigation.NavController
 import androidx.navigation.NavDeepLinkBuilder
-import androidx.navigation.Navigation
 import com.project.neardoc.NearDocMainActivity
 import com.project.neardoc.R
-import com.project.neardoc.view.fragments.AccountPage
 import javax.inject.Inject
 
 class NotificationBuilder @Inject constructor(): INotificationBuilder {
@@ -27,10 +23,11 @@ class NotificationBuilder @Inject constructor(): INotificationBuilder {
     lateinit var context: Context
 
     override fun createNotification(requestCode: Int, chanelId:
-    String, notificationId: Int, smallIcon: Int, bigIcon: Int, title: String, description: String) {
+    String, notificationId: Int, smallIcon: Int, bigIcon: Int, title: String, description: String, caloriesBurnedResult: Int) {
         createNotificationChanel(chanelId)
         val data = Bundle()
         data.putString(Constants.STEP_COUNT_NOTIFICATION, "STEP_NOTIFICATION")
+        data.putInt(Constants.CALORIES_BURNED_RESULT, caloriesBurnedResult)
         val contentComponentName = ComponentName(this.context, NearDocMainActivity::class.java)
         val pendingIntent: PendingIntent = NavDeepLinkBuilder(this.context)
             .setComponentName(contentComponentName)

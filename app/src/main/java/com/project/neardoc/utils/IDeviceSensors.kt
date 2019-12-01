@@ -12,4 +12,5 @@ interface IDeviceSensors {
     )
     fun clearObservers(view: MaterialTextView, stepCountView: MaterialTextView)
     fun unRegisterSensorListener()
+    fun flashStepCounter()
 }

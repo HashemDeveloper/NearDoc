@@ -192,4 +192,8 @@ class AccountPageViewModel @Inject constructor(): ViewModel() {
     fun getLastStepCountValue(): Int {
         return this.iSharedPrefService.getLastStepCountValue()
     }
+
+    fun flashStepCounter() {
+        this.iSensors.flashStepCounter()
+    }
 }

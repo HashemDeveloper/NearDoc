@@ -57,7 +57,9 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         if (arguments != null) {
             val bundle: Bundle = arguments!!
             if (bundle.containsKey(Constants.STEP_COUNT_NOTIFICATION)) {
-                Toast.makeText(this.context, "You have notification", Toast.LENGTH_SHORT).show()
+                val caloriresBurned: Int = bundle.getInt(Constants.CALORIES_BURNED_RESULT)
+                this.accountPageViewModel.flashStepCounter()
+                Toast.makeText(this.context, "Calories $caloriresBurned", Toast.LENGTH_SHORT).show()
             }
         }
     }
