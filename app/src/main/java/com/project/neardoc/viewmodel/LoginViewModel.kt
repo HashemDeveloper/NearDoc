@@ -70,6 +70,7 @@ class LoginViewModel @Inject constructor() : ViewModel() {
                this.loadingLiveData.value = false
                this.errorLiveData.value = false
                this.loginSuccessLiveData.value = true
+               this.iSharedPrefService.setNotificationEnabled(true)
                processGoogleLoginData(activity, firebaseUser, fullName)
            }, {onError ->
                this.loadingLiveData.value = false
@@ -140,6 +141,7 @@ class LoginViewModel @Inject constructor() : ViewModel() {
                     this.emailVerificationRequireLiveData.value = false
                     this.errorLiveData.value = false
                     this.loadingLiveData.value = false
+                    this.iSharedPrefService.setNotificationEnabled(true)
                     val userEmail:String = firebaseUser.email!!
                     fetchUserInfoFromFirebaseDb(userEmail)
                 } else {

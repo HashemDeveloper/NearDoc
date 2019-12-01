@@ -9,7 +9,6 @@ import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.services.StepCounterService
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.INotificationBuilder
-import com.project.neardoc.utils.INotificationScheduler
 import com.project.neardoc.utils.IStepCountSensor
 import dagger.android.AndroidInjection
 import javax.inject.Inject
@@ -19,17 +18,17 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
     lateinit var iStepCounterSensor: IStepCountSensor
     @Inject
     lateinit var iNotificationBuilder: INotificationBuilder
-    private var sensorManager: SensorManager?= null
+    private var sensorManager: SensorManager? = null
     @Inject
     lateinit var iSharedPrefService: ISharedPrefService
 
     override fun onReceive(context: Context?, intent: Intent?) {
-       AndroidInjection.inject(this, context)
+        AndroidInjection.inject(this, context)
         when (intent!!.action) {
             Constants.CONNECTIVITY_ACTION -> {
                 //do nothing
             }
-            Constants.LOCATION_SERVICE_ACTION ->{
+            Constants.LOCATION_SERVICE_ACTION -> {
                 Log.i("Good: ", "Yes")
             }
             Constants.USER_STATE_ACTION -> {

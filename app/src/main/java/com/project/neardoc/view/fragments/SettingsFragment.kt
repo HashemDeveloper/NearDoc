@@ -63,10 +63,6 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        this.isNotificationEnabled = this.iSharedPrefService.getIsNotificationEnabled()
-        if (this.notificationPref != null) {
-            this.notificationPref!!.setDefaultValue(this.isNotificationEnabled)
-        }
     }
 
     private fun setupPreferenceListeners() {
@@ -74,6 +70,7 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
         val searchPrefCategory: PreferenceCategory = findPreference<PreferenceCategory>("searchPrefCategory") as PreferenceCategory
         val helpPrefCategory: PreferenceCategory = findPreference<PreferenceCategory>("helpAndSupport") as PreferenceCategory
         notificationPref = findPreference<NotificationSwitchPref>("notificationSwitchPref") as NotificationSwitchPref
+        notificationPref!!.setDefaultValue(notificationPref!!.isChecked)
         notificationPref!!.setOnPreferenceClickListener {
             val sharedPref: SharedPreferences = it.sharedPreferences
             val isChecked: Boolean = sharedPref.getBoolean("notificationSwitchPref", false)
