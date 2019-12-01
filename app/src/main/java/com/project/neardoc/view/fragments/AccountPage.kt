@@ -59,7 +59,8 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
             if (bundle.containsKey(Constants.STEP_COUNT_NOTIFICATION)) {
                 val caloriresBurned: Int = bundle.getInt(Constants.CALORIES_BURNED_RESULT)
                 this.accountPageViewModel.flashStepCounter()
-                Toast.makeText(this.context, "Calories $caloriresBurned", Toast.LENGTH_SHORT).show()
+                val totalStepCount: Int = this.accountPageViewModel.getTotalStepCounted()
+                Toast.makeText(this.context, "Calories $caloriresBurned by taking $totalStepCount steps", Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -74,7 +74,6 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
         notificationPref!!.setOnPreferenceClickListener {
             val sharedPref: SharedPreferences = it.sharedPreferences
             val isChecked: Boolean = sharedPref.getBoolean("notificationSwitchPref", false)
-            Toast.makeText(this.context, "Checked: $isChecked", Toast.LENGTH_SHORT).show()
             this.iSharedPrefService.setNotificationEnabled(isChecked)
             true
         }

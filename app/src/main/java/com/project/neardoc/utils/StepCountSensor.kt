@@ -78,6 +78,7 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
             .subscribe({values ->
                 run {
                     this.iSharedPrefService.storeLastValueOfStepTaken(values)
+                    this.iSharedPrefService.saveTotalStepCount(values)
                 }
             }, { error ->
                 run {
