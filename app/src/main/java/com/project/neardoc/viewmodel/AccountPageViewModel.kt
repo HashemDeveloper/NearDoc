@@ -186,6 +186,7 @@ class AccountPageViewModel @Inject constructor(): ViewModel() {
         this.iSharedPrefService.removeItems(Constants.SHARED_PREF_USER_CURRENT_STATE)
         this.iSharedPrefService.removeItems(Constants.SHARED_PREF_USER_LOGIN_PROVIDER)
         this.iSharedPrefService.removeItems(Constants.SHARED_PREF_USER_IMAGE)
+        this.iSharedPrefService.removeItems(Constants.NOTIFICATION_ENABLED)
     }
 
     fun getLastStepCountValue(): Int {
