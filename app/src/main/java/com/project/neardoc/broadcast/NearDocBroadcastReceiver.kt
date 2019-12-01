@@ -6,11 +6,12 @@ import android.content.Intent
 import android.hardware.SensorManager
 import android.util.Log
 import com.project.neardoc.data.local.ISharedPrefService
+import com.project.neardoc.model.WeekDays
+import com.project.neardoc.model.WeekDaysType
 import com.project.neardoc.services.StepCounterService
-import com.project.neardoc.utils.Constants
-import com.project.neardoc.utils.INotificationBuilder
-import com.project.neardoc.utils.IStepCountSensor
+import com.project.neardoc.utils.*
 import dagger.android.AndroidInjection
+import java.util.*
 import javax.inject.Inject
 
 class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
@@ -21,6 +22,7 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
     private var sensorManager: SensorManager? = null
     @Inject
     lateinit var iSharedPrefService: ISharedPrefService
+    private val listOfDays: MutableList<String> = arrayListOf()
 
     override fun onReceive(context: Context?, intent: Intent?) {
         AndroidInjection.inject(this, context)
@@ -36,6 +38,7 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
             }
             Constants.STEP_COUNTER_SERVICE_ACTION -> {
                 val isNotificationOn: Boolean = this.iSharedPrefService.getIsNotificationEnabled()
+                val name: String = this.iSharedPrefService.getUserName()
                 if (isNotificationOn) {
                     sensorManager = context!!.getSystemService(Context.SENSOR_SERVICE) as SensorManager
                     iStepCounterSensor.initiateStepCounterSensor(sensorManager!!)
@@ -43,11 +46,15 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
                     this.iNotificationBuilder.createNotification(StepCounterService.STEP_COUNT_NOTIFICATION_REQ_CODE, "STEP_COUNT",
                         123,
                         com.project.neardoc.R.drawable.ic_walk_2x,
-                        com.project.neardoc.R.drawable.heart, "You have burned: ",
-                        "$result calories today! Good Job!"
-                    )
+                        com.project.neardoc.R.drawable.heart, "Hi $name!",
+                        getMessage()
+                     )
                 }
             }
         }
+    }
+    private fun getMessage(): String {
+        val calorieMessageGenerator = CalorieMessageGenerator()
+        return calorieMessageGenerator.getStringBasedOnWeekDays()
     }
 }
