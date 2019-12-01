@@ -27,6 +27,7 @@ import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.BottomBarEvent
 import com.project.neardoc.events.StepCounterEvent
+import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.IStepCountSensor
 import com.project.neardoc.viewmodel.AccountPageViewModel
 import dagger.android.support.AndroidSupportInjection
@@ -53,6 +54,12 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         super.onCreate(savedInstanceState)
         EventBus.getDefault().register(this)
         EventBus.getDefault().postSticky(BottomBarEvent(false))
+        if (arguments != null) {
+            val bundle: Bundle = arguments!!
+            if (bundle.containsKey(Constants.STEP_COUNT_NOTIFICATION)) {
+                Toast.makeText(this.context, "You have notification", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onCreateView(
@@ -154,7 +161,9 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onStepCountEvent(event: StepCounterEvent) {
         if (event.getStepCount() != 0) {
-            fragment_account_step_counter_view_id.text = event.getStepCount().toString()
+            fragment_account_step_counter_view_id?.let {
+                it.text = event.getStepCount().toString()
+            }
         }
     }
 

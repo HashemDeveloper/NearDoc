@@ -75,7 +75,7 @@ class Welcome : Fragment(), Injectable{
                 val bundle: Bundle = arguments!!
                 if (bundle.containsKey(Constants.STEP_COUNT_NOTIFICATION)) {
                     val navigateToAccountPage = findNavController()
-                    navigateToAccountPage.navigate(R.id.accountPage)
+                    navigateToAccountPage.navigate(R.id.accountPage, bundle)
                 }
             } else {
                 val navigateToHomePage = findNavController()
