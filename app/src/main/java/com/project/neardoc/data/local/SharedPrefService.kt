@@ -233,6 +233,6 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
     }
 
     override fun getIsNotificationEnabled(): Boolean {
-        return pref?.getBoolean(Constants.NOTIFICATION_ENABLED, true)!!
+        return pref?.getBoolean(Constants.NOTIFICATION_ENABLED, false)!!
     }
 }
