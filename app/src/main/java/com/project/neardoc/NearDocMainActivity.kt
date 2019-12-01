@@ -177,17 +177,25 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
     }
     private fun enableBottomBar(isLoggedIn: Boolean) {
         if (isLoggedIn) {
-            fragment_main_bottom_bar_id.visibility = View.VISIBLE
-            val userImage: String = this.iSharedPrefService.getUserImage()
-            val username: String = this.iSharedPrefService.getUserUsername()
-            if (!isFinishing) {
-                if (userImage.isNotEmpty()) {
-                    Glide.with(this).load(userImage).into(fragment_main_bottom_bar_profile_image_id)
-                } else {
-                    val accountImageResId = getDrawableImage("ic_account_circle_white_24dp")
-                    Glide.with(this).load(accountImageResId).into(fragment_main_bottom_bar_profile_image_id)
+            try {
+                fragment_main_bottom_bar_id.visibility = View.VISIBLE
+                val userImage: String = this.iSharedPrefService.getUserImage()
+                val username: String = this.iSharedPrefService.getUserUsername()
+                if (!isFinishing) {
+                    if (userImage.isNotEmpty()) {
+                        Glide.with(this).load(userImage).into(fragment_main_bottom_bar_profile_image_id)
+                    } else {
+                        val accountImageResId = getDrawableImage("ic_account_circle_white_24dp")
+                        Glide.with(this).load(accountImageResId).into(fragment_main_bottom_bar_profile_image_id)
+                    }
+                    fragment_main_bottom_bar_username_view_id.text = username
                 }
-                fragment_main_bottom_bar_username_view_id.text = username
+            } catch (ex: UninitializedPropertyAccessException) {
+                if (BuildConfig.DEBUG) {
+                    if (ex.localizedMessage != null) {
+                        Log.i("Initialized: ", ex.localizedMessage!!)
+                    }
+                }
             }
         } else {
             fragment_main_bottom_bar_id.visibility = View.GONE

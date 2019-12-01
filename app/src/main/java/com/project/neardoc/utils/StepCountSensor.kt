@@ -46,6 +46,7 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
     override fun initiateStepCounterSensor(
         sensorManager: SensorManager
     ) {
+        this.mStepCounter = 0
         this.mStepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
         val isRegistered: Boolean = sensorManager.registerListener(this, this.mStepSensor, SensorManager.SENSOR_DELAY_NORMAL, DEFAULT_LATENCY)
         if (isRegistered) {
@@ -53,6 +54,9 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
                 Log.i("StepCountRegisteredAt: $TAG", sensorManager.toString())
             }
         }
+    }
+    private fun register(sensorManager: SensorManager) {
+
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, p1: Int) {
@@ -74,6 +78,7 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
             .subscribe({values ->
                 run {
                     this.iSharedPrefService.storeLastValueOfStepTaken(values)
+                    this.iSharedPrefService.saveTotalStepCount(values)
                 }
             }, { error ->
                 run {
@@ -97,7 +102,7 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
                     this.mStepCounter = event.values[0].toInt()
                 }
                 this.mSteps = event.values[0].toInt() - this.mStepCounter // calculate steps taken
-                this.mSteps = this.mSteps!! + this.mStepCounter // add previous step taken
+                this.mSteps = this.mSteps!! + this.iSharedPrefService.getLastStepCountValue() // add previous step taken
             }
             this.mSteps
         }
@@ -135,6 +140,7 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
         this.mEventLength = 0
         this.mEventData = 0
         this.mEventDelays = FloatArray(EVENT_QUEUE_LENGTH)
+        this.iSharedPrefService.removeItems(Constants.STEP_COUNT_VALUE)
     }
 
     override fun unRegisterCounterSensor(sensorManager: SensorManager) {

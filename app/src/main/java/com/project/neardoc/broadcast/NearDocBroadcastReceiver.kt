@@ -22,7 +22,6 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
     private var sensorManager: SensorManager? = null
     @Inject
     lateinit var iSharedPrefService: ISharedPrefService
-    private val listOfDays: MutableList<String> = arrayListOf()
 
     override fun onReceive(context: Context?, intent: Intent?) {
         AndroidInjection.inject(this, context)
@@ -47,7 +46,8 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
                         123,
                         com.project.neardoc.R.drawable.ic_walk_2x,
                         com.project.neardoc.R.drawable.heart, "Hi $name!",
-                        getMessage()
+                        getMessage(),
+                        result
                      )
                 }
             }

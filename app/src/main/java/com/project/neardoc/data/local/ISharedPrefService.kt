@@ -43,4 +43,6 @@ interface ISharedPrefService {
     fun getLastStepCountValue(): Int
     fun setNotificationEnabled(checked: Boolean)
     fun getIsNotificationEnabled(): Boolean
+    fun saveTotalStepCount(lastStepCountValue: Int)
+    fun getTotalStepCount(): Int
 }
