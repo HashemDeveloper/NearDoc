@@ -5,6 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.hardware.SensorManager
 import android.util.Log
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.ProcessLifecycleOwner
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.model.WeekDays
 import com.project.neardoc.model.WeekDaysType
@@ -14,7 +18,7 @@ import dagger.android.AndroidInjection
 import java.util.*
 import javax.inject.Inject
 
-class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
+class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver(), LifecycleObserver {
     @Inject
     lateinit var iStepCounterSensor: IStepCountSensor
     @Inject
@@ -22,9 +26,11 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
     private var sensorManager: SensorManager? = null
     @Inject
     lateinit var iSharedPrefService: ISharedPrefService
+    private var isOnForeground: Boolean?= false
 
     override fun onReceive(context: Context?, intent: Intent?) {
         AndroidInjection.inject(this, context)
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         when (intent!!.action) {
             Constants.CONNECTIVITY_ACTION -> {
                 //do nothing
@@ -38,7 +44,7 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
             Constants.STEP_COUNTER_SERVICE_ACTION -> {
                 val isNotificationOn: Boolean = this.iSharedPrefService.getIsNotificationEnabled()
                 val name: String = this.iSharedPrefService.getUserName()
-                if (isNotificationOn) {
+                if (isNotificationOn && !this.isOnForeground!!) {
                     sensorManager = context!!.getSystemService(Context.SENSOR_SERVICE) as SensorManager
                     iStepCounterSensor.initiateStepCounterSensor(sensorManager!!)
                     val result: Int = intent.getIntExtra(Constants.STEP_COUNT_VALUE, 0)
@@ -52,6 +58,15 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
                 }
             }
         }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onAppIsOnForeground() {
+        this.isOnForeground = true
+    }
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun appIsOnBackground() {
+        this.isOnForeground = false
     }
     private fun getMessage(): String {
         val calorieMessageGenerator = CalorieMessageGenerator()

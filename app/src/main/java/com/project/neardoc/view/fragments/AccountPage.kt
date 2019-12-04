@@ -48,6 +48,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     private val accountPageViewModel: AccountPageViewModel by viewModels {
         this.viewModelFactory
     }
+    private var isNotificationWhileInApp: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -57,6 +58,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         if (arguments != null) {
             val bundle: Bundle = arguments!!
             if (bundle.containsKey(Constants.STEP_COUNT_NOTIFICATION)) {
+                this.isNotificationWhileInApp = true
                 val caloriresBurned: Int = bundle.getInt(Constants.CALORIES_BURNED_RESULT)
                 this.accountPageViewModel.flashStepCounter()
                 val totalStepCount: Int = this.accountPageViewModel.getTotalStepCounted()
