@@ -10,11 +10,13 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.project.neardoc.data.local.ISharedPrefService
+import com.project.neardoc.events.NotifySilentEvent
 import com.project.neardoc.model.WeekDays
 import com.project.neardoc.model.WeekDaysType
 import com.project.neardoc.services.StepCounterService
 import com.project.neardoc.utils.*
 import dagger.android.AndroidInjection
+import org.greenrobot.eventbus.EventBus
 import java.util.*
 import javax.inject.Inject
 
@@ -55,6 +57,8 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver(), Lifec
                         getMessage(),
                         result
                      )
+                } else {
+                    EventBus.getDefault().postSticky(NotifySilentEvent(true))
                 }
             }
         }

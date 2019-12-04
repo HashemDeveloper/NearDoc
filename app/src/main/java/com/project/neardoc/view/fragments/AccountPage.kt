@@ -26,6 +26,7 @@ import com.project.neardoc.broadcast.NearDocBroadcastReceiver
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.BottomBarEvent
+import com.project.neardoc.events.NotifySilentEvent
 import com.project.neardoc.events.StepCounterEvent
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.IStepCountSensor
@@ -169,6 +170,12 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
             fragment_account_step_counter_view_id?.let {
                 it.text = event.getStepCount().toString()
             }
+        }
+    }
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun onSilentNotificationEvent(event: NotifySilentEvent) {
+        if (event.getHasNotification()) {
+            Toast.makeText(this.context, "You have notification!", Toast.LENGTH_SHORT).show()
         }
     }
 
