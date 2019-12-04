@@ -46,10 +46,10 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver(), Lifec
             Constants.STEP_COUNTER_SERVICE_ACTION -> {
                 val isNotificationOn: Boolean = this.iSharedPrefService.getIsNotificationEnabled()
                 val name: String = this.iSharedPrefService.getUserName()
+                val result: Int = intent.getIntExtra(Constants.STEP_COUNT_VALUE, 0)
                 if (isNotificationOn && !this.isOnForeground!!) {
                     sensorManager = context!!.getSystemService(Context.SENSOR_SERVICE) as SensorManager
                     iStepCounterSensor.initiateStepCounterSensor(sensorManager!!)
-                    val result: Int = intent.getIntExtra(Constants.STEP_COUNT_VALUE, 0)
                     this.iNotificationBuilder.createNotification(StepCounterService.STEP_COUNT_NOTIFICATION_REQ_CODE, "STEP_COUNT",
                         123,
                         com.project.neardoc.R.drawable.ic_walk_2x,
@@ -58,7 +58,7 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver(), Lifec
                         result
                      )
                 } else {
-                    EventBus.getDefault().postSticky(NotifySilentEvent(true))
+                    EventBus.getDefault().postSticky(NotifySilentEvent(true, result))
                 }
             }
         }
