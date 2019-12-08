@@ -5,16 +5,25 @@ import android.content.Context
 import android.content.Intent
 import android.hardware.SensorManager
 import android.util.Log
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.ProcessLifecycleOwner
 import com.project.neardoc.data.local.ISharedPrefService
+import com.project.neardoc.events.NotifySilentEvent
+import com.project.neardoc.events.UserStateEvent
 import com.project.neardoc.model.WeekDays
 import com.project.neardoc.model.WeekDaysType
 import com.project.neardoc.services.StepCounterService
 import com.project.neardoc.utils.*
 import dagger.android.AndroidInjection
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.util.*
 import javax.inject.Inject
 
-class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
+class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver(), LifecycleObserver {
     @Inject
     lateinit var iStepCounterSensor: IStepCountSensor
     @Inject
@@ -22,9 +31,12 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
     private var sensorManager: SensorManager? = null
     @Inject
     lateinit var iSharedPrefService: ISharedPrefService
+    private var isOnForeground: Boolean?= false
+    private var isUserLoggedIn: Boolean?= false
 
     override fun onReceive(context: Context?, intent: Intent?) {
         AndroidInjection.inject(this, context)
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         when (intent!!.action) {
             Constants.CONNECTIVITY_ACTION -> {
                 //do nothing
@@ -38,10 +50,10 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
             Constants.STEP_COUNTER_SERVICE_ACTION -> {
                 val isNotificationOn: Boolean = this.iSharedPrefService.getIsNotificationEnabled()
                 val name: String = this.iSharedPrefService.getUserName()
-                if (isNotificationOn) {
+                val result: Int = intent.getIntExtra(Constants.STEP_COUNT_VALUE, 0)
+                if (isNotificationOn && !this.isOnForeground!!) {
                     sensorManager = context!!.getSystemService(Context.SENSOR_SERVICE) as SensorManager
                     iStepCounterSensor.initiateStepCounterSensor(sensorManager!!)
-                    val result: Int = intent.getIntExtra(Constants.STEP_COUNT_VALUE, 0)
                     this.iNotificationBuilder.createNotification(StepCounterService.STEP_COUNT_NOTIFICATION_REQ_CODE, "STEP_COUNT",
                         123,
                         com.project.neardoc.R.drawable.ic_walk_2x,
@@ -49,9 +61,34 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver() {
                         getMessage(),
                         result
                      )
+                } else {
+                    if (this.isUserLoggedIn!!) {
+                        EventBus.getDefault().postSticky(NotifySilentEvent(true, result))
+                    }
                 }
             }
         }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onAppIsOnForeground() {
+        this.isOnForeground = true
+    }
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun appIsOnBackground() {
+        this.isOnForeground = false
+    }
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    fun onCreate() {
+        EventBus.getDefault().register(this)
+    }
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    fun onDestroy() {
+        EventBus.getDefault().unregister(this)
+    }
+    @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
+    fun onUserStateEvent(userStateEvent: UserStateEvent) {
+       this.isUserLoggedIn = userStateEvent.isLoggedIn
     }
     private fun getMessage(): String {
         val calorieMessageGenerator = CalorieMessageGenerator()

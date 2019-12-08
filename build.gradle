@@ -36,7 +36,7 @@ ext {
     rxJavaVersion = '2.1.4'
     rxAndroidVersion = '2.1.1'
     room_version = "2.2.2"
-    materialDesignVersion = '1.2.0-alpha01'
+    materialDesignVersion = '1.2.0-alpha02'
     designSupportLib ='1.0.0'
     gsonVersion = "2.4.0"
     puglin_version = "3.5.0"

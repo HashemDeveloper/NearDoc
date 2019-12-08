@@ -3,38 +3,43 @@ package com.project.neardoc.view.fragments
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textview.MaterialTextView
 import com.linroid.filtermenu.library.FilterMenu
 import com.linroid.filtermenu.library.FilterMenuLayout
 import com.project.neardoc.R
-import com.project.neardoc.broadcast.NearDocBroadcastReceiver
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.BottomBarEvent
+import com.project.neardoc.events.NotifySilentEvent
 import com.project.neardoc.events.StepCounterEvent
 import com.project.neardoc.utils.Constants
-import com.project.neardoc.utils.IStepCountSensor
+import com.project.neardoc.utils.GenderType
 import com.project.neardoc.viewmodel.AccountPageViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_account_page.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 
@@ -48,6 +53,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     private val accountPageViewModel: AccountPageViewModel by viewModels {
         this.viewModelFactory
     }
+    private var isNotificationWhileInApp: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -57,10 +63,11 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         if (arguments != null) {
             val bundle: Bundle = arguments!!
             if (bundle.containsKey(Constants.STEP_COUNT_NOTIFICATION)) {
+                this.isNotificationWhileInApp = true
                 val caloriresBurned: Int = bundle.getInt(Constants.CALORIES_BURNED_RESULT)
                 this.accountPageViewModel.flashStepCounter()
                 val totalStepCount: Int = this.accountPageViewModel.getTotalStepCounted()
-                Toast.makeText(this.context, "Calories $caloriresBurned by taking $totalStepCount steps", Toast.LENGTH_SHORT).show()
+                displayCaloriesBurnedDialog(caloriresBurned, totalStepCount, GenderType.MALE)
             }
         }
     }
@@ -97,6 +104,60 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
             Navigation.findNavController(it).navigate(AccountPageDirections.actionHomePage())
         }
         attachMenu(fragment_account_menu_bt_id)
+    }
+
+    private fun displayCaloriesBurnedDialog(caloriesBurned: Int, totalStepTaken: Int, gender: GenderType) {
+        var calorieBurnGoalPerDay: Int? = null
+        calorieBurnGoalPerDay = when (gender) {
+            GenderType.MALE -> {
+                2000
+            }
+            GenderType.FEMALE -> {
+                1600
+            }
+        }
+        val viewGroup: ViewGroup = activity!!.window.decorView.rootView as ViewGroup
+        val caloriesParentView: View = layoutInflater.inflate(R.layout.calories_burned_layout, viewGroup, false)
+        val stepsTakenView: MaterialTextView = caloriesParentView.run {
+            this.findViewById(R.id.calories_burned_steps_taken_view_id)
+        }
+        val caloriesDateView: MaterialTextView = caloriesParentView.run {
+            this.findViewById(R.id.calories_burned_date_view_id)
+        }
+        val caloriesStatProgressView: ProgressBar = caloriesParentView.run {
+            this.findViewById(R.id.calories_fg_progress_bar_id)
+        }
+        val caloriesBurnedTextView: MaterialTextView = caloriesParentView.run {
+            this.findViewById(R.id.calories_burned_result_view_id)
+        }
+        val goalView: MaterialTextView = caloriesParentView.run {
+            this.findViewById(R.id.calories_burned_goal_view_id)
+        }
+        val okBt: MaterialButton = caloriesParentView.run {
+            this.findViewById(R.id.calories_burned_ok_bt_id)
+        }
+        val displayCaloriesDialog = MaterialAlertDialogBuilder(this.context)
+        displayCaloriesDialog.setView(caloriesParentView)
+        val rootDialog: AlertDialog = displayCaloriesDialog.create()
+        rootDialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        rootDialog.show()
+
+        val dateFormat: DateFormat = SimpleDateFormat("EEEE MMM d yyyy", Locale.getDefault())
+        val dateString: String = dateFormat.format(Date())
+        caloriesDateView.text = dateString
+
+        val stepsTakenMessage = "$totalStepTaken Steps Taken"
+        val caloriesBurnedMessage = "$caloriesBurned Calories Burned"
+        val goalMessage = "Your Goal $calorieBurnGoalPerDay"
+        caloriesStatProgressView.progress =  totalStepTaken
+
+        goalView.text = goalMessage
+        caloriesBurnedTextView.text = caloriesBurnedMessage
+        stepsTakenView.text = stepsTakenMessage
+
+        okBt.setOnClickListener {
+            rootDialog.dismiss()
+        }
     }
 
     @SuppressLint("InlinedApi")
@@ -167,6 +228,14 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
             fragment_account_step_counter_view_id?.let {
                 it.text = event.getStepCount().toString()
             }
+        }
+    }
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun onSilentNotificationEvent(event: NotifySilentEvent) {
+        if (event.getHasNotification()) {
+            val totalStepCount: Int = this.accountPageViewModel.getTotalStepCounted()
+            val caloriesBurnedResult: Int = event.getCaloriesBurnedResult()
+            displayCaloriesBurnedDialog(caloriesBurnedResult, totalStepCount, GenderType.MALE)
         }
     }
 
