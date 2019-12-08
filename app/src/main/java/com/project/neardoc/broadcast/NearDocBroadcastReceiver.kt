@@ -11,12 +11,15 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.events.NotifySilentEvent
+import com.project.neardoc.events.UserStateEvent
 import com.project.neardoc.model.WeekDays
 import com.project.neardoc.model.WeekDaysType
 import com.project.neardoc.services.StepCounterService
 import com.project.neardoc.utils.*
 import dagger.android.AndroidInjection
 import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.util.*
 import javax.inject.Inject
 
@@ -29,6 +32,7 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver(), Lifec
     @Inject
     lateinit var iSharedPrefService: ISharedPrefService
     private var isOnForeground: Boolean?= false
+    private var isUserLoggedIn: Boolean?= false
 
     override fun onReceive(context: Context?, intent: Intent?) {
         AndroidInjection.inject(this, context)
@@ -58,7 +62,9 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver(), Lifec
                         result
                      )
                 } else {
-                    EventBus.getDefault().postSticky(NotifySilentEvent(true, result))
+                    if (this.isUserLoggedIn!!) {
+                        EventBus.getDefault().postSticky(NotifySilentEvent(true, result))
+                    }
                 }
             }
         }
@@ -71,6 +77,18 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver(), Lifec
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun appIsOnBackground() {
         this.isOnForeground = false
+    }
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    fun onCreate() {
+        EventBus.getDefault().register(this)
+    }
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    fun onDestroy() {
+        EventBus.getDefault().unregister(this)
+    }
+    @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
+    fun onUserStateEvent(userStateEvent: UserStateEvent) {
+       this.isUserLoggedIn = userStateEvent.isLoggedIn
     }
     private fun getMessage(): String {
         val calorieMessageGenerator = CalorieMessageGenerator()

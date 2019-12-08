@@ -37,6 +37,9 @@ import kotlinx.android.synthetic.main.fragment_account_page.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 
@@ -64,7 +67,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
                 val caloriresBurned: Int = bundle.getInt(Constants.CALORIES_BURNED_RESULT)
                 this.accountPageViewModel.flashStepCounter()
                 val totalStepCount: Int = this.accountPageViewModel.getTotalStepCounted()
-                displayCaloriesBurnedDialog(caloriresBurned, totalStepCount,"Date", GenderType.MALE)
+                displayCaloriesBurnedDialog(caloriresBurned, totalStepCount, GenderType.MALE)
             }
         }
     }
@@ -103,7 +106,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         attachMenu(fragment_account_menu_bt_id)
     }
 
-    private fun displayCaloriesBurnedDialog(caloriesBurned: Int, totalStepTaken: Int, date: String, gender: GenderType) {
+    private fun displayCaloriesBurnedDialog(caloriesBurned: Int, totalStepTaken: Int, gender: GenderType) {
         var calorieBurnGoalPerDay: Int? = null
         calorieBurnGoalPerDay = when (gender) {
             GenderType.MALE -> {
@@ -136,11 +139,17 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         val displayCaloriesDialog = MaterialAlertDialogBuilder(this.context)
         displayCaloriesDialog.setView(caloriesParentView)
         val rootDialog: AlertDialog = displayCaloriesDialog.create()
+        rootDialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         rootDialog.show()
+
+        val dateFormat: DateFormat = SimpleDateFormat("EEEE MMM d yyyy", Locale.getDefault())
+        val dateString: String = dateFormat.format(Date())
+        caloriesDateView.text = dateString
 
         val stepsTakenMessage = "$totalStepTaken Steps Taken"
         val caloriesBurnedMessage = "$caloriesBurned Calories Burned"
         val goalMessage = "Your Goal $calorieBurnGoalPerDay"
+        caloriesStatProgressView.progress =  totalStepTaken
 
         goalView.text = goalMessage
         caloriesBurnedTextView.text = caloriesBurnedMessage
@@ -226,7 +235,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         if (event.getHasNotification()) {
             val totalStepCount: Int = this.accountPageViewModel.getTotalStepCounted()
             val caloriesBurnedResult: Int = event.getCaloriesBurnedResult()
-            displayCaloriesBurnedDialog(caloriesBurnedResult, totalStepCount,"Date", GenderType.MALE)
+            displayCaloriesBurnedDialog(caloriesBurnedResult, totalStepCount, GenderType.MALE)
         }
     }
 

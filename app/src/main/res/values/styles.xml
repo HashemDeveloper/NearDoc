@@ -44,4 +44,10 @@
         <item name="android:thumbTint">@color/switch_color</item>
         <item name="android:track">@color/switch_color</item>
     </style>
+    <style name="NearDocPopUpStyle">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
 </resources>

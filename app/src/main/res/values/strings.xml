@@ -98,4 +98,5 @@
     <string name="home">HOME</string>
     <string name="state">State</string>
     <string name="notification">Notifications</string>
+    <string name="_2000_steps_taken">2000 Steps taken</string>
 </resources>

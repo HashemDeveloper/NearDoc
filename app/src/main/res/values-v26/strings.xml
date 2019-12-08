@@ -98,4 +98,5 @@
     <string name="state">State</string>
     <string name="step_counter_service_reason">Service by NearDoc, monitors steps to calculate calories burned everyday.</string>
     <string name="notification">Notifications</string>
+    <string name="_2000_steps_taken">2000 Steps taken</string>
 </resources>
