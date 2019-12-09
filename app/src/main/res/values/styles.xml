@@ -50,4 +50,7 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:background">@android:color/transparent</item>
     </style>
+    <style name="RadioButtonStyle">
+        <item name="radioButtonStyle">@style/Widget.MaterialComponents.CompoundButton.RadioButton</item>
+    </style>
 </resources>

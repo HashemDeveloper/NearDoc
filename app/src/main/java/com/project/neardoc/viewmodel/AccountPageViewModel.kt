@@ -3,6 +3,8 @@ package com.project.neardoc.viewmodel
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.FragmentActivity
@@ -39,9 +41,11 @@ class AccountPageViewModel @Inject constructor(): ViewModel() {
     private var seekBarMaxValue: Int?= null
     private var seekBarHalveValue: Int?= null
     private var seekBarTotalValue: Int?= null
+    @Inject
+    lateinit var context: Context
 
-    fun setupDeviceSensor(activity: FragmentActivity, fragmentAccountRoomTempViewId: MaterialTextView?, stepCountView: MaterialTextView?) {
-        this.iSensors.setupDeviceSensor(activity, fragmentAccountRoomTempViewId!!, stepCountView!!)
+    fun setupDeviceSensor(activity: FragmentActivity, fragmentAccountRoomTempViewId: MaterialTextView?, stepCountParentLayout: FrameLayout) {
+        this.iSensors.setupDeviceSensor(activity, fragmentAccountRoomTempViewId!!, stepCountParentLayout)
     }
 
     fun clearObservers(tempView: MaterialTextView?, stepCountView: MaterialTextView?) {
@@ -199,5 +203,9 @@ class AccountPageViewModel @Inject constructor(): ViewModel() {
 
     fun getTotalStepCounted(): Int {
         return this.iSharedPrefService.getTotalStepCount()
+    }
+
+    fun startStepCountService(activity: FragmentActivity) {
+        Toast.makeText(this.context, "Starting service...", Toast.LENGTH_SHORT).show()
     }
 }

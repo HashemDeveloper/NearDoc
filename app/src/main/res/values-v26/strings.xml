@@ -99,4 +99,10 @@
     <string name="step_counter_service_reason">Service by NearDoc, monitors steps to calculate calories burned everyday.</string>
     <string name="notification">Notifications</string>
     <string name="_2000_steps_taken">2000 Steps taken</string>
+    <string name="weight_in_pound">Weight in pound</string>
+    <string name="height_in_inch">Height in inch</string>
+    <string name="age">Age</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="save">Save</string>
 </resources>

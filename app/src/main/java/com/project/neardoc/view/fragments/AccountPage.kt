@@ -9,11 +9,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ProgressBar
+import android.widget.ScrollView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.ActivityCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
@@ -31,6 +34,7 @@ import com.project.neardoc.events.NotifySilentEvent
 import com.project.neardoc.events.StepCounterEvent
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.GenderType
+import com.project.neardoc.utils.keyboardstatechecker.KeyboardEventListener
 import com.project.neardoc.viewmodel.AccountPageViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_account_page.*
@@ -54,6 +58,8 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         this.viewModelFactory
     }
     private var isNotificationWhileInApp: Boolean = false
+    private var dialogUserInfoMainContainerView: ScrollView?= null
+    private var rootDialog: AlertDialog?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -83,16 +89,10 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         super.onViewCreated(view, savedInstanceState)
         this.accountPageViewModel.setupUserProfile(context!!, fragment_account_user_image_view_id, fragment_account_user_name_id,
             fragment_account_user_email_view_id, fragment_account_user_location_view_id)
+        this.accountPageViewModel.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id, fragment_step_count_parent_layout)
         val lastStepCountValue: Int = this.accountPageViewModel.getLastStepCountValue()
-        fragment_account_step_counter_view_id.text = lastStepCountValue.toString()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (!checkActivityRecognitionPermission()) {
-                requestActivityRecogPermission()
-            } else {
-                this.accountPageViewModel.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id, fragment_account_step_counter_view_id)
-            }
-        } else {
-            this.accountPageViewModel.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id, fragment_account_step_counter_view_id)
+        if (!fragment_account_page_start_step_count_bt_id.isVisible) {
+            fragment_account_step_counter_view_id.text = lastStepCountValue.toString()
         }
         this.accountPageViewModel.animateBreathingTitleView(fragment_account_breathing_ex_title_view_id)
         fragment_account_start_breathing_bt_id.setOnClickListener {
@@ -102,6 +102,17 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         fragment_account_go_back_bt_id.setOnClickListener {
             EventBus.getDefault().postSticky(BottomBarEvent(true))
             Navigation.findNavController(it).navigate(AccountPageDirections.actionHomePage())
+        }
+        fragment_account_page_start_step_count_bt_id.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                if (!checkActivityRecognitionPermission()) {
+                    requestActivityRecogPermission()
+                } else {
+                    this.accountPageViewModel.startStepCountService(activity!!)
+                }
+            } else {
+                this.accountPageViewModel.startStepCountService(activity!!)
+            }
         }
         attachMenu(fragment_account_menu_bt_id)
     }
@@ -116,8 +127,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
                 1600
             }
         }
-        val viewGroup: ViewGroup = activity!!.window.decorView.rootView as ViewGroup
-        val caloriesParentView: View = layoutInflater.inflate(R.layout.calories_burned_layout, viewGroup, false)
+        val caloriesParentView: View = getParentViewForDialog(R.layout.calories_burned_layout, DialogViewType.VIEW_DISPLAY_CALORIES)
         val stepsTakenView: MaterialTextView = caloriesParentView.run {
             this.findViewById(R.id.calories_burned_steps_taken_view_id)
         }
@@ -138,9 +148,9 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         }
         val displayCaloriesDialog = MaterialAlertDialogBuilder(this.context)
         displayCaloriesDialog.setView(caloriesParentView)
-        val rootDialog: AlertDialog = displayCaloriesDialog.create()
-        rootDialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        rootDialog.show()
+        this.rootDialog = displayCaloriesDialog.create()
+        rootDialog?.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        rootDialog?.show()
 
         val dateFormat: DateFormat = SimpleDateFormat("EEEE MMM d yyyy", Locale.getDefault())
         val dateString: String = dateFormat.format(Date())
@@ -156,8 +166,21 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         stepsTakenView.text = stepsTakenMessage
 
         okBt.setOnClickListener {
-            rootDialog.dismiss()
+            rootDialog?.dismiss()
         }
+    }
+    private fun getParentViewForDialog(resource: Int, viewType: DialogViewType): View {
+        val view: View?
+        val viewGroup: ViewGroup = activity!!.window.decorView.rootView as ViewGroup
+        view = when (viewType) {
+            DialogViewType.VIEW_DISPLAY_CALORIES -> {
+                layoutInflater.inflate(resource, viewGroup, false)
+            }
+            DialogViewType.VIEW_DISPLAY_USER_FORM -> {
+                layoutInflater.inflate(resource, viewGroup, false)
+            }
+        }
+        return view
     }
 
     @SuppressLint("InlinedApi")
@@ -212,10 +235,31 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
        if (requestCode == ACTIVITY_RECOGNITION_REQ_CODE) {
            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
               if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                  this.accountPageViewModel.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id, fragment_account_step_counter_view_id)
+                  fragment_account_page_start_step_count_bt_id.visibility = View.GONE
+                  fragment_account_step_counter_view_id.text = "0"
+                  displayUserInfoForm()
+              } else {
+                  fragment_account_page_start_step_count_bt_id.visibility = View.VISIBLE
               }
            }
        }
+    }
+    private fun displayUserInfoForm() {
+        val parentView: View = getParentViewForDialog(R.layout.dialog_user_info_form_layout, DialogViewType.VIEW_DISPLAY_USER_FORM)
+        this.dialogUserInfoMainContainerView = parentView.findViewById(R.id.dialog_user_info_main_container_id)
+        val saveBt: MaterialButton = parentView.run {
+            this.findViewById(R.id.dialog_user_info_save_bt_id)
+        }
+        val displayCaloriesDialog = MaterialAlertDialogBuilder(this.context)
+        displayCaloriesDialog.setView(parentView)
+        this.rootDialog = displayCaloriesDialog.create()
+        rootDialog?.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        this.rootDialog!!.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        rootDialog!!.show()
+        rootDialog!!.setCanceledOnTouchOutside(false)
+        saveBt.setOnClickListener {
+            this.rootDialog!!.dismiss()
+        }
     }
 
     override fun onMenuExpand() {
@@ -248,6 +292,13 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     override fun onResume() {
         super.onResume()
         EventBus.getDefault().postSticky(BottomBarEvent(false))
+        KeyboardEventListener(this.activity!!) {
+            if (it) {
+                if (this.dialogUserInfoMainContainerView != null) {
+                    this.dialogUserInfoMainContainerView!!.scrollTo(0, this.dialogUserInfoMainContainerView!!.bottom)
+                }
+            }
+        }
     }
 
     override fun onStart() {
@@ -267,5 +318,12 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     override fun onDestroyView() {
         super.onDestroyView()
         this.accountPageViewModel.clearObservers(fragment_account_room_temp_view_id, fragment_account_step_counter_view_id)
+        if (this.rootDialog != null) {
+            this.rootDialog!!.dismiss()
+        }
+    }
+    enum class DialogViewType {
+        VIEW_DISPLAY_CALORIES,
+        VIEW_DISPLAY_USER_FORM
     }
 }

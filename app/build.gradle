@@ -24,6 +24,7 @@ android {
         resValue "string", "firebase_db_secret", (project.findProperty("FIREBASE_DB_SECRET") ?: "")
         resValue "string", "google_sign_in_api_key", (project.findProperty("GOOGLE_SIGN_IN_API_KEY") ?: "")
         resValue "string", "better_doc_api_key", (project.findProperty("BETER_DOC_API_KEY") ?: "")
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {

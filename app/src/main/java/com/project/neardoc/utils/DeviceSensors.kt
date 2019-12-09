@@ -3,10 +3,9 @@ package com.project.neardoc.utils
 import android.content.Context
 import android.content.Intent
 import android.hardware.*
-import android.os.Parcel
-import android.os.Parcelable
 import android.util.Log
 import android.view.View
+import android.widget.FrameLayout
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import com.google.android.material.textview.MaterialTextView
@@ -28,7 +27,7 @@ class DeviceSensors @Inject constructor(private val context: Context): IDeviceSe
     override fun setupDeviceSensor(
         activity: FragmentActivity,
         roomTempTextView: MaterialTextView,
-        stepCountView: MaterialTextView
+        stepCountParentLayout: FrameLayout
     ) {
         for (sensorList in getListOfSensorsInDevice()) {
             if (BuildConfig.DEBUG) {
@@ -49,9 +48,9 @@ class DeviceSensors @Inject constructor(private val context: Context): IDeviceSe
                    this.iLightSensor.getSensorEventLiveData().observe(activity, lightSensorEventObserver())
                }
                Sensor.TYPE_STEP_COUNTER -> {
-                   stepCountView.visibility = View.VISIBLE
-                   val stepCountServiceIntent = Intent(this.context, StepCounterService::class.java)
-                   activity.startService(stepCountServiceIntent)
+                   stepCountParentLayout.visibility = View.VISIBLE
+//                   val stepCountServiceIntent = Intent(this.context, StepCounterService::class.java)
+//                   activity.startService(stepCountServiceIntent)
                }
            }
         }
