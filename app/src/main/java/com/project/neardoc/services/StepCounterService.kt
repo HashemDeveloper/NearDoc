@@ -60,7 +60,7 @@ class StepCounterService @Inject constructor(): Service(), CoroutineScope {
         super.onStartCommand(intent, flags, startId)
         launch {
             val stepCount: Int = iSharedPrefService.getLastStepCountValue()
-            //TODO: save wait and height from the user and then get the value
+            //TODO: save weight and height from the user and then get the value
             val burnedCalories: Double = iCalorieBurnedCalculator.calculateCalorieBurned(178.0, 67.8, stepCount)
             iNotificationScheduler.scheduleJob(Constants.STEP_COUNTER_SERVICE_ACTION, STEP_COUNT_NOTIFICATION_REQ_CODE,
                 1, 0, burnedCalories.toInt())

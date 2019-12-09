@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.ActivityCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
@@ -83,16 +84,10 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         super.onViewCreated(view, savedInstanceState)
         this.accountPageViewModel.setupUserProfile(context!!, fragment_account_user_image_view_id, fragment_account_user_name_id,
             fragment_account_user_email_view_id, fragment_account_user_location_view_id)
+        this.accountPageViewModel.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id, fragment_step_count_parent_layout)
         val lastStepCountValue: Int = this.accountPageViewModel.getLastStepCountValue()
-        fragment_account_step_counter_view_id.text = lastStepCountValue.toString()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (!checkActivityRecognitionPermission()) {
-                requestActivityRecogPermission()
-            } else {
-                this.accountPageViewModel.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id, fragment_account_step_counter_view_id)
-            }
-        } else {
-            this.accountPageViewModel.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id, fragment_account_step_counter_view_id)
+        if (!fragment_account_page_start_step_count_bt_id.isVisible) {
+            fragment_account_step_counter_view_id.text = lastStepCountValue.toString()
         }
         this.accountPageViewModel.animateBreathingTitleView(fragment_account_breathing_ex_title_view_id)
         fragment_account_start_breathing_bt_id.setOnClickListener {
@@ -102,6 +97,17 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         fragment_account_go_back_bt_id.setOnClickListener {
             EventBus.getDefault().postSticky(BottomBarEvent(true))
             Navigation.findNavController(it).navigate(AccountPageDirections.actionHomePage())
+        }
+        fragment_account_page_start_step_count_bt_id.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                if (!checkActivityRecognitionPermission()) {
+                    requestActivityRecogPermission()
+                } else {
+                    this.accountPageViewModel.startStepCountService(activity!!)
+                }
+            } else {
+                this.accountPageViewModel.startStepCountService(activity!!)
+            }
         }
         attachMenu(fragment_account_menu_bt_id)
     }
@@ -212,7 +218,11 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
        if (requestCode == ACTIVITY_RECOGNITION_REQ_CODE) {
            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
               if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                  this.accountPageViewModel.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id, fragment_account_step_counter_view_id)
+                  fragment_account_page_start_step_count_bt_id.visibility = View.GONE
+                  fragment_account_step_counter_view_id.text = "0"
+                  Toast.makeText(this.context, "Display a form", Toast.LENGTH_SHORT).show()
+              } else {
+                  fragment_account_page_start_step_count_bt_id.visibility = View.VISIBLE
               }
            }
        }
