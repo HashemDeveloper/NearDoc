@@ -59,6 +59,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     }
     private var isNotificationWhileInApp: Boolean = false
     private var dialogUserInfoMainContainerView: ScrollView?= null
+    private var rootDialog: AlertDialog?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -147,9 +148,9 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         }
         val displayCaloriesDialog = MaterialAlertDialogBuilder(this.context)
         displayCaloriesDialog.setView(caloriesParentView)
-        val rootDialog: AlertDialog = displayCaloriesDialog.create()
-        rootDialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        rootDialog.show()
+        this.rootDialog = displayCaloriesDialog.create()
+        rootDialog?.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        rootDialog?.show()
 
         val dateFormat: DateFormat = SimpleDateFormat("EEEE MMM d yyyy", Locale.getDefault())
         val dateString: String = dateFormat.format(Date())
@@ -165,7 +166,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         stepsTakenView.text = stepsTakenMessage
 
         okBt.setOnClickListener {
-            rootDialog.dismiss()
+            rootDialog?.dismiss()
         }
     }
     private fun getParentViewForDialog(resource: Int, viewType: DialogViewType): View {
@@ -246,12 +247,19 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     private fun displayUserInfoForm() {
         val parentView: View = getParentViewForDialog(R.layout.dialog_user_info_form_layout, DialogViewType.VIEW_DISPLAY_USER_FORM)
         this.dialogUserInfoMainContainerView = parentView.findViewById(R.id.dialog_user_info_main_container_id)
+        val saveBt: MaterialButton = parentView.run {
+            this.findViewById(R.id.dialog_user_info_save_bt_id)
+        }
         val displayCaloriesDialog = MaterialAlertDialogBuilder(this.context)
         displayCaloriesDialog.setView(parentView)
-        val rootDialog: AlertDialog = displayCaloriesDialog.create()
-        rootDialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        rootDialog.show()
-        rootDialog.setCanceledOnTouchOutside(false)
+        this.rootDialog = displayCaloriesDialog.create()
+        rootDialog?.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        this.rootDialog!!.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        rootDialog!!.show()
+        rootDialog!!.setCanceledOnTouchOutside(false)
+        saveBt.setOnClickListener {
+            this.rootDialog!!.dismiss()
+        }
     }
 
     override fun onMenuExpand() {
@@ -310,6 +318,9 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     override fun onDestroyView() {
         super.onDestroyView()
         this.accountPageViewModel.clearObservers(fragment_account_room_temp_view_id, fragment_account_step_counter_view_id)
+        if (this.rootDialog != null) {
+            this.rootDialog!!.dismiss()
+        }
     }
     enum class DialogViewType {
         VIEW_DISPLAY_CALORIES,

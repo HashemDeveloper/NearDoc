@@ -16,6 +16,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="48dp"
             >
+
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -25,7 +26,7 @@
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/fragment_account_user_image_holder"
                     android:layout_width="300dp"
-                    android:layout_height="300dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/padding_16dp"
                     android:layout_marginLeft="@dimen/padding_16dp"
                     android:layout_marginRight="@dimen/padding_16dp"
@@ -40,7 +41,7 @@
                     <RelativeLayout
                         android:id="@+id/dialog_user_info_input_container_id"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_marginTop="24dp"
                         >
                         <com.google.android.material.textfield.TextInputLayout
@@ -109,6 +110,7 @@
                                 />
                         </com.google.android.material.textfield.TextInputLayout>
                         <RadioGroup
+                            android:id="@+id/dialog_user_info_radio_group_id"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
@@ -130,6 +132,18 @@
                                 android:text="@string/female"
                                 />
                         </RadioGroup>
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/dialog_user_info_save_bt_id"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/dialog_user_info_radio_group_id"
+                            android:layout_centerHorizontal="true"
+                            style="@style/Widget.MaterialComponents.Button"
+                            app:rippleColor="@color/white"
+                            app:elevation="8dp"
+                            app:backgroundTint="@color/blue_gray_400"
+                            android:text="@string/save"
+                            />
                     </RelativeLayout>
                 </com.google.android.material.card.MaterialCardView>
             </FrameLayout>
