@@ -205,9 +205,13 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         val heartRate = AppCompatImageView(this.context)
         heartRate.setBackgroundResource(R.drawable.heart_cardiogram_24_white)
         heartRate.id = R.id.account_heart_rate_bt
+        val editProfileBt = AppCompatImageView(this.context)
+        editProfileBt.setBackgroundResource(R.drawable.ic_edit_white_24dp)
+        editProfileBt.id = R.id.account_edit_personal_info_bt
         return FilterMenu.Builder(this.context)
             .addItem(signOutBt)
             .addItem(heartRate)
+            .addItem(editProfileBt)
             .attach(layout)
             .withListener(this)
             .build()
@@ -222,6 +226,8 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
             signOut()
         } else if (view.id == R.id.account_heart_rate_bt) {
             Toast.makeText(this.context, "Heart rate", Toast.LENGTH_SHORT).show()
+        } else if (view.id == R.id.account_edit_personal_info_bt) {
+            displayUserInfoForm()
         }
     }
     private fun signOut() {

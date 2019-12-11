@@ -2,4 +2,5 @@
 <resources>
     <item name="account_signout_bt" type="id"/>
     <item name="account_heart_rate_bt" type="id"/>
+    <item name="account_edit_personal_info_bt" type="id"/>
 </resources>
