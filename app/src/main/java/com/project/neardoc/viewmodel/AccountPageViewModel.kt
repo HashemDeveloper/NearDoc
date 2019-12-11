@@ -208,4 +208,13 @@ class AccountPageViewModel @Inject constructor(): ViewModel() {
     fun startStepCountService(activity: FragmentActivity) {
         Toast.makeText(this.context, "Starting service...", Toast.LENGTH_SHORT).show()
     }
+
+    fun saveUserPersonalInfo(
+        userAge: String,
+        userWeight: String,
+        userHeight: String,
+        gender: String
+    ) {
+
+    }
 }

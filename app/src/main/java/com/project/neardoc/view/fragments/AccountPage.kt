@@ -9,10 +9,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.ProgressBar
-import android.widget.ScrollView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.ActivityCompat
@@ -38,6 +35,7 @@ import com.project.neardoc.events.StepCounterEvent
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.GenderType
 import com.project.neardoc.utils.keyboardstatechecker.KeyboardEventListener
+import com.project.neardoc.utils.validators.EmptyFieldValidator
 import com.project.neardoc.viewmodel.AccountPageViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_account_page.*
@@ -54,7 +52,9 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     companion object {
         const val ACTIVITY_RECOGNITION_REQ_CODE: Int = 2
     }
-
+    private var emptyWeightValidator: EmptyFieldValidator?= null
+    private var emptyHeightValidator: EmptyFieldValidator?= null
+    private var emptyAgeValidator: EmptyFieldValidator?= null
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val accountPageViewModel: AccountPageViewModel by viewModels {
@@ -280,6 +280,23 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         val ageEditText: TextInputEditText = parentView.run {
             this.findViewById(R.id.dialog_user_info_age_edit_text_id)
         }
+        val ageRadioGroup: RadioGroup = parentView.run {
+            this.findViewById(R.id.dialog_user_info_radio_group_id)
+        }
+        var gender = "Male"
+        ageRadioGroup.setOnCheckedChangeListener { radioGroup, checkedId ->
+            when (checkedId) {
+                R.id.dialog_user_info_male_radio_bt_id -> {
+                    gender = "Male"
+                }
+                R.id.dialog_user_info_female_radio_bt_id -> {
+                    gender = "Female"
+                }
+            }
+        }
+        this.emptyWeightValidator = EmptyFieldValidator(weightInputLayout, "")
+        this.emptyHeightValidator = EmptyFieldValidator(heightInputLayout, "")
+        this.emptyAgeValidator = EmptyFieldValidator(ageInputLayout, "")
 
         val displayCaloriesDialog = MaterialAlertDialogBuilder(this.context)
         displayCaloriesDialog.setView(parentView)
@@ -288,11 +305,42 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         this.rootDialog!!.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         rootDialog!!.show()
         rootDialog!!.setCanceledOnTouchOutside(false)
+
         saveBt.setOnClickListener {
-            this.rootDialog!!.dismiss()
+            val userWeight: String = weightEditText.text.toString()
+            val userHeight: String = heightEditText.text.toString()
+            val userAge: String = ageEditText.text.toString()
+            val isValidWeight: Boolean = this.emptyWeightValidator!!.getIsValidated(userWeight)
+            val isValidHeight: Boolean = this.emptyHeightValidator!!.getIsValidated(userHeight)
+            val isValidAge: Boolean = this.emptyAgeValidator!!.getIsValidated(userAge)
+            if (isValidWeight && isValidHeight && isValidAge && gender.isNotEmpty()) {
+                displayValidationError(false, weightInputLayout, heightInputLayout, ageInputLayout)
+                this.accountPageViewModel.saveUserPersonalInfo(userAge, userWeight, userHeight, gender)
+                this.rootDialog!!.dismiss()
+
+            } else {
+                displayValidationError(true, weightInputLayout, heightInputLayout, ageInputLayout)
+            }
         }
         closeDialogBt.setOnClickListener {
             this.rootDialog!!.dismiss()
+        }
+    }
+    private fun displayValidationError(isError: Boolean, weightInputLayout: TextInputLayout, heightInputLayout: TextInputLayout, ageInputLayout: TextInputLayout) {
+        if (isError) {
+            weightInputLayout.isErrorEnabled = true
+            heightInputLayout.isErrorEnabled = true
+            ageInputLayout.isErrorEnabled = true
+            weightInputLayout.error = "Please enter weight"
+            heightInputLayout.error = "Please enter height"
+            ageInputLayout.error = "Please enter age"
+        } else {
+            weightInputLayout.isErrorEnabled = false
+            heightInputLayout.isErrorEnabled = false
+            ageInputLayout.isErrorEnabled = false
+            weightInputLayout.error = ""
+            heightInputLayout.error = ""
+            ageInputLayout.error = ""
         }
     }
 

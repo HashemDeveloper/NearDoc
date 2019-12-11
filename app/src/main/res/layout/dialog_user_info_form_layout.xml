@@ -24,7 +24,7 @@
                 >
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/fragment_account_user_image_holder"
-                    android:layout_width="300dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/padding_16dp"
                     android:layout_marginLeft="@dimen/padding_16dp"
@@ -74,6 +74,7 @@
                             app:startIconDrawable="@drawable/height_black_24dp"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                             android:layout_below="@+id/dialog_user_info_weight_input_layout_id"
+                            android:layout_marginTop="@dimen/dimen_8dp"
                             >
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/dialog_user_info_height_edit_text_id"
@@ -96,6 +97,7 @@
                             app:startIconDrawable="@drawable/age_icon_black_32px"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                             android:layout_below="@+id/dialog_user_info_height_input_layout_id"
+                            android:layout_marginTop="@dimen/dimen_8dp"
                             >
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/dialog_user_info_age_edit_text_id"
@@ -117,6 +119,7 @@
                             android:layout_alignParentStart="true"
                             android:layout_alignParentLeft="true"
                             android:checkedButton="@id/dialog_user_info_male_radio_bt_id"
+                            android:layout_marginTop="@dimen/dimen_8dp"
                             >
                             <com.google.android.material.radiobutton.MaterialRadioButton
                                 android:id="@+id/dialog_user_info_male_radio_bt_id"
@@ -166,7 +169,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginRight="42dp"
+                android:layout_marginRight="@dimen/padding_16dp"
                 app:srcCompat="@drawable/ic_close_red_24dp"
                 app:maxImageSize="34dp"
                 app:backgroundTint="@color/blue_gray_100"
@@ -174,7 +177,7 @@
                 app:tint="@color/blue_gray_700"
                 app:rippleColor="@color/blue_gray_400"
                 android:layout_alignParentRight="true"
-                android:layout_marginEnd="42dp"
+                android:layout_marginEnd="@dimen/padding_16dp"
                 style="@style/Widget.MaterialComponents.FloatingActionButton"
                 />
         </RelativeLayout>
