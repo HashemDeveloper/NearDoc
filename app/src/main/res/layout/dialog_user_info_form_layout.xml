@@ -16,7 +16,6 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="48dp"
             >
-
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -60,7 +59,7 @@
                                 android:layout_height="wrap_content"
                                 android:textColorHint="@color/blue_gray_400"
                                 android:textColor="@color/blue_gray_700"
-                                android:inputType="text"
+                                android:inputType="numberDecimal"
                                 android:maxLines="1"
                                 android:imeOptions="actionNext"
                                 />
@@ -82,7 +81,7 @@
                                 android:layout_height="wrap_content"
                                 android:textColorHint="@android:color/white"
                                 android:textColor="@color/blue_gray_700"
-                                android:inputType="text"
+                                android:inputType="numberDecimal"
                                 android:maxLines="1"
                                 android:imeOptions="actionNext"
                                 />
@@ -104,7 +103,7 @@
                                 android:layout_height="wrap_content"
                                 android:textColorHint="@color/blue_gray_400"
                                 android:textColor="@color/blue_gray_700"
-                                android:inputType="text"
+                                android:inputType="numberDecimal"
                                 android:maxLines="1"
                                 android:imeOptions="actionDone"
                                 />
@@ -160,6 +159,23 @@
                 app:civ_circle_background_color="@color/blue_gray_100"
                 app:civ_fill_color="@color/blue_gray_400"
                 android:elevation="8dp"
+                />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/dialog_user_info_close_form_bt_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginRight="42dp"
+                app:srcCompat="@drawable/ic_close_red_24dp"
+                app:maxImageSize="34dp"
+                app:backgroundTint="@color/blue_gray_100"
+                app:fabSize="auto"
+                app:tint="@color/blue_gray_700"
+                app:rippleColor="@color/blue_gray_400"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="42dp"
+                style="@style/Widget.MaterialComponents.FloatingActionButton"
                 />
         </RelativeLayout>
     </RelativeLayout>

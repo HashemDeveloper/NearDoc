@@ -116,7 +116,7 @@
                           <androidx.appcompat.widget.AppCompatImageView
                               android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
-                              android:src="@drawable/ic_location_red_24dp"
+                              app:srcCompat="@drawable/ic_location_red_24dp"
                               android:layout_gravity="center_vertical"
                               />
                           <com.google.android.material.textview.MaterialTextView
@@ -133,6 +133,57 @@
                               android:textColor="@color/blue_gray_400"
                               />
                       </LinearLayout>
+                       <LinearLayout
+                           android:id="@+id/fragment_account_personal_info_container_id"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:orientation="vertical"
+                           android:layout_gravity="center_horizontal"
+                           android:layout_marginTop="8dp"
+                           android:visibility="visible"
+                           >
+                           <com.google.android.material.textview.MaterialTextView
+                               android:id="@+id/fragment_account_page_age_view_id"
+                               android:layout_width="wrap_content"
+                               android:layout_height="wrap_content"
+                               android:text="@string/age"
+                               android:layout_gravity="center_horizontal"
+                               android:textSize="18sp"
+                               android:textColor="@color/blue_gray_400"
+                               />
+                           <com.google.android.material.textview.MaterialTextView
+                               android:id="@+id/fragment_account_page_gender_view_id"
+                               android:layout_width="wrap_content"
+                               android:layout_height="wrap_content"
+                               android:text="@string/gender"
+                               android:layout_gravity="center_horizontal"
+                               android:textSize="18sp"
+                               android:textColor="@color/blue_gray_400"
+                               />
+                           <RelativeLayout
+                               android:layout_width="wrap_content"
+                               android:layout_height="wrap_content"
+                               >
+                               <com.google.android.material.textview.MaterialTextView
+                                   android:id="@+id/fragment_account_page_height_view_id"
+                                   android:layout_width="wrap_content"
+                                   android:layout_height="wrap_content"
+                                   android:text="@string/height"
+                                   android:textSize="18sp"
+                                   android:textColor="@color/blue_gray_400"
+                                   android:layout_marginEnd="@dimen/padding_16dp"
+                                   />
+                               <com.google.android.material.textview.MaterialTextView
+                                   android:id="@+id/fragment_account_page_weight_view_id"
+                                   android:layout_width="wrap_content"
+                                   android:layout_height="wrap_content"
+                                   android:layout_toEndOf="@+id/fragment_account_page_height_view_id"
+                                   android:text="@string/weight"
+                                   android:textSize="18sp"
+                                   android:textColor="@color/blue_gray_400"
+                                   />
+                           </RelativeLayout>
+                       </LinearLayout>
                    </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </FrameLayout>
@@ -148,7 +199,6 @@
                 app:civ_border_color="@color/blue_gray_100"
                 app:civ_circle_background_color="@color/blue_gray_100"
                 app:civ_fill_color="@color/blue_gray_400"
-                android:elevation="8dp"
                 />
         </RelativeLayout>
         <FrameLayout
@@ -208,7 +258,6 @@
             android:id="@+id/fragment_account_menu_bt_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:elevation="8dp"
             app:fm_expandedRadius="96dp"
             app:fm_collapsedRadius="24dp"
             app:fm_centerBottom="50dp"

@@ -23,6 +23,9 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.textview.MaterialTextView
 import com.linroid.filtermenu.library.FilterMenu
 import com.linroid.filtermenu.library.FilterMenuLayout
@@ -250,6 +253,28 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         val saveBt: MaterialButton = parentView.run {
             this.findViewById(R.id.dialog_user_info_save_bt_id)
         }
+        val closeDialogBt: FloatingActionButton = parentView.run {
+            this.findViewById(R.id.dialog_user_info_close_form_bt_id)
+        }
+        val weightInputLayout: TextInputLayout = parentView.run {
+            this.findViewById(R.id.dialog_user_info_weight_input_layout_id)
+        }
+        val weightEditText: TextInputEditText = parentView.run {
+            this.findViewById(R.id.dialog_user_info_weight_edit_text_id)
+        }
+        val heightInputLayout: TextInputLayout = parentView.run {
+            this.findViewById(R.id.dialog_user_info_height_input_layout_id)
+        }
+        val heightEditText: TextInputEditText = parentView.run {
+            this.findViewById(R.id.dialog_user_info_height_edit_text_id)
+        }
+        val ageInputLayout: TextInputLayout = parentView.run {
+            this.findViewById(R.id.dialog_user_info_age_input_layout_id)
+        }
+        val ageEditText: TextInputEditText = parentView.run {
+            this.findViewById(R.id.dialog_user_info_age_edit_text_id)
+        }
+
         val displayCaloriesDialog = MaterialAlertDialogBuilder(this.context)
         displayCaloriesDialog.setView(parentView)
         this.rootDialog = displayCaloriesDialog.create()
@@ -258,6 +283,9 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         rootDialog!!.show()
         rootDialog!!.setCanceledOnTouchOutside(false)
         saveBt.setOnClickListener {
+            this.rootDialog!!.dismiss()
+        }
+        closeDialogBt.setOnClickListener {
             this.rootDialog!!.dismiss()
         }
     }

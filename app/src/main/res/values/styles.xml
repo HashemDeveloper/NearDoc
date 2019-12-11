@@ -53,4 +53,11 @@
     <style name="RadioButtonStyle">
         <item name="radioButtonStyle">@style/Widget.MaterialComponents.CompoundButton.RadioButton</item>
     </style>
+    <style name="RoundShapeStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">32dp</item>
+        <item name="cornerSizeBottomLeft">32dp</item>
+        <item name="cornerSizeTopRight">32dp</item>
+        <item name="cornerSizeBottomRight">32dp</item>
+    </style>
 </resources>
