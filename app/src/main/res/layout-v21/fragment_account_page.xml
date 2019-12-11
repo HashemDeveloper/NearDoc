@@ -142,7 +142,7 @@
                            android:orientation="vertical"
                            android:layout_gravity="center_horizontal"
                            android:layout_marginTop="8dp"
-                           android:visibility="visible"
+                           android:visibility="gone"
                            >
                            <com.google.android.material.textview.MaterialTextView
                                android:id="@+id/fragment_account_page_age_view_id"
