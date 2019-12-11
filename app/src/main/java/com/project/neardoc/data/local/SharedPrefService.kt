@@ -245,4 +245,14 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
     override fun getTotalStepCount(): Int {
         return pref?.getInt(Constants.TOTAL_STEP_COUNT, 0)!!
     }
+
+    override fun runStepCountForegroundOrBackground(b: Boolean) {
+        pref?.edit(commit = true) {
+            putBoolean(Constants.RUN_STEP_COUNT_FG_OR_BG, b)
+        }
+    }
+
+    override fun getStepCountOnForegroundOrBackground(): Boolean {
+        return pref?.getBoolean(Constants.RUN_STEP_COUNT_FG_OR_BG, false)!!
+    }
 }

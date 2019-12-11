@@ -253,6 +253,10 @@ class AccountPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
         return this.eventObserver
     }
 
+    fun stepCountServiceShouldRunOnFgOrBg(b: Boolean) {
+        this.iSharedPrefService.runStepCountForegroundOrBackground(b)
+    }
+
     override val coroutineContext: CoroutineContext
         get() = this.job + Dispatchers.Main
 }

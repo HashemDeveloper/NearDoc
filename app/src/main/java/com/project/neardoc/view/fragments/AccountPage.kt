@@ -89,7 +89,19 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     private fun observeEvents(): Observer<Boolean> {
         return Observer { event ->
             if (event) {
+                val startServiceDialog = MaterialAlertDialogBuilder(this.context!!)
+                startServiceDialog.setTitle(R.string.step_count_service_start_message)
 
+                startServiceDialog.setPositiveButton((android.R.string.yes)) { _, _ ->
+                    this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(true)
+                }
+                startServiceDialog.setNegativeButton((android.R.string.no)) {_,_ ->
+                    this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(false)
+                }
+                startServiceDialog.setOnDismissListener {
+
+                }
+                startServiceDialog.show()
             } else {
                 if (BuildConfig.DEBUG) {
                     Log.i(TAG, "Failed to save user data")
