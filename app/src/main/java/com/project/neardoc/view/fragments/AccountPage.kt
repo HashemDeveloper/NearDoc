@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
@@ -26,6 +28,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.textview.MaterialTextView
 import com.linroid.filtermenu.library.FilterMenu
 import com.linroid.filtermenu.library.FilterMenuLayout
+import com.project.neardoc.BuildConfig
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
@@ -51,6 +54,8 @@ import javax.inject.Inject
 class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     companion object {
         const val ACTIVITY_RECOGNITION_REQ_CODE: Int = 2
+        @JvmStatic
+        private val TAG: String = AccountPage::class.java.canonicalName!!
     }
     private var emptyWeightValidator: EmptyFieldValidator?= null
     private var emptyHeightValidator: EmptyFieldValidator?= null
@@ -77,6 +82,30 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
                 this.accountPageViewModel.flashStepCounter()
                 val totalStepCount: Int = this.accountPageViewModel.getTotalStepCounted()
                 displayCaloriesBurnedDialog(caloriresBurned, totalStepCount, GenderType.MALE)
+            }
+        }
+        this.accountPageViewModel.getIsAnyEventTriggered().observe(activity!!, observeEvents())
+    }
+    private fun observeEvents(): Observer<Boolean> {
+        return Observer { event ->
+            if (event) {
+                val startServiceDialog = MaterialAlertDialogBuilder(this.context!!)
+                startServiceDialog.setTitle(R.string.step_count_service_start_message)
+
+                startServiceDialog.setPositiveButton((android.R.string.yes)) { _, _ ->
+                    this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(true)
+                }
+                startServiceDialog.setNegativeButton((android.R.string.no)) {_,_ ->
+                    this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(false)
+                }
+                startServiceDialog.setOnDismissListener {
+
+                }
+                startServiceDialog.show()
+            } else {
+                if (BuildConfig.DEBUG) {
+                    Log.i(TAG, "Failed to save user data")
+                }
             }
         }
     }
@@ -368,6 +397,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     override fun onDestroy() {
         EventBus.getDefault().unregister(this)
         EventBus.getDefault().postSticky(BottomBarEvent(true))
+        this.accountPageViewModel.getIsAnyEventTriggered().removeObserver(observeEvents())
         super.onDestroy()
     }
 
