@@ -3,6 +3,8 @@ package com.project.neardoc.di
 import android.content.Context
 import com.project.neardoc.NearDocApp
 import com.project.neardoc.data.local.ISharedPrefService
+import com.project.neardoc.data.local.IUserInfoDao
+import com.project.neardoc.data.local.LocalDBService
 import com.project.neardoc.data.local.SharedPrefService
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
 import com.project.neardoc.data.local.remote.NearDocRemoteRepo
@@ -101,5 +103,10 @@ class ApplicationModule {
     @Provides
     fun provideCalorieBurnCalculator(calorieBurnedCalculator: CalorieBurnedCalculator): ICalorieBurnedCalculator {
         return calorieBurnedCalculator
+    }
+    @Singleton
+    @Provides
+    fun provideUserInfoDb(dbService: LocalDBService): IUserInfoDao {
+        return dbService.getUserInfoDao()
     }
 }

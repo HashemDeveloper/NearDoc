@@ -1,6 +1,7 @@
 package com.project.neardoc.viewmodel
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -8,6 +9,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bumptech.glide.Glide
 import com.github.florent37.viewanimator.ViewAnimator
@@ -15,23 +18,34 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.auth.FirebaseAuth
+import com.project.neardoc.BuildConfig
 import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
+import com.project.neardoc.data.local.IUserInfoDao
 import com.project.neardoc.events.BottomBarEvent
 import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.events.UserStateEvent
+import com.project.neardoc.model.localstoragemodels.UserPersonalInfo
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.IDeviceSensors
 import com.project.neardoc.utils.PageType
 import com.ramotion.fluidslider.FluidSlider
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import java.text.MessageFormat
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
-class AccountPageViewModel @Inject constructor(): ViewModel() {
+class AccountPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
+
     companion object {
         const val DEFAULT_REPEAT_COUNT = 5
+        @JvmStatic
+        private val TAG: String = AccountPageViewModel::class.java.canonicalName!!
     }
     @Inject
     lateinit var iSensors: IDeviceSensors
@@ -43,6 +57,10 @@ class AccountPageViewModel @Inject constructor(): ViewModel() {
     private var seekBarTotalValue: Int?= null
     @Inject
     lateinit var context: Context
+    @Inject
+    lateinit var iUserInfoDao: IUserInfoDao
+    private val job = Job()
+    private val eventObserver: MutableLiveData<Boolean> = MutableLiveData()
 
     fun setupDeviceSensor(activity: FragmentActivity, fragmentAccountRoomTempViewId: MaterialTextView?, stepCountParentLayout: FrameLayout) {
         this.iSensors.setupDeviceSensor(activity, fragmentAccountRoomTempViewId!!, stepCountParentLayout)
@@ -215,6 +233,26 @@ class AccountPageViewModel @Inject constructor(): ViewModel() {
         userHeight: String,
         gender: String
     ) {
-
+        launch {
+            iUserInfoDao.deleteUserPersonalInfo()
+            val email: String = iSharedPrefService.getUserEmail()
+            val userPersonalInfo = UserPersonalInfo(0, email, userWeight.toDouble(), userHeight.toDouble(), userAge.toInt(), gender)
+            iUserInfoDao.insertUserInfo(userPersonalInfo)
+        }.invokeOnCompletion {
+            if (it != null && it.localizedMessage != null) {
+                if (BuildConfig.DEBUG) {
+                    Log.i(TAG, it.localizedMessage!!)
+                }
+                this.eventObserver.value = false
+            } else {
+                this.eventObserver.value = true
+            }
+        }
     }
+    public fun getIsAnyEventTriggered(): LiveData<Boolean> {
+        return this.eventObserver
+    }
+
+    override val coroutineContext: CoroutineContext
+        get() = this.job + Dispatchers.Main
 }
