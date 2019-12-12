@@ -60,4 +60,10 @@
         <item name="cornerSizeTopRight">32dp</item>
         <item name="cornerSizeBottomRight">32dp</item>
     </style>
+    <style name="MaterialDialogTheme">
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog</item>
+        <item name="materialAlertDialogTitlePanelStyle">@style/MaterialAlertDialog.MaterialComponents.Title.Panel</item>
+        <item name="materialAlertDialogTitleIconStyle">@style/MaterialAlertDialog.MaterialComponents.Title.Icon</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.MaterialComponents.Title.Text</item>
+    </style>
 </resources>

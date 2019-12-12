@@ -3,6 +3,7 @@ package com.project.neardoc.view.fragments
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +15,7 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -35,6 +37,7 @@ import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.BottomBarEvent
 import com.project.neardoc.events.NotifySilentEvent
 import com.project.neardoc.events.StepCounterEvent
+import com.project.neardoc.model.localstoragemodels.UserPersonalInfo
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.GenderType
 import com.project.neardoc.utils.keyboardstatechecker.KeyboardEventListener
@@ -84,30 +87,69 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
                 displayCaloriesBurnedDialog(caloriresBurned, totalStepCount, GenderType.MALE)
             }
         }
+        this.accountPageViewModel.init()
         this.accountPageViewModel.getIsAnyEventTriggered().observe(activity!!, observeEvents())
+        this.accountPageViewModel.getUserInfoLiveData().observe(activity!!, userPersonalInfoObserver())
+    }
+    private fun userPersonalInfoObserver(): Observer<UserPersonalInfo> {
+        return Observer { info ->
+            if (info != null) {
+                fragment_account_page_start_step_count_bt_id.visibility = View.GONE
+                fragment_account_step_counter_view_id.text = "0"
+                displayUserInfo(info, true)
+            } else {
+                displayUserInfo(null, false)
+                fragment_account_page_start_step_count_bt_id.visibility = View.VISIBLE
+            }
+        }
+    }
+    private fun displayUserInfo(info: UserPersonalInfo?, show: Boolean) {
+        if (show) {
+            if (info != null) {
+                fragment_account_personal_info_container_id.visibility = View.VISIBLE
+                val age = "Age: ${info.userAge}"
+                fragment_account_page_age_view_id.text = age
+                fragment_account_page_gender_view_id.text = info.genderType
+                val height = "Height: ${info.userHeight}"
+                val weight = "Weight: ${info.userWeight}"
+                fragment_account_page_height_view_id.text = height
+                fragment_account_page_weight_view_id.text = weight
+            }
+        } else {
+            fragment_account_personal_info_container_id.visibility = View.GONE
+        }
     }
     private fun observeEvents(): Observer<Boolean> {
         return Observer { event ->
             if (event) {
-                val startServiceDialog = MaterialAlertDialogBuilder(this.context!!)
-                startServiceDialog.setTitle(R.string.step_count_service_start_message)
-
-                startServiceDialog.setPositiveButton((android.R.string.yes)) { _, _ ->
-                    this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(true)
-                }
-                startServiceDialog.setNegativeButton((android.R.string.no)) {_,_ ->
-                    this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(false)
-                }
-                startServiceDialog.setOnDismissListener {
-
-                }
-                startServiceDialog.show()
+               stepCountWarnDialog()
             } else {
                 if (BuildConfig.DEBUG) {
                     Log.i(TAG, "Failed to save user data")
                 }
             }
         }
+    }
+    private fun stepCountWarnDialog() {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this.activity!!)
+        builder.setTitle(R.string.step_count_service_start_message)
+        builder.setCancelable(false)
+        builder.setPositiveButton(("Yes")) {d,k ->
+            this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(true)
+            d.dismiss()
+        }
+        builder.setNegativeButton(("No")) {d,k ->
+            this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(false)
+            d.dismiss()
+        }
+
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.setCanceledOnTouchOutside(false)
+        alertDialog.show()
+        val yesBt: Button = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+        val noBt: Button = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+        yesBt.setTextColor(ContextCompat.getColor(this.context!!, R.color.blue_500))
+        noBt.setTextColor(ContextCompat.getColor(this.context!!, R.color.purple_400))
     }
 
     override fun onCreateView(
@@ -209,6 +251,9 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
                 layoutInflater.inflate(resource, viewGroup, false)
             }
             DialogViewType.VIEW_DISPLAY_USER_FORM -> {
+                layoutInflater.inflate(resource, viewGroup, false)
+            }
+            DialogViewType.VIEW_REGULAR -> {
                 layoutInflater.inflate(resource, viewGroup, false)
             }
         }
@@ -398,6 +443,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         EventBus.getDefault().unregister(this)
         EventBus.getDefault().postSticky(BottomBarEvent(true))
         this.accountPageViewModel.getIsAnyEventTriggered().removeObserver(observeEvents())
+        this.accountPageViewModel.getUserInfoLiveData().removeObserver(userPersonalInfoObserver())
         super.onDestroy()
     }
 
@@ -436,6 +482,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     }
     enum class DialogViewType {
         VIEW_DISPLAY_CALORIES,
-        VIEW_DISPLAY_USER_FORM
+        VIEW_DISPLAY_USER_FORM,
+        VIEW_REGULAR
     }
 }

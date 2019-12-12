@@ -15,4 +15,8 @@
     <color name="blue_gray_700">#455A64</color>
     <color name="blue_gray_800">#37474F</color>
     <color name="yellow_500">#FFEB3B</color>
+    <color name="pink_200">#FF4081</color>
+    <color name="pink_500">#E91E63</color>
+    <color name="purple_400">#D500F9</color>
+    <color name="blue_500">#2196F3</color>
 </resources>
