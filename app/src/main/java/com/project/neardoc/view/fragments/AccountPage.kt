@@ -94,11 +94,12 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     private fun userPersonalInfoObserver(): Observer<UserPersonalInfo> {
         return Observer { info ->
             if (info != null) {
-                fragment_account_page_start_step_count_bt_id.visibility = View.VISIBLE
+                fragment_account_page_start_step_count_bt_id.visibility = View.GONE
+                fragment_account_step_counter_view_id.text = "0"
                 displayUserInfo(info, true)
             } else {
                 displayUserInfo(null, false)
-                fragment_account_page_start_step_count_bt_id.visibility = View.GONE
+                fragment_account_page_start_step_count_bt_id.visibility = View.VISIBLE
             }
         }
     }
