@@ -184,13 +184,11 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         builder.setTitle(R.string.step_count_service_start_message)
         builder.setCancelable(false)
         builder.setPositiveButton(("Yes")) {d,k ->
-            this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(true)
-            this.accountPageViewModel.startStepCountService(activity!!)
+            this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(Constants.SERVICE_FOREGROUND)
             d.dismiss()
         }
         builder.setNegativeButton(("No")) {d,k ->
-            this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(false)
-            this.accountPageViewModel.startStepCountService(activity!!)
+            this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(Constants.SERVICE_BACKGROUND)
             d.dismiss()
         }
 

@@ -246,13 +246,14 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
         return pref?.getInt(Constants.TOTAL_STEP_COUNT, 0)!!
     }
 
-    override fun runStepCountForegroundOrBackground(b: Boolean) {
+    override fun saveStepCountServiceType(serviceType: String) {
         pref?.edit(commit = true) {
-            putBoolean(Constants.RUN_STEP_COUNT_FG_OR_BG, b)
+            putString(Constants.SERVICE_TYPE, serviceType)
         }
+        listener?.onSharedPreferenceChanged(pref, Constants.SERVICE_TYPE)
     }
 
-    override fun getStepCountOnForegroundOrBackground(): Boolean {
-        return pref?.getBoolean(Constants.RUN_STEP_COUNT_FG_OR_BG, false)!!
+    override fun getStepCountServiceType(): String {
+        return pref?.getString(Constants.SERVICE_TYPE, "")!!
     }
 }

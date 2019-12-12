@@ -2,6 +2,7 @@ package com.project.neardoc.viewmodel
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
@@ -13,19 +14,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.work.*
+import com.project.neardoc.BuildConfig
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
+import com.project.neardoc.services.StepCounterService
 import com.project.neardoc.utils.Constants
-import com.project.neardoc.utils.ILocationService
-import com.project.neardoc.utils.IPermissionListener
-import com.project.neardoc.view.fragments.HomePage
 import com.project.neardoc.worker.LocationUpdateWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.IOException
-import java.time.Duration
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -35,6 +34,7 @@ class HomePageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     companion object {
         private val MINIMUM_INTERVAL = 15 * 60 * 1000L
         private val FLEX_INTERVAL = 5 * 60 * 1000L
+        @JvmStatic private val TAG: String = HomePageViewModel::class.java.canonicalName!!
     }
     @Inject
     lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
@@ -78,7 +78,9 @@ class HomePageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
                         val data: Data = it.outputData
                         val lat: String = data.getString(Constants.WORKER_LOCATION_LAT)!!
                         val lon: String = data.getString(Constants.WORKER_LOCATION_LON)!!
-                        Log.i("Lat: ", "$lat, $lon")
+                        if (BuildConfig.DEBUG) {
+                            Log.i("$TAG, LatLon:", "$lat, $lon")
+                        }
                     }
                     else -> {
                         return@Observer
@@ -96,23 +98,37 @@ class HomePageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     }
 
     override val coroutineContext: CoroutineContext
-        get() = this.job + Dispatchers.IO
+        get() = this.job + Dispatchers.Main
 
     fun storeUserCurrentState(latitude: Double, longitude: Double) {
         this.geoCoder = Geocoder(this.context, Locale.US)
-        launch {
-            try {
-                val addressList: MutableList<Address> = geoCoder?.getFromLocation(latitude, longitude, 10)!!
-                for (address in addressList) {
-                    if (address.locality != null && address.locality.isNotEmpty()) {
-                        val currentState: String = address.locality
-                        iSharedPrefService.setUserCurrentState(currentState)
-                    }
+        try {
+            val addressList: MutableList<Address> = geoCoder?.getFromLocation(latitude, longitude, 10)!!
+            for (address in addressList) {
+                if (address.locality != null && address.locality.isNotEmpty()) {
+                    val currentState: String = address.locality
+                    iSharedPrefService.setUserCurrentState(currentState)
                 }
-            } catch (ioException: IOException) {
-                if (ioException.localizedMessage != null) {
-                    Log.i("IoException: ", ioException.localizedMessage!!)
+            }
+        } catch (ioException: IOException) {
+            if (ioException.localizedMessage != null) {
+                if (BuildConfig.DEBUG) {
+                    Log.i("$TAG: IoException:", ioException.localizedMessage!!)
                 }
+            }
+        }
+    }
+
+    fun startStepCountService(activity: FragmentActivity) {
+        when (this.iSharedPrefService.getStepCountServiceType()) {
+            Constants.SERVICE_FOREGROUND -> {
+
+            }
+            Constants.SERVICE_BACKGROUND -> {
+                if (BuildConfig.DEBUG) {
+                    Log.i(TAG, "Running step count foreground service")
+                }
+                activity.startService(Intent(this.context, StepCounterService::class.java))
             }
         }
     }

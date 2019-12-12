@@ -1,11 +1,11 @@
 package com.project.neardoc.viewmodel
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.FragmentActivity
@@ -26,6 +26,7 @@ import com.project.neardoc.events.BottomBarEvent
 import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.events.UserStateEvent
 import com.project.neardoc.model.localstoragemodels.UserPersonalInfo
+import com.project.neardoc.services.StepCounterService
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.IDeviceSensors
 import com.project.neardoc.utils.PageType
@@ -240,10 +241,6 @@ class AccountPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
         return this.iSharedPrefService.getTotalStepCount()
     }
 
-    fun startStepCountService(activity: FragmentActivity) {
-        Toast.makeText(this.context, "Starting service...", Toast.LENGTH_SHORT).show()
-    }
-
     fun saveUserPersonalInfo(
         userAge: String,
         userWeight: String,
@@ -275,8 +272,8 @@ class AccountPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
         return this.userPersonalInfoLiveData
     }
 
-    fun stepCountServiceShouldRunOnFgOrBg(b: Boolean) {
-        this.iSharedPrefService.runStepCountForegroundOrBackground(b)
+    fun stepCountServiceShouldRunOnFgOrBg(service: String) {
+        this.iSharedPrefService.saveStepCountServiceType(service)
     }
 
     override val coroutineContext: CoroutineContext
