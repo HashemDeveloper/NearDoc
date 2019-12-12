@@ -1,4 +1,4 @@
-package com.project.neardoc.utils
+package com.project.neardoc.utils.notifications
 
 interface INotificationBuilder {
     fun createNotification(requestCode: Int, chanelId: String, notificationId: Int, smallIcon: Int, bigIcon: Int, title: String, description: String, caloriesBurnedResult: Int)

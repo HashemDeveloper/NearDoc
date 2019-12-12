@@ -1,4 +1,4 @@
-package com.project.neardoc.utils
+package com.project.neardoc.utils.notifications
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -15,9 +15,11 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavDeepLinkBuilder
 import com.project.neardoc.NearDocMainActivity
 import com.project.neardoc.R
+import com.project.neardoc.utils.Constants
 import javax.inject.Inject
 
-class NotificationBuilder @Inject constructor(): INotificationBuilder {
+class NotificationBuilder @Inject constructor():
+    INotificationBuilder {
 
     @Inject
     lateinit var context: Context

@@ -13,17 +13,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
 
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
-import com.project.neardoc.events.BottomBarEvent
 import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.events.NetworkStateEvent
-import com.project.neardoc.events.UserStateEvent
 import com.project.neardoc.utils.*
+import com.project.neardoc.utils.networkconnections.ConnectionSettings
 import com.project.neardoc.utils.validators.PasswordValidator
+import com.project.neardoc.utils.widgets.INearDockMessageViewer
+import com.project.neardoc.utils.widgets.IUpdatePassSnackBarListener
+import com.project.neardoc.utils.widgets.PageType
+import com.project.neardoc.utils.widgets.SnackbarType
 import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.UpdatePasswordViewModel
 import dagger.android.support.AndroidSupportInjection
@@ -33,7 +35,8 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
-class UpdatePassword : Fragment(), Injectable, IUpdatePassSnackBarListener {
+class UpdatePassword : Fragment(), Injectable,
+    IUpdatePassSnackBarListener {
 
     @Inject
     lateinit var iNearDockMessageViewer: INearDockMessageViewer
@@ -136,7 +139,11 @@ class UpdatePassword : Fragment(), Injectable, IUpdatePassSnackBarListener {
     }
 
     private fun displayConnectionSetting() {
-        this.connectionSettings = ConnectionSettings(activity!!, view!!)
+        this.connectionSettings =
+            ConnectionSettings(
+                activity!!,
+                view!!
+            )
         connectionSettings?.initWifiSetting(false)
         this.iNearDockMessageViewer.displayMessage(
             connectionSettings,

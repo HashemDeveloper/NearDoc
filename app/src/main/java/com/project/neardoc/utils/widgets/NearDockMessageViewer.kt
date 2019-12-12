@@ -1,4 +1,4 @@
-package com.project.neardoc.utils
+package com.project.neardoc.utils.widgets
 
 import android.content.Context
 import android.view.Gravity
@@ -7,9 +7,11 @@ import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import com.project.neardoc.R
+import com.project.neardoc.utils.networkconnections.ConnectionSettings
 import javax.inject.Inject
 
-class NearDockMessageViewer @Inject constructor(private val context: Context): INearDockMessageViewer{
+class NearDockMessageViewer @Inject constructor(private val context: Context):
+    INearDockMessageViewer {
 
     private var mTypeList: MutableList<SnackbarType>?= null
     private var mSnackBar: Snackbar?= null

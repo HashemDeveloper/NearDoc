@@ -11,9 +11,9 @@ import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.IUserInfoDao
 import com.project.neardoc.model.localstoragemodels.UserPersonalInfo
 import com.project.neardoc.utils.Constants
-import com.project.neardoc.utils.ICalorieBurnedCalculator
-import com.project.neardoc.utils.INotificationScheduler
-import com.project.neardoc.utils.IStepCountSensor
+import com.project.neardoc.utils.calories.ICalorieBurnedCalculator
+import com.project.neardoc.utils.notifications.INotificationScheduler
+import com.project.neardoc.utils.sensors.IStepCountSensor
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

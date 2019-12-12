@@ -1,4 +1,4 @@
-package com.project.neardoc.utils
+package com.project.neardoc.utils.sensors
 
 import android.hardware.Sensor
 import android.hardware.SensorEvent

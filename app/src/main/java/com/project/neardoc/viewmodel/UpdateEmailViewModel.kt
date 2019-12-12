@@ -19,7 +19,7 @@ import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.events.UserStateEvent
 import com.project.neardoc.rxauth.IRxAuthentication
 import com.project.neardoc.utils.Constants
-import com.project.neardoc.utils.PageType
+import com.project.neardoc.utils.widgets.PageType
 import com.project.neardoc.worker.UpdateEmailWorker
 import com.project.neardoc.worker.UpdateUserInfoWorker
 import io.reactivex.disposables.CompositeDisposable

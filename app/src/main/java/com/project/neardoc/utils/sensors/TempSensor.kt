@@ -1,6 +1,5 @@
-package com.project.neardoc.utils
+package com.project.neardoc.utils.sensors
 
-import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -16,7 +15,11 @@ class TempSensor @Inject constructor(): ITempSensor, SensorEventListener {
     private val sensorEventLiveData: MutableLiveData<SensorEvent> = MutableLiveData()
 
     override fun onAccuracyChanged(sensor: Sensor?, p1: Int) {
-        val accuracyChangedModel = AccuracyChangedModel(sensor, p1)
+        val accuracyChangedModel =
+            AccuracyChangedModel(
+                sensor,
+                p1
+            )
         this.accuracyChangedLiveData.value = accuracyChangedModel
     }
 

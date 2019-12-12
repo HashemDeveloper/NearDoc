@@ -1,4 +1,4 @@
-package com.project.neardoc.utils
+package com.project.neardoc.utils.networkconnections
 
 import android.content.Context
 import android.content.IntentFilter
@@ -11,9 +11,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.project.neardoc.R
 import com.project.neardoc.broadcast.NearDocBroadcastReceiver
+import com.project.neardoc.utils.Constants
 import javax.inject.Inject
 
-class ConnectionStateMonitor @Inject constructor(private val context: Context) : LiveData<Boolean>(), IConnectionStateMonitor {
+class ConnectionStateMonitor @Inject constructor(private val context: Context) : LiveData<Boolean>(),
+    IConnectionStateMonitor {
 
     @Inject
     lateinit var nearDocBroadcastReceiver: NearDocBroadcastReceiver
@@ -27,7 +29,10 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
     init {
         this.connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            this.networkCallback = NearDocNetworkCallback(this)
+            this.networkCallback =
+                NearDocNetworkCallback(
+                    this
+                )
         }
     }
 

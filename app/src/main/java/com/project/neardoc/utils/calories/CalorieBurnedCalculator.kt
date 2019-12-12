@@ -1,8 +1,9 @@
-package com.project.neardoc.utils
+package com.project.neardoc.utils.calories
 
 import javax.inject.Inject
 
-class CalorieBurnedCalculator @Inject constructor(): ICalorieBurnedCalculator {
+class CalorieBurnedCalculator @Inject constructor():
+    ICalorieBurnedCalculator {
     companion object {
         @JvmStatic val WALING_FACTOR: Double = 0.57
     }

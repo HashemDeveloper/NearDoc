@@ -27,6 +27,9 @@ import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseUser
 import com.project.neardoc.events.*
 import com.project.neardoc.services.StepCounterService
+import com.project.neardoc.utils.networkconnections.IConnectionStateMonitor
+import com.project.neardoc.utils.networkconnections.NearDocNetworkType
+import com.project.neardoc.utils.widgets.PageType
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 

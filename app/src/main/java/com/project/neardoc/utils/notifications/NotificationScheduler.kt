@@ -1,10 +1,11 @@
-package com.project.neardoc.utils
+package com.project.neardoc.utils.notifications
 
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import com.project.neardoc.broadcast.NearDocBroadcastReceiver
+import com.project.neardoc.utils.Constants
 import java.util.*
 import javax.inject.Inject
 

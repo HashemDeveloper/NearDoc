@@ -14,7 +14,7 @@ import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.LocationUpdateEvent
 import com.project.neardoc.events.NetworkStateEvent
-import com.project.neardoc.utils.ConnectionSettings
+import com.project.neardoc.utils.networkconnections.ConnectionSettings
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.viewmodel.SearchPageViewModel
 import com.project.neardoc.viewmodel.listeners.ISearchPageViewModel
@@ -77,7 +77,11 @@ class SearchPage : Fragment(), Injectable, ISearchPageViewModel {
         }
     }
     private fun displayConnectionSetting() {
-        this.connectionSettings = ConnectionSettings(activity!!, fragment_search_page_snackbar_id)
+        this.connectionSettings =
+            ConnectionSettings(
+                activity!!,
+                fragment_search_page_snackbar_id
+            )
         connectionSettings?.initWifiSetting(false)
     }
 

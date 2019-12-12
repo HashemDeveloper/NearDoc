@@ -1,9 +1,9 @@
-package com.project.neardoc.utils
+package com.project.neardoc.utils.sensors
 
-import android.content.Context
 import android.hardware.SensorEvent
 import android.hardware.SensorManager
 import androidx.lifecycle.LiveData
+import com.project.neardoc.utils.sensors.TempSensor
 
 interface ITempSensor {
     fun initiateTempSensor(sensorManager: SensorManager): TempSensor

@@ -1,7 +1,6 @@
 package com.project.neardoc.viewmodel
 
 import android.content.Context
-import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -26,10 +25,9 @@ import com.project.neardoc.events.BottomBarEvent
 import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.events.UserStateEvent
 import com.project.neardoc.model.localstoragemodels.UserPersonalInfo
-import com.project.neardoc.services.StepCounterService
 import com.project.neardoc.utils.Constants
-import com.project.neardoc.utils.IDeviceSensors
-import com.project.neardoc.utils.PageType
+import com.project.neardoc.utils.sensors.IDeviceSensors
+import com.project.neardoc.utils.widgets.PageType
 import com.ramotion.fluidslider.FluidSlider
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.CoroutineScope

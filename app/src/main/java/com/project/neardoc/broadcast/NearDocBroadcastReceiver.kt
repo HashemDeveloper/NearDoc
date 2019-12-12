@@ -12,15 +12,15 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.events.NotifySilentEvent
 import com.project.neardoc.events.UserStateEvent
-import com.project.neardoc.model.WeekDays
-import com.project.neardoc.model.WeekDaysType
 import com.project.neardoc.services.StepCounterService
 import com.project.neardoc.utils.*
+import com.project.neardoc.utils.calories.CalorieMessageGenerator
+import com.project.neardoc.utils.notifications.INotificationBuilder
+import com.project.neardoc.utils.sensors.IStepCountSensor
 import dagger.android.AndroidInjection
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.util.*
 import javax.inject.Inject
 
 class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver(), LifecycleObserver {
@@ -91,7 +91,8 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver(), Lifec
        this.isUserLoggedIn = userStateEvent.isLoggedIn
     }
     private fun getMessage(): String {
-        val calorieMessageGenerator = CalorieMessageGenerator()
+        val calorieMessageGenerator =
+            CalorieMessageGenerator()
         return calorieMessageGenerator.getStringBasedOnWeekDays()
     }
 }

@@ -1,4 +1,4 @@
-package com.project.neardoc.utils
+package com.project.neardoc.utils.widgets
 
 enum class PageType {
     MAIN_PAGE,

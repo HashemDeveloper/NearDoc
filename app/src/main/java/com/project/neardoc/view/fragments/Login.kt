@@ -20,7 +20,7 @@ import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.rxeventbus.IRxEventBus
-import com.project.neardoc.utils.ConnectionSettings
+import com.project.neardoc.utils.networkconnections.ConnectionSettings
 import com.project.neardoc.viewmodel.LoginViewModel
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.disposables.CompositeDisposable
@@ -43,9 +43,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.project.neardoc.events.EmailVerificationEvent
 import com.project.neardoc.utils.Constants.Companion.mobileData
 import com.project.neardoc.utils.Constants.Companion.wifiData
-import com.project.neardoc.utils.INearDockMessageViewer
-import com.project.neardoc.utils.ILoginSnackBarListeners
-import com.project.neardoc.utils.SnackbarType
+import com.project.neardoc.utils.widgets.INearDockMessageViewer
+import com.project.neardoc.utils.widgets.ILoginSnackBarListeners
+import com.project.neardoc.utils.widgets.SnackbarType
 import com.project.neardoc.utils.validators.EmailValidator
 import com.project.neardoc.utils.validators.PasswordValidator
 import com.project.neardoc.view.widgets.GlobalLoadingBar
@@ -53,7 +53,8 @@ import com.project.neardoc.viewmodel.listeners.ILoginViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class Login : Fragment(), Injectable, ILoginViewModel, ILoginSnackBarListeners{
+class Login : Fragment(), Injectable, ILoginViewModel,
+    ILoginSnackBarListeners {
 
     companion object {
         @JvmStatic private val GOOGLE_SIGN_IN_CODE: Int = 0
@@ -163,7 +164,11 @@ class Login : Fragment(), Injectable, ILoginViewModel, ILoginSnackBarListeners{
         }
     }
     private fun displayConnectionSetting() {
-        this.connectionSettings = ConnectionSettings(activity!!, view!!)
+        this.connectionSettings =
+            ConnectionSettings(
+                activity!!,
+                view!!
+            )
         connectionSettings?.initWifiSetting(false)
         this.iNearDockMessageViewer.displayMessage(connectionSettings, SnackbarType.CONNECTION_SETTING, true, "", true)
     }

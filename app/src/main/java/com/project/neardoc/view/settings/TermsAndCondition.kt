@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.events.LandInSettingPageEvent
-import com.project.neardoc.utils.PageType
+import com.project.neardoc.utils.widgets.PageType
 import dagger.android.support.AndroidSupportInjection
 import org.greenrobot.eventbus.EventBus
 

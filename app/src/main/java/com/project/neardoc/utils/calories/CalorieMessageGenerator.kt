@@ -1,7 +1,8 @@
-package com.project.neardoc.utils
+package com.project.neardoc.utils.calories
 
 import com.project.neardoc.model.WeekDays
 import com.project.neardoc.model.WeekDaysType
+import com.project.neardoc.utils.DayGetter
 import java.util.*
 
 class CalorieMessageGenerator {

@@ -1,6 +1,6 @@
 package com.project.neardoc.events
 
-import com.project.neardoc.utils.NearDocNetworkType
+import com.project.neardoc.utils.networkconnections.NearDocNetworkType
 
 class NetworkStateEvent(private val networkAvailable: Boolean, private val type: NearDocNetworkType?) {
     fun getIsNetworkAvailable(): Boolean {

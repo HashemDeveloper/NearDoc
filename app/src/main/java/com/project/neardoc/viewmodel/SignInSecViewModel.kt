@@ -17,7 +17,7 @@ import com.project.neardoc.events.BottomBarEvent
 import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.events.UserStateEvent
 import com.project.neardoc.utils.Constants
-import com.project.neardoc.utils.PageType
+import com.project.neardoc.utils.widgets.PageType
 import com.project.neardoc.worker.DeleteAccountWorker
 import com.project.neardoc.worker.DeleteUserInfoWorker
 import com.project.neardoc.worker.DeleteUsernameWorker

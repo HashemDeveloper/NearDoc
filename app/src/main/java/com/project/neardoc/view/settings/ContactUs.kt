@@ -14,7 +14,7 @@ import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.model.SignInSecurityHeaderModel
-import com.project.neardoc.utils.PageType
+import com.project.neardoc.utils.widgets.PageType
 import com.project.neardoc.view.adapters.ContactUsAdapter
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_contact_us.*

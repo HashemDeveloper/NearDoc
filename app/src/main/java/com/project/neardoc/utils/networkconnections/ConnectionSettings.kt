@@ -1,4 +1,4 @@
-package com.project.neardoc.utils
+package com.project.neardoc.utils.networkconnections
 
 import android.content.Intent
 import android.provider.Settings

@@ -1,4 +1,4 @@
-package com.project.neardoc.utils
+package com.project.neardoc.utils.sensors
 
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -12,11 +12,10 @@ import androidx.lifecycle.MutableLiveData
 import com.project.neardoc.BuildConfig
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.events.StepCounterEvent
-import io.reactivex.Observer
+import com.project.neardoc.utils.Constants
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
@@ -48,7 +47,9 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
     ) {
         this.mStepCounter = 0
         this.mStepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
-        val isRegistered: Boolean = sensorManager.registerListener(this, this.mStepSensor, SensorManager.SENSOR_DELAY_NORMAL, DEFAULT_LATENCY)
+        val isRegistered: Boolean = sensorManager.registerListener(this, this.mStepSensor, SensorManager.SENSOR_DELAY_NORMAL,
+            DEFAULT_LATENCY
+        )
         if (isRegistered) {
             if (BuildConfig.DEBUG) {
                 Log.i("StepCountRegisteredAt: $TAG", sensorManager.toString())

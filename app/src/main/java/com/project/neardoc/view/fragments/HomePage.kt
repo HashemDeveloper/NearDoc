@@ -20,7 +20,7 @@ import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.LocationUpdateEvent
 import com.project.neardoc.events.NetworkStateEvent
-import com.project.neardoc.utils.ConnectionSettings
+import com.project.neardoc.utils.networkconnections.ConnectionSettings
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.ILocationService
 import com.project.neardoc.utils.IPermissionListener
@@ -95,7 +95,11 @@ class HomePage: Fragment(), Injectable, IPermissionListener {
         }
     }
     private fun displayConnectionSetting() {
-        this.connectionSettings = ConnectionSettings(activity!!, fragment_home_page_snackbar_id)
+        this.connectionSettings =
+            ConnectionSettings(
+                activity!!,
+                fragment_home_page_snackbar_id
+            )
         connectionSettings?.initWifiSetting(false)
     }
     private fun displayLoading(isLoading: Boolean) {

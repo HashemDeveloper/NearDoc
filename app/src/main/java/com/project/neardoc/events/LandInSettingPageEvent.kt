@@ -1,6 +1,6 @@
 package com.project.neardoc.events
 
-import com.project.neardoc.utils.PageType
+import com.project.neardoc.utils.widgets.PageType
 
 class LandInSettingPageEvent constructor(private val isOnSettingPage: Boolean, private val pageType: PageType) {
     fun getIsOnSettingPage(): Boolean {

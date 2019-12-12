@@ -16,9 +16,9 @@ import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.NetworkStateEvent
-import com.project.neardoc.utils.ConnectionSettings
-import com.project.neardoc.utils.INearDockMessageViewer
-import com.project.neardoc.utils.SnackbarType
+import com.project.neardoc.utils.networkconnections.ConnectionSettings
+import com.project.neardoc.utils.widgets.INearDockMessageViewer
+import com.project.neardoc.utils.widgets.SnackbarType
 import com.project.neardoc.utils.validators.EmailValidator
 import com.project.neardoc.utils.validators.EmptyFieldValidator
 import com.project.neardoc.utils.validators.PasswordValidator
@@ -140,7 +140,11 @@ class Registration : Fragment(), Injectable, IRegistrationViewModel{
     }
 
     private fun displayConnectionSetting() {
-        this.connectionSettings = ConnectionSettings(activity!!, view!!)
+        this.connectionSettings =
+            ConnectionSettings(
+                activity!!,
+                view!!
+            )
         connectionSettings?.initWifiSetting(false)
         this.iNearDockMessageViewer.displayMessage(connectionSettings, SnackbarType.CONNECTION_SETTING, true, "", true)
     }

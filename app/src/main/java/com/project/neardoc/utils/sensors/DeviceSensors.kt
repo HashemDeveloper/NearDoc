@@ -1,7 +1,6 @@
-package com.project.neardoc.utils
+package com.project.neardoc.utils.sensors
 
 import android.content.Context
-import android.content.Intent
 import android.hardware.*
 import android.util.Log
 import android.view.View
@@ -10,10 +9,10 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import com.google.android.material.textview.MaterialTextView
 import com.project.neardoc.BuildConfig
-import com.project.neardoc.services.StepCounterService
 import javax.inject.Inject
 
-class DeviceSensors @Inject constructor(private val context: Context): IDeviceSensors {
+class DeviceSensors @Inject constructor(private val context: Context):
+    IDeviceSensors {
     @Inject
     lateinit var iTempSensor: ITempSensor
     @Inject

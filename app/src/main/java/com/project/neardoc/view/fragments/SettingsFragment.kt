@@ -18,7 +18,7 @@ import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.utils.Constants
-import com.project.neardoc.utils.PageType
+import com.project.neardoc.utils.widgets.PageType
 import com.project.neardoc.view.widgets.CustomPreference
 import com.project.neardoc.view.widgets.CustomSwitchPreference
 import com.project.neardoc.view.widgets.NotificationSwitchPref

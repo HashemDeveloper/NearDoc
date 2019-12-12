@@ -1,7 +1,6 @@
 package com.project.neardoc.viewmodel
 
 import android.content.Context
-import android.os.Handler
 import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
@@ -19,7 +18,7 @@ import com.project.neardoc.events.BottomBarEvent
 import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.events.UserStateEvent
 import com.project.neardoc.utils.Constants
-import com.project.neardoc.utils.PageType
+import com.project.neardoc.utils.widgets.PageType
 import com.project.neardoc.worker.UpdatePasswordWorker
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject

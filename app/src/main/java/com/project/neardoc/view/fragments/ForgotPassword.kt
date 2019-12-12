@@ -20,11 +20,9 @@ import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.NetworkStateEvent
-import com.project.neardoc.utils.ConnectionSettings
+import com.project.neardoc.utils.networkconnections.ConnectionSettings
 import com.project.neardoc.utils.Constants.Companion.mobileData
 import com.project.neardoc.utils.Constants.Companion.wifiData
-import com.project.neardoc.utils.INearDockMessageViewer
-import com.project.neardoc.utils.SnackbarType
 import com.project.neardoc.utils.validators.EmailValidator
 import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.ForgotPasswordViewModel
@@ -82,7 +80,11 @@ class ForgotPassword : Fragment(), Injectable, IForgotPasswordViewModel {
         }
     }
     private fun displayConnectionSetting() {
-        val connectionSettings = ConnectionSettings(activity!!, view!!)
+        val connectionSettings =
+            ConnectionSettings(
+                activity!!,
+                view!!
+            )
         connectionSettings.initWifiSetting(false)
     }
     override fun onPasswordResetLinkProcessed() {

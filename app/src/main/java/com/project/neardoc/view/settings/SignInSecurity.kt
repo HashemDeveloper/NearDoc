@@ -28,7 +28,11 @@ import com.project.neardoc.model.ManageAccountModel
 import com.project.neardoc.model.SignInSecurityHeaderModel
 import com.project.neardoc.model.SignInSecurityModel
 import com.project.neardoc.utils.*
+import com.project.neardoc.utils.networkconnections.ConnectionSettings
 import com.project.neardoc.utils.validators.PasswordValidator
+import com.project.neardoc.utils.widgets.INearDockMessageViewer
+import com.project.neardoc.utils.widgets.PageType
+import com.project.neardoc.utils.widgets.SnackbarType
 import com.project.neardoc.view.adapters.SignInSecClickListener
 import com.project.neardoc.view.adapters.SignInSecurityAdapter
 import com.project.neardoc.view.widgets.GlobalLoadingBar
@@ -151,7 +155,11 @@ class SignInSecurity : Fragment(), Injectable, SignInSecClickListener {
         this.iNearDockMessageViewer.dismiss(this.connectionSettings, SnackbarType.CONNECTION_SETTING)
     }
     private fun displayConnectionSetting() {
-        this.connectionSettings = ConnectionSettings(activity!!, view!!)
+        this.connectionSettings =
+            ConnectionSettings(
+                activity!!,
+                view!!
+            )
         connectionSettings?.initWifiSetting(false)
         this.iNearDockMessageViewer.displayMessage(connectionSettings, SnackbarType.CONNECTION_SETTING, true, "", true)
     }

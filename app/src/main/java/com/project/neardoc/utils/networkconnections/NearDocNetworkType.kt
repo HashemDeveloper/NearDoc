@@ -1,4 +1,4 @@
-package com.project.neardoc.utils
+package com.project.neardoc.utils.networkconnections
 
 enum class NearDocNetworkType {
     MOBILE_DATA,

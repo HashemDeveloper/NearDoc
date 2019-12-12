@@ -22,8 +22,13 @@ import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.utils.*
+import com.project.neardoc.utils.networkconnections.ConnectionSettings
 import com.project.neardoc.utils.validators.EmailValidator
 import com.project.neardoc.utils.validators.EmptyFieldValidator
+import com.project.neardoc.utils.widgets.INearDockMessageViewer
+import com.project.neardoc.utils.widgets.IUpdatePassSnackBarListener
+import com.project.neardoc.utils.widgets.PageType
+import com.project.neardoc.utils.widgets.SnackbarType
 import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.UpdateEmailViewModel
 import dagger.android.support.AndroidSupportInjection
@@ -33,7 +38,8 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
-class UpdateEmail : Fragment(), Injectable, IUpdatePassSnackBarListener{
+class UpdateEmail : Fragment(), Injectable,
+    IUpdatePassSnackBarListener {
 
     @Inject
     lateinit var iNearDockMessageViewer: INearDockMessageViewer
@@ -148,7 +154,11 @@ class UpdateEmail : Fragment(), Injectable, IUpdatePassSnackBarListener{
     }
 
     private fun displayConnectionSetting() {
-        this.connectionSettings = ConnectionSettings(activity!!, view!!)
+        this.connectionSettings =
+            ConnectionSettings(
+                activity!!,
+                view!!
+            )
         connectionSettings?.initWifiSetting(false)
         this.iNearDockMessageViewer.displayMessage(connectionSettings, SnackbarType.CONNECTION_SETTING, true, "", true)
     }
