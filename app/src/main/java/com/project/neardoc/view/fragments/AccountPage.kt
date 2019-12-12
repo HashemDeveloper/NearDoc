@@ -3,6 +3,7 @@ package com.project.neardoc.view.fragments
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +15,7 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -89,25 +91,34 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     private fun observeEvents(): Observer<Boolean> {
         return Observer { event ->
             if (event) {
-                val startServiceDialog = MaterialAlertDialogBuilder(this.context!!)
-                startServiceDialog.setTitle(R.string.step_count_service_start_message)
-
-                startServiceDialog.setPositiveButton((android.R.string.yes)) { _, _ ->
-                    this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(true)
-                }
-                startServiceDialog.setNegativeButton((android.R.string.no)) {_,_ ->
-                    this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(false)
-                }
-                startServiceDialog.setOnDismissListener {
-
-                }
-                startServiceDialog.show()
+               stepCountWarnDialog()
             } else {
                 if (BuildConfig.DEBUG) {
                     Log.i(TAG, "Failed to save user data")
                 }
             }
         }
+    }
+    private fun stepCountWarnDialog() {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this.activity!!)
+        builder.setTitle(R.string.step_count_service_start_message)
+        builder.setCancelable(false)
+        builder.setPositiveButton(("Yes")) {d,k ->
+            this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(true)
+            d.dismiss()
+        }
+        builder.setNegativeButton(("No")) {d,k ->
+            this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(false)
+            d.dismiss()
+        }
+
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.setCanceledOnTouchOutside(false)
+        alertDialog.show()
+        val yesBt: Button = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+        val noBt: Button = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+        yesBt.setTextColor(ContextCompat.getColor(this.context!!, R.color.blue_500))
+        noBt.setTextColor(ContextCompat.getColor(this.context!!, R.color.purple_400))
     }
 
     override fun onCreateView(
@@ -209,6 +220,9 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
                 layoutInflater.inflate(resource, viewGroup, false)
             }
             DialogViewType.VIEW_DISPLAY_USER_FORM -> {
+                layoutInflater.inflate(resource, viewGroup, false)
+            }
+            DialogViewType.VIEW_REGULAR -> {
                 layoutInflater.inflate(resource, viewGroup, false)
             }
         }
@@ -436,6 +450,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     }
     enum class DialogViewType {
         VIEW_DISPLAY_CALORIES,
-        VIEW_DISPLAY_USER_FORM
+        VIEW_DISPLAY_USER_FORM,
+        VIEW_REGULAR
     }
 }
