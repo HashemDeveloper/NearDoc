@@ -109,5 +109,8 @@
     <string name="height">Height</string>
     <string name="weight">Weight</string>
     <string name="step_count_service_start_message">Let NearDoc calculate my steps all the time?</string>
+    <string name="step_count_chanel_name">Regular Step Count</string>
+    <string name="step_count_chanel_name_foreground">Step count foreground service</string>
+    <string name="step_count_foreground_chanel_desc">Turn on to indicate NearDoc is calculating your steps.</string>
 
 </resources>
