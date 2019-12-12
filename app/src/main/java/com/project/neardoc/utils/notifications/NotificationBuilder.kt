@@ -43,7 +43,7 @@ class NotificationBuilder @Inject constructor():
                     .setArguments(data)
                     .createPendingIntent()
                 val bigPicture: Bitmap = BitmapFactory.decodeResource(this.context.resources, bigIcon)
-                notification = NotificationCompat.Builder(this.context, chanelId)
+               val builder: NotificationCompat.Builder = getNotificationBuilder(chanelId)
                     .setSmallIcon(smallIcon)
                     .setLargeIcon(bigPicture)
                     .setContentTitle(title)
@@ -53,7 +53,11 @@ class NotificationBuilder @Inject constructor():
                         .bigText(description))
                     .setContentIntent(pendingIntent)
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .build()
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    builder.setChannelId(chanelId)
+                }
+                notification = builder.build()
                 NotificationManagerCompat.from(context).notify(Constants.STEP_COUNT_REGULAR_NOTIFICATION_ID, notification)
                 return notification
             }
@@ -68,7 +72,7 @@ class NotificationBuilder @Inject constructor():
                     .setGraph(R.navigation.nearby_doc_navigation)
                     .setDestination(R.id.accountPage)
                     .createPendingIntent()
-                notification = NotificationCompat.Builder(this.context, chanelId)
+                val builder: NotificationCompat.Builder = getNotificationBuilder(chanelId)
                     .setSmallIcon(smallIcon)
                     .setContentTitle(appName)
                     .setContentText(context.getString(R.string.foreground_step_count_running_message))
@@ -78,9 +82,21 @@ class NotificationBuilder @Inject constructor():
                     .setContentIntent(pendingIntent)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setWhen(System.currentTimeMillis())
-                    .build()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    builder.setChannelId(chanelId)
+                }
+                notification = builder.build()
                 return notification
             }
         }
+    }
+    private fun getNotificationBuilder(chanelId: String): NotificationCompat.Builder {
+        val builder: NotificationCompat.Builder?
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder = NotificationCompat.Builder(this.context, chanelId)
+        } else {
+            builder = NotificationCompat.Builder(this.context)
+        }
+        return builder
     }
 }
