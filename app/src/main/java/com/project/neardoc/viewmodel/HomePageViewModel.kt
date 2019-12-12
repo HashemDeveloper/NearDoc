@@ -32,8 +32,6 @@ import kotlin.coroutines.CoroutineContext
 
 class HomePageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     companion object {
-        private val MINIMUM_INTERVAL = 15 * 60 * 1000L
-        private val FLEX_INTERVAL = 5 * 60 * 1000L
         @JvmStatic private val TAG: String = HomePageViewModel::class.java.canonicalName!!
     }
     @Inject
@@ -42,59 +40,11 @@ class HomePageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     lateinit var iSharedPrefService: ISharedPrefService
     @Inject
     lateinit var context: Context
-    private var workerLiveData: LiveData<WorkInfo>?= null
     private val job = Job()
     private var geoCoder: Geocoder?= null
 
-    fun requestPermission(): Boolean {
-        val foreGroundFineLocationState: Int = ContextCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION)
-        val foreGroundCoarseLocationState: Int = ContextCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_COARSE_LOCATION)
-        var backgroundLocationState = 0
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            backgroundLocationState = ContextCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-        }
-        return (foreGroundCoarseLocationState == PackageManager.PERMISSION_GRANTED) && (foreGroundFineLocationState == PackageManager.PERMISSION_GRANTED)
-                && (backgroundLocationState == PackageManager.PERMISSION_GRANTED)
-    }
-
-    fun startLocationUpdate(activity: FragmentActivity, isStart: Boolean) {
-        if (isStart) {
-            val locationUpdateReq: PeriodicWorkRequest = PeriodicWorkRequest.Builder(LocationUpdateWorker::class.java, MINIMUM_INTERVAL, TimeUnit.MILLISECONDS,
-                FLEX_INTERVAL, TimeUnit.MILLISECONDS)
-                .build()
-            val workManager: WorkManager = WorkManager.getInstance(this.context)
-            workManager.enqueueUniquePeriodicWork("PeriodicLocationUpdate", ExistingPeriodicWorkPolicy.REPLACE, locationUpdateReq)
-            this.workerLiveData = workManager.getWorkInfoByIdLiveData(locationUpdateReq.id)
-            this.workerLiveData!!.observe(activity, locationUpdateObserver())
-        }
-    }
-    private fun locationUpdateObserver(): Observer<WorkInfo> {
-        return Observer {
-            if (it?.state == null) {
-                return@Observer
-            } else {
-                when (it.state) {
-                    WorkInfo.State.SUCCEEDED -> {
-                        val data: Data = it.outputData
-                        val lat: String = data.getString(Constants.WORKER_LOCATION_LAT)!!
-                        val lon: String = data.getString(Constants.WORKER_LOCATION_LON)!!
-                        if (BuildConfig.DEBUG) {
-                            Log.i("$TAG, LatLon:", "$lat, $lon")
-                        }
-                    }
-                    else -> {
-                        return@Observer
-                    }
-                }
-            }
-        }
-    }
-
     override fun onCleared() {
         super.onCleared()
-        if (this.workerLiveData != null) {
-            this.workerLiveData!!.removeObserver(locationUpdateObserver())
-        }
     }
 
     override val coroutineContext: CoroutineContext
@@ -122,11 +72,13 @@ class HomePageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     fun startStepCountService(activity: FragmentActivity) {
         when (this.iSharedPrefService.getStepCountServiceType()) {
             Constants.SERVICE_FOREGROUND -> {
-
+                if (BuildConfig.DEBUG) {
+                    Log.i(TAG, "Running step count foreground service")
+                }
             }
             Constants.SERVICE_BACKGROUND -> {
                 if (BuildConfig.DEBUG) {
-                    Log.i(TAG, "Running step count foreground service")
+                    Log.i(TAG, "Running step count background service")
                 }
                 activity.startService(Intent(this.context, StepCounterService::class.java))
             }
