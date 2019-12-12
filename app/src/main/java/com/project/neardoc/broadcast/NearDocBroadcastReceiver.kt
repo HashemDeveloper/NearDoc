@@ -16,6 +16,7 @@ import com.project.neardoc.services.StepCounterService
 import com.project.neardoc.utils.*
 import com.project.neardoc.utils.calories.CalorieMessageGenerator
 import com.project.neardoc.utils.notifications.INotificationBuilder
+import com.project.neardoc.utils.notifications.NotificationType
 import com.project.neardoc.utils.sensors.IStepCountSensor
 import dagger.android.AndroidInjection
 import org.greenrobot.eventbus.EventBus
@@ -54,7 +55,7 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver(), Lifec
                 if (isNotificationOn && !this.isOnForeground!!) {
                     sensorManager = context!!.getSystemService(Context.SENSOR_SERVICE) as SensorManager
                     iStepCounterSensor.initiateStepCounterSensor(sensorManager!!)
-                    this.iNotificationBuilder.createNotification(StepCounterService.STEP_COUNT_NOTIFICATION_REQ_CODE, "STEP_COUNT",
+                    this.iNotificationBuilder.createNotification(NotificationType.NOTIFICATION_REGULAR, StepCounterService.STEP_COUNT_NOTIFICATION_REQ_CODE, "STEP_COUNT",
                         123,
                         com.project.neardoc.R.drawable.ic_walk_2x,
                         com.project.neardoc.R.drawable.heart, "Hi $name!",

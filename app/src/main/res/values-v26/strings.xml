@@ -112,4 +112,5 @@
     <string name="step_count_chanel_name">Regular Step Count</string>
     <string name="step_count_chanel_name_foreground">Step count foreground service</string>
     <string name="step_count_foreground_chanel_desc">Turn on to indicate NearDoc is calculating your steps.</string>
+    <string name="foreground_step_count_running_message">Step count running. Tap to open.</string>
 </resources>
