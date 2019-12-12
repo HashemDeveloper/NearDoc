@@ -37,6 +37,7 @@ import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.BottomBarEvent
 import com.project.neardoc.events.NotifySilentEvent
 import com.project.neardoc.events.StepCounterEvent
+import com.project.neardoc.model.localstoragemodels.UserPersonalInfo
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.GenderType
 import com.project.neardoc.utils.keyboardstatechecker.KeyboardEventListener
@@ -86,7 +87,36 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
                 displayCaloriesBurnedDialog(caloriresBurned, totalStepCount, GenderType.MALE)
             }
         }
+        this.accountPageViewModel.init()
         this.accountPageViewModel.getIsAnyEventTriggered().observe(activity!!, observeEvents())
+        this.accountPageViewModel.getUserInfoLiveData().observe(activity!!, userPersonalInfoObserver())
+    }
+    private fun userPersonalInfoObserver(): Observer<UserPersonalInfo> {
+        return Observer { info ->
+            if (info != null) {
+                fragment_account_page_start_step_count_bt_id.visibility = View.VISIBLE
+                displayUserInfo(info, true)
+            } else {
+                displayUserInfo(null, false)
+                fragment_account_page_start_step_count_bt_id.visibility = View.GONE
+            }
+        }
+    }
+    private fun displayUserInfo(info: UserPersonalInfo?, show: Boolean) {
+        if (show) {
+            if (info != null) {
+                fragment_account_personal_info_container_id.visibility = View.VISIBLE
+                val age = "Age: ${info.userAge}"
+                fragment_account_page_age_view_id.text = age
+                fragment_account_page_gender_view_id.text = info.genderType
+                val height = "Height: ${info.userHeight}"
+                val weight = "Weight: ${info.userWeight}"
+                fragment_account_page_height_view_id.text = height
+                fragment_account_page_weight_view_id.text = weight
+            }
+        } else {
+            fragment_account_personal_info_container_id.visibility = View.GONE
+        }
     }
     private fun observeEvents(): Observer<Boolean> {
         return Observer { event ->
@@ -412,6 +442,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         EventBus.getDefault().unregister(this)
         EventBus.getDefault().postSticky(BottomBarEvent(true))
         this.accountPageViewModel.getIsAnyEventTriggered().removeObserver(observeEvents())
+        this.accountPageViewModel.getUserInfoLiveData().removeObserver(userPersonalInfoObserver())
         super.onDestroy()
     }
 
