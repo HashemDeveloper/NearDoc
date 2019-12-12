@@ -59,6 +59,10 @@
             android:exported="false"
             android:description="@string/step_counter_service_reason"
             />
+        <service android:name=".services.StepCountForegroundService"
+            android:exported="false"
+            android:description="@string/step_counter_service_reason"
+            />
 <!--        <service-->
 <!--            android:name=".services.FirebaseTokenIdService"-->
 <!--            android:exported="false">-->
