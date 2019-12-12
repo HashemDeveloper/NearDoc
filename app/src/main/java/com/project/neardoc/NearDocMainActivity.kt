@@ -26,12 +26,16 @@ import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseUser
 import com.project.neardoc.events.*
+import com.project.neardoc.services.StepCounterService
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 
 class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, SharedPreferences.OnSharedPreferenceChangeListener{
-
+    companion object {
+        @JvmStatic
+        private val TAG: String = NearDocMainActivity::class.java.canonicalName!!
+    }
     @Inject
     lateinit var iLocationService: ILocationService
     @Inject
@@ -380,6 +384,21 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
                         EventBus.getDefault().postSticky(LocationEnabledEvent(true))
                     } else {
                         EventBus.getDefault().postSticky(LocationEnabledEvent(false))
+                    }
+                }
+                Constants.SERVICE_TYPE -> {
+                    when (pref?.getString(key, "")!!) {
+                        Constants.SERVICE_FOREGROUND -> {
+                            if (BuildConfig.DEBUG) {
+                                Log.i(TAG, "Running step count foreground service")
+                            }
+                        }
+                        Constants.SERVICE_BACKGROUND -> {
+                            if (BuildConfig.DEBUG) {
+                                Log.i(TAG, "Running step count background service")
+                            }
+                            startService(Intent(this, StepCounterService::class.java))
+                        }
                     }
                 }
             }

@@ -1,6 +1,7 @@
 package com.project.neardoc.di.backgroundservice
 
 import com.project.neardoc.di.scopes.ServiceKey
+import com.project.neardoc.services.StepCountForegroundService
 import com.project.neardoc.services.StepCounterService
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -9,5 +10,8 @@ import dagger.android.ContributesAndroidInjector
 abstract class ServiceBuilderModule {
     @ServiceKey
     @ContributesAndroidInjector
-    abstract fun contributeServiceModule(): StepCounterService
+    abstract fun contributeStepCountServiceModule(): StepCounterService
+    @ServiceKey
+    @ContributesAndroidInjector
+    abstract fun contributeStepCountForegroundModule(): StepCountForegroundService
 }

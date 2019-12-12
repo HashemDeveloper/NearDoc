@@ -8,6 +8,8 @@ import android.os.Binder
 import android.os.IBinder
 import com.project.neardoc.broadcast.NearDocBroadcastReceiver
 import com.project.neardoc.data.local.ISharedPrefService
+import com.project.neardoc.data.local.IUserInfoDao
+import com.project.neardoc.model.localstoragemodels.UserPersonalInfo
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.ICalorieBurnedCalculator
 import com.project.neardoc.utils.INotificationScheduler
@@ -37,6 +39,8 @@ class StepCounterService @Inject constructor(): Service(), CoroutineScope {
     lateinit var iSharedPrefService: ISharedPrefService
     @Inject
     lateinit var iCalorieBurnedCalculator: ICalorieBurnedCalculator
+    @Inject
+    lateinit var iUserInfoDao: IUserInfoDao
 
     private var job = Job()
 
@@ -60,8 +64,11 @@ class StepCounterService @Inject constructor(): Service(), CoroutineScope {
         super.onStartCommand(intent, flags, startId)
         launch {
             val stepCount: Int = iSharedPrefService.getLastStepCountValue()
-            //TODO: save weight and height from the user and then get the value
-            val burnedCalories: Double = iCalorieBurnedCalculator.calculateCalorieBurned(178.0, 67.8, stepCount)
+            val email: String = iSharedPrefService.getUserEmail()
+            val userPersonalInfo: UserPersonalInfo = iUserInfoDao.getUserByEmail(email)
+            val height: Double = userPersonalInfo.userHeight
+            val weight: Double = userPersonalInfo.userWeight
+            val burnedCalories: Double = iCalorieBurnedCalculator.calculateCalorieBurned(height, weight, stepCount)
             iNotificationScheduler.scheduleJob(Constants.STEP_COUNTER_SERVICE_ACTION, STEP_COUNT_NOTIFICATION_REQ_CODE,
                 1, 0, burnedCalories.toInt())
         }
