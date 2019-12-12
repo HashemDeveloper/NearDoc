@@ -71,6 +71,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     private var isNotificationWhileInApp: Boolean = false
     private var dialogUserInfoMainContainerView: ScrollView?= null
     private var rootDialog: AlertDialog?= null
+    private var isUserPersonalInfoAvailable = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -90,66 +91,6 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         this.accountPageViewModel.init()
         this.accountPageViewModel.getIsAnyEventTriggered().observe(activity!!, observeEvents())
         this.accountPageViewModel.getUserInfoLiveData().observe(activity!!, userPersonalInfoObserver())
-    }
-    private fun userPersonalInfoObserver(): Observer<UserPersonalInfo> {
-        return Observer { info ->
-            if (info != null) {
-                fragment_account_page_start_step_count_bt_id.visibility = View.GONE
-                fragment_account_step_counter_view_id.text = "0"
-                displayUserInfo(info, true)
-            } else {
-                displayUserInfo(null, false)
-                fragment_account_page_start_step_count_bt_id.visibility = View.VISIBLE
-            }
-        }
-    }
-    private fun displayUserInfo(info: UserPersonalInfo?, show: Boolean) {
-        if (show) {
-            if (info != null) {
-                fragment_account_personal_info_container_id.visibility = View.VISIBLE
-                val age = "Age: ${info.userAge}"
-                fragment_account_page_age_view_id.text = age
-                fragment_account_page_gender_view_id.text = info.genderType
-                val height = "Height: ${info.userHeight}"
-                val weight = "Weight: ${info.userWeight}"
-                fragment_account_page_height_view_id.text = height
-                fragment_account_page_weight_view_id.text = weight
-            }
-        } else {
-            fragment_account_personal_info_container_id.visibility = View.GONE
-        }
-    }
-    private fun observeEvents(): Observer<Boolean> {
-        return Observer { event ->
-            if (event) {
-               stepCountWarnDialog()
-            } else {
-                if (BuildConfig.DEBUG) {
-                    Log.i(TAG, "Failed to save user data")
-                }
-            }
-        }
-    }
-    private fun stepCountWarnDialog() {
-        val builder: AlertDialog.Builder = AlertDialog.Builder(this.activity!!)
-        builder.setTitle(R.string.step_count_service_start_message)
-        builder.setCancelable(false)
-        builder.setPositiveButton(("Yes")) {d,k ->
-            this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(true)
-            d.dismiss()
-        }
-        builder.setNegativeButton(("No")) {d,k ->
-            this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(false)
-            d.dismiss()
-        }
-
-        val alertDialog: AlertDialog = builder.create()
-        alertDialog.setCanceledOnTouchOutside(false)
-        alertDialog.show()
-        val yesBt: Button = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
-        val noBt: Button = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
-        yesBt.setTextColor(ContextCompat.getColor(this.context!!, R.color.blue_500))
-        noBt.setTextColor(ContextCompat.getColor(this.context!!, R.color.purple_400))
     }
 
     override fun onCreateView(
@@ -177,18 +118,90 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
             EventBus.getDefault().postSticky(BottomBarEvent(true))
             Navigation.findNavController(it).navigate(AccountPageDirections.actionHomePage())
         }
+
         fragment_account_page_start_step_count_bt_id.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 if (!checkActivityRecognitionPermission()) {
                     requestActivityRecogPermission()
                 } else {
-                    this.accountPageViewModel.startStepCountService(activity!!)
+                    if (!this.isUserPersonalInfoAvailable) {
+                        displayUserInfoForm()
+                    } else {
+                        this.accountPageViewModel.startStepCountService(activity!!)
+                    }
                 }
             } else {
-                this.accountPageViewModel.startStepCountService(activity!!)
+                if (!this.isUserPersonalInfoAvailable) {
+                    displayUserInfoForm()
+                } else {
+                    this.accountPageViewModel.startStepCountService(activity!!)
+                }
             }
         }
         attachMenu(fragment_account_menu_bt_id)
+    }
+
+    private fun userPersonalInfoObserver(): Observer<UserPersonalInfo> {
+        return Observer { info ->
+            if (info != null) {
+                displayUserInfo(info, true)
+                this.isUserPersonalInfoAvailable = true
+            } else {
+                displayUserInfo(null, false)
+                fragment_account_page_start_step_count_bt_id.visibility = View.VISIBLE
+                this.isUserPersonalInfoAvailable = false
+            }
+        }
+    }
+    private fun displayUserInfo(info: UserPersonalInfo?, show: Boolean) {
+        if (show) {
+            if (info != null && checkActivityRecognitionPermission()) {
+                fragment_account_page_start_step_count_bt_id.visibility = View.GONE
+                fragment_account_step_counter_view_id.text = "0"
+                fragment_account_personal_info_container_id.visibility = View.VISIBLE
+                val age = "Age: ${info.userAge}"
+                fragment_account_page_age_view_id.text = age
+                fragment_account_page_gender_view_id.text = info.genderType
+                val height = "Height: ${info.userHeight}"
+                val weight = "Weight: ${info.userWeight}"
+                fragment_account_page_height_view_id.text = height
+                fragment_account_page_weight_view_id.text = weight
+            }
+        } else {
+            fragment_account_personal_info_container_id.visibility = View.GONE
+        }
+    }
+    private fun observeEvents(): Observer<Boolean> {
+        return Observer { event ->
+            if (event) {
+                stepCountWarnDialog()
+            } else {
+                if (BuildConfig.DEBUG) {
+                    Log.i(TAG, "Failed to save user data")
+                }
+            }
+        }
+    }
+    private fun stepCountWarnDialog() {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this.activity!!)
+        builder.setTitle(R.string.step_count_service_start_message)
+        builder.setCancelable(false)
+        builder.setPositiveButton(("Yes")) {d,k ->
+            this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(true)
+            d.dismiss()
+        }
+        builder.setNegativeButton(("No")) {d,k ->
+            this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(false)
+            d.dismiss()
+        }
+
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.setCanceledOnTouchOutside(false)
+        alertDialog.show()
+        val yesBt: Button = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+        val noBt: Button = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+        yesBt.setTextColor(ContextCompat.getColor(this.context!!, R.color.blue_500))
+        noBt.setTextColor(ContextCompat.getColor(this.context!!, R.color.purple_400))
     }
 
     private fun displayCaloriesBurnedDialog(caloriesBurned: Int, totalStepTaken: Int, gender: GenderType) {
@@ -318,14 +331,24 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
        if (requestCode == ACTIVITY_RECOGNITION_REQ_CODE) {
            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
               if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                  fragment_account_page_start_step_count_bt_id.visibility = View.GONE
-                  fragment_account_step_counter_view_id.text = "0"
-                  displayUserInfoForm()
+                  toggleUserInfoView()
               } else {
                   fragment_account_page_start_step_count_bt_id.visibility = View.VISIBLE
               }
            }
        }
+    }
+    private fun toggleUserInfoView() {
+        if (!this.isUserPersonalInfoAvailable) {
+            fragment_account_page_start_step_count_bt_id.visibility = View.VISIBLE
+            fragment_account_personal_info_container_id.visibility = View.GONE
+            displayUserInfoForm()
+        } else {
+            fragment_account_page_start_step_count_bt_id.visibility = View.GONE
+            fragment_account_step_counter_view_id.text = "0"
+            fragment_account_personal_info_container_id.visibility = View.VISIBLE
+            this.accountPageViewModel.getUserInfoLiveData().observe(activity!!, userPersonalInfoObserver())
+        }
     }
     private fun displayUserInfoForm() {
         val parentView: View = getParentViewForDialog(R.layout.dialog_user_info_form_layout, DialogViewType.VIEW_DISPLAY_USER_FORM)

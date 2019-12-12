@@ -63,6 +63,22 @@ class AccountPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     private val eventObserver: MutableLiveData<Boolean> = MutableLiveData()
     private val userPersonalInfoLiveData: MutableLiveData<UserPersonalInfo> = MutableLiveData()
 
+    fun init() {
+        val email: String = this.iSharedPrefService.getUserEmail()
+        var userPersonalInfo: UserPersonalInfo?= null
+        launch {
+            userPersonalInfo = iUserInfoDao.getUserByEmail(email)
+        }.invokeOnCompletion {
+            if (it != null && it.localizedMessage != null) {
+                if (BuildConfig.DEBUG) {
+                    Log.i(TAG, it.localizedMessage!!)
+                }
+            } else {
+                this.userPersonalInfoLiveData.value = userPersonalInfo
+            }
+        }
+    }
+
     fun setupDeviceSensor(activity: FragmentActivity, fragmentAccountRoomTempViewId: MaterialTextView?, stepCountParentLayout: FrameLayout) {
         this.iSensors.setupDeviceSensor(activity, fragmentAccountRoomTempViewId!!, stepCountParentLayout)
     }
@@ -261,22 +277,6 @@ class AccountPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
 
     fun stepCountServiceShouldRunOnFgOrBg(b: Boolean) {
         this.iSharedPrefService.runStepCountForegroundOrBackground(b)
-    }
-
-    fun init() {
-        val email: String = this.iSharedPrefService.getUserEmail()
-        var userPersonalInfo: UserPersonalInfo?= null
-        launch {
-            userPersonalInfo = iUserInfoDao.getUserByEmail(email)
-        }.invokeOnCompletion {
-            if (it != null && it.localizedMessage != null) {
-                if (BuildConfig.DEBUG) {
-                    Log.i(TAG, it.localizedMessage!!)
-                }
-            } else {
-                this.userPersonalInfoLiveData.value = userPersonalInfo
-            }
-        }
     }
 
     override val coroutineContext: CoroutineContext
