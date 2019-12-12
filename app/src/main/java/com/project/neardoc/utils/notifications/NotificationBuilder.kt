@@ -23,44 +23,64 @@ class NotificationBuilder @Inject constructor():
 
     @Inject
     lateinit var context: Context
+    @Inject
+    lateinit var iNotificationChanelBuilder: INotificationChanelBuilder
 
-    override fun createNotification(requestCode: Int, chanelId:
-    String, notificationId: Int, smallIcon: Int, bigIcon: Int, title: String, description: String, caloriesBurnedResult: Int) {
-        createNotificationChanel(chanelId)
-        val data = Bundle()
-        data.putString(Constants.STEP_COUNT_NOTIFICATION, "STEP_NOTIFICATION")
-        data.putInt(Constants.CALORIES_BURNED_RESULT, caloriesBurnedResult)
-        val contentComponentName = ComponentName(this.context, NearDocMainActivity::class.java)
-        val pendingIntent: PendingIntent = NavDeepLinkBuilder(this.context)
-            .setComponentName(contentComponentName)
-            .setGraph(R.navigation.nearby_doc_navigation)
-            .setDestination(R.id.accountPage)
-            .setArguments(data)
-            .createPendingIntent()
-        val bigPicture: Bitmap = BitmapFactory.decodeResource(this.context.resources, bigIcon)
-        val notification: Notification = NotificationCompat.Builder(this.context, chanelId)
-            .setSmallIcon(smallIcon)
-            .setLargeIcon(bigPicture)
-            .setContentTitle(title)
-            .setContentText(description)
-            .setAutoCancel(true)
-            .setStyle(NotificationCompat.BigTextStyle()
-                .bigText(description))
-            .setContentIntent(pendingIntent)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .build()
-        NotificationManagerCompat.from(this.context).notify(notificationId, notification)
-    }
-    private fun createNotificationChanel(chanelId: String) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name: String = chanelId
-            val desc = "Chanel Description"
-            val importance: Int = NotificationManager.IMPORTANCE_HIGH
-            val chanel: NotificationChannel = NotificationChannel(chanelId, name, importance).apply {
-                description = desc
+    override fun createNotification(notificationType: NotificationType, requestCode: Int, chanelId:
+    String, smallIcon: Int, bigIcon: Int, title: String, description: String, caloriesBurnedResult: Int): Notification {
+        this.iNotificationChanelBuilder.createNotificationChannels(notificationType, chanelId)
+        val notification: Notification
+        when (notificationType) {
+            NotificationType.NOTIFICATION_REGULAR -> {
+                val data = Bundle()
+                data.putString(Constants.STEP_COUNT_NOTIFICATION, "STEP_NOTIFICATION")
+                data.putInt(Constants.CALORIES_BURNED_RESULT, caloriesBurnedResult)
+                val contentComponentName = ComponentName(this.context, NearDocMainActivity::class.java)
+                val pendingIntent: PendingIntent = NavDeepLinkBuilder(this.context)
+                    .setComponentName(contentComponentName)
+                    .setGraph(R.navigation.nearby_doc_navigation)
+                    .setDestination(R.id.accountPage)
+                    .setArguments(data)
+                    .createPendingIntent()
+                val bigPicture: Bitmap = BitmapFactory.decodeResource(this.context.resources, bigIcon)
+                notification = NotificationCompat.Builder(this.context, chanelId)
+                    .setSmallIcon(smallIcon)
+                    .setLargeIcon(bigPicture)
+                    .setContentTitle(title)
+                    .setContentText(description)
+                    .setAutoCancel(true)
+                    .setStyle(NotificationCompat.BigTextStyle()
+                        .bigText(description))
+                    .setContentIntent(pendingIntent)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .build()
+                NotificationManagerCompat.from(context).notify(Constants.STEP_COUNT_REGULAR_NOTIFICATION_ID, notification)
+                return notification
             }
-            val notificationManager: NotificationManager = this.context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(chanel)
+            NotificationType.NOTIFICATION_FOREGROUND -> {
+                val data = Bundle()
+                data.putString(Constants.STEP_COUNT_FOREGROUND, "STEP_COUNT_FOREGROUND")
+                val pendingComponentName = ComponentName(this.context, NearDocMainActivity::class.java)
+                val appName: String = this.context.getString(R.string.app_name)
+                val pendingIntent: PendingIntent = NavDeepLinkBuilder(this.context)
+                    .setComponentName(pendingComponentName)
+                    .setArguments(data)
+                    .setGraph(R.navigation.nearby_doc_navigation)
+                    .setDestination(R.id.accountPage)
+                    .createPendingIntent()
+                notification = NotificationCompat.Builder(this.context, chanelId)
+                    .setSmallIcon(smallIcon)
+                    .setContentTitle(appName)
+                    .setContentText(context.getString(R.string.foreground_step_count_running_message))
+                    .setTicker(this.context.getString(R.string.foreground_step_count_running_message))
+                    .setOngoing(true)
+                    .setAutoCancel(true)
+                    .setContentIntent(pendingIntent)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setWhen(System.currentTimeMillis())
+                    .build()
+                return notification
+            }
         }
     }
 }

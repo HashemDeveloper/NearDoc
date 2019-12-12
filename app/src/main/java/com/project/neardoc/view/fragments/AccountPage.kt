@@ -72,6 +72,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     private var dialogUserInfoMainContainerView: ScrollView?= null
     private var rootDialog: AlertDialog?= null
     private var isUserPersonalInfoAvailable = false
+    private val userPersonalInfo: UserPersonalInfo?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -102,6 +103,9 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        this.accountPageViewModel.init()
+        this.accountPageViewModel.getIsAnyEventTriggered().observe(activity!!, observeEvents())
+        this.accountPageViewModel.getUserInfoLiveData().observe(activity!!, userPersonalInfoObserver())
         this.accountPageViewModel.setupUserProfile(context!!, fragment_account_user_image_view_id, fragment_account_user_name_id,
             fragment_account_user_email_view_id, fragment_account_user_location_view_id)
         this.accountPageViewModel.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id, fragment_step_count_parent_layout)
@@ -144,7 +148,6 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
                 this.isUserPersonalInfoAvailable = true
             } else {
                 displayUserInfo(null, false)
-                fragment_account_page_start_step_count_bt_id.visibility = View.VISIBLE
                 this.isUserPersonalInfoAvailable = false
             }
         }
@@ -152,20 +155,40 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     private fun displayUserInfo(info: UserPersonalInfo?, show: Boolean) {
         if (show) {
             if (info != null && checkActivityRecognitionPermission()) {
-                fragment_account_page_start_step_count_bt_id.visibility = View.GONE
-                fragment_account_step_counter_view_id.text = "0"
-                fragment_account_personal_info_container_id.visibility = View.VISIBLE
+                fragment_account_page_start_step_count_bt_id?.let {
+                    it.visibility = View.GONE
+                }
+
+                fragment_account_step_counter_view_id?.let {
+                    it.text = "0"
+                }
+                fragment_account_personal_info_container_id?.let {
+                    it.visibility = View.VISIBLE
+                }
                 val age = "Age: ${info.userAge}"
                 val gender = "Gender: ${info.genderType}"
-                fragment_account_page_age_view_id.text = age
-                fragment_account_page_gender_view_id.text = gender
+                fragment_account_page_age_view_id?.let {
+                    it.text = age
+                }
+                fragment_account_page_gender_view_id?.let {
+                    it.text = gender
+                }
                 val height = "Height: ${info.userHeight}"
                 val weight = "Weight: ${info.userWeight}"
-                fragment_account_page_height_view_id.text = height
-                fragment_account_page_weight_view_id.text = weight
+                fragment_account_page_height_view_id?.let {
+                    it.text = height
+                }
+                fragment_account_page_weight_view_id?.let {
+                    it.text = weight
+                }
             }
         } else {
-            fragment_account_personal_info_container_id.visibility = View.GONE
+            fragment_account_personal_info_container_id?.let {
+                it.visibility = View.GONE
+            }
+            fragment_account_page_start_step_count_bt_id?.let {
+                it.visibility = View.VISIBLE
+            }
         }
     }
     private fun observeEvents(): Observer<Boolean> {
