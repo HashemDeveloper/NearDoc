@@ -27,8 +27,9 @@ class NotificationBuilder @Inject constructor():
     lateinit var iNotificationChanelBuilder: INotificationChanelBuilder
 
     override fun createNotification(notificationType: NotificationType, requestCode: Int, chanelId:
-    String, notificationId: Int, smallIcon: Int, bigIcon: Int, title: String, description: String, caloriesBurnedResult: Int) {
+    String, smallIcon: Int, bigIcon: Int, title: String, description: String, caloriesBurnedResult: Int): Notification {
         this.iNotificationChanelBuilder.createNotificationChannels(notificationType, chanelId)
+        val notification: Notification
         when (notificationType) {
             NotificationType.NOTIFICATION_REGULAR -> {
                 val data = Bundle()
@@ -42,7 +43,7 @@ class NotificationBuilder @Inject constructor():
                     .setArguments(data)
                     .createPendingIntent()
                 val bigPicture: Bitmap = BitmapFactory.decodeResource(this.context.resources, bigIcon)
-                val notification: Notification = NotificationCompat.Builder(this.context, chanelId)
+                notification = NotificationCompat.Builder(this.context, chanelId)
                     .setSmallIcon(smallIcon)
                     .setLargeIcon(bigPicture)
                     .setContentTitle(title)
@@ -53,7 +54,8 @@ class NotificationBuilder @Inject constructor():
                     .setContentIntent(pendingIntent)
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .build()
-                NotificationManagerCompat.from(this.context).notify(notificationId, notification)
+                NotificationManagerCompat.from(context).notify(Constants.STEP_COUNT_REGULAR_NOTIFICATION_ID, notification)
+                return notification
             }
             NotificationType.NOTIFICATION_FOREGROUND -> {
                 val data = Bundle()
@@ -66,7 +68,7 @@ class NotificationBuilder @Inject constructor():
                     .setGraph(R.navigation.nearby_doc_navigation)
                     .setDestination(R.id.accountPage)
                     .createPendingIntent()
-                val notification: Notification = NotificationCompat.Builder(this.context, chanelId)
+                notification = NotificationCompat.Builder(this.context, chanelId)
                     .setSmallIcon(smallIcon)
                     .setContentTitle(appName)
                     .setContentText(context.getString(R.string.foreground_step_count_running_message))
@@ -77,7 +79,7 @@ class NotificationBuilder @Inject constructor():
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setWhen(System.currentTimeMillis())
                     .build()
-                NotificationManagerCompat.from(this.context).notify(notificationId, notification)
+                return notification
             }
         }
     }

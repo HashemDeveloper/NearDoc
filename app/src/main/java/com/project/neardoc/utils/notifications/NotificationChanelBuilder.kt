@@ -28,7 +28,7 @@ class NotificationChanelBuilder @Inject constructor(): INotificationChanelBuilde
                         chanel!!.lightColor = ContextCompat.getColor(this.context, R.color.blue_gray_500)
                         chanel!!.setBypassDnd(true)
                         chanel!!.setShowBadge(true)
-                        chanel!!.description = "Turn on to get notification about how much calories you burn every day."
+                        chanel!!.description = context.getString(R.string.turn_on_step_count_notification_message)
                         chanel!!.lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
                         notificationManager.createNotificationChannel(chanel!!)
                         return@let
