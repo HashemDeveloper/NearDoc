@@ -126,15 +126,11 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
                 } else {
                     if (!this.isUserPersonalInfoAvailable) {
                         displayUserInfoForm()
-                    } else {
-                        this.accountPageViewModel.startStepCountService(activity!!)
                     }
                 }
             } else {
                 if (!this.isUserPersonalInfoAvailable) {
                     displayUserInfoForm()
-                } else {
-                    this.accountPageViewModel.startStepCountService(activity!!)
                 }
             }
         }
@@ -160,8 +156,9 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
                 fragment_account_step_counter_view_id.text = "0"
                 fragment_account_personal_info_container_id.visibility = View.VISIBLE
                 val age = "Age: ${info.userAge}"
+                val gender = "Gender: ${info.genderType}"
                 fragment_account_page_age_view_id.text = age
-                fragment_account_page_gender_view_id.text = info.genderType
+                fragment_account_page_gender_view_id.text = gender
                 val height = "Height: ${info.userHeight}"
                 val weight = "Weight: ${info.userWeight}"
                 fragment_account_page_height_view_id.text = height
@@ -188,10 +185,12 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         builder.setCancelable(false)
         builder.setPositiveButton(("Yes")) {d,k ->
             this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(true)
+            this.accountPageViewModel.startStepCountService(activity!!)
             d.dismiss()
         }
         builder.setNegativeButton(("No")) {d,k ->
             this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(false)
+            this.accountPageViewModel.startStepCountService(activity!!)
             d.dismiss()
         }
 
