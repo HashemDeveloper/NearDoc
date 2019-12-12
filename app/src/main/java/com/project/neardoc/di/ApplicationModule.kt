@@ -17,10 +17,7 @@ import com.project.neardoc.utils.calories.CalorieBurnedCalculator
 import com.project.neardoc.utils.calories.ICalorieBurnedCalculator
 import com.project.neardoc.utils.networkconnections.ConnectionStateMonitor
 import com.project.neardoc.utils.networkconnections.IConnectionStateMonitor
-import com.project.neardoc.utils.notifications.INotificationBuilder
-import com.project.neardoc.utils.notifications.INotificationScheduler
-import com.project.neardoc.utils.notifications.NotificationBuilder
-import com.project.neardoc.utils.notifications.NotificationScheduler
+import com.project.neardoc.utils.notifications.*
 import com.project.neardoc.utils.sensors.*
 import com.project.neardoc.utils.widgets.INearDockMessageViewer
 import com.project.neardoc.utils.widgets.NearDockMessageViewer
@@ -119,5 +116,10 @@ class ApplicationModule {
     @Provides
     fun provideUserInfoDb(dbService: LocalDBService): IUserInfoDao {
         return dbService.getUserInfoDao()
+    }
+    @Singleton
+    @Provides
+    fun provideNotificationChanelBuilder(notificationChanelBuilder: NotificationChanelBuilder): INotificationChanelBuilder {
+        return notificationChanelBuilder
     }
 }
