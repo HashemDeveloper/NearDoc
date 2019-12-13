@@ -64,29 +64,28 @@ class NotificationBuilder @Inject constructor():
                 return notification
             }
             NotificationType.NOTIFICATION_FOREGROUND -> {
-                val data = Bundle()
-                data.putBoolean(Constants.STEP_COUNT_FOREGROUND, true)
                 val pendingComponentName = ComponentName(this.context, NearDocMainActivity::class.java)
                 val appName: String = this.context.getString(R.string.app_name)
                 val intent = Intent(this.context, StepCountForegroundService::class.java)
-                val servicePendingIntent: PendingIntent = PendingIntent.getService(this.context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                intent.putExtra(Constants.STEP_COUNT_FOREGROUND, true)
+                val servicePendingIntent: PendingIntent = PendingIntent.getService(this.context,
+                    StepCountForegroundService.STEP_COUNT_FOREGROUND_SERVICE_REQ_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT)
                 val pendingIntent: PendingIntent = NavDeepLinkBuilder(this.context)
                     .setComponentName(pendingComponentName)
-                    .setArguments(data)
                     .setGraph(R.navigation.nearby_doc_navigation)
                     .setDestination(R.id.accountPage)
                     .createPendingIntent()
                 val builder: NotificationCompat.Builder = getNotificationBuilder(chanelId)
-                    .addAction(R.drawable.ic_cancel, context.getString(R.string.stop_step_counter), servicePendingIntent)
-                    .setSmallIcon(smallIcon)
-                    .setContentTitle(appName)
-                    .setContentText(context.getString(R.string.foreground_step_count_running_message))
-                    .setTicker(this.context.getString(R.string.foreground_step_count_running_message))
-                    .setOngoing(true)
-                    .setAutoCancel(true)
-                    .setContentIntent(pendingIntent)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .setWhen(System.currentTimeMillis())
+                    builder.addAction(R.drawable.ic_cancel, context.getString(R.string.stop_step_counter), servicePendingIntent)
+                    builder.setSmallIcon(smallIcon)
+                    builder.setContentTitle(appName)
+                    builder.setContentText(context.getString(R.string.foreground_step_count_running_message))
+                    builder.setTicker(this.context.getString(R.string.foreground_step_count_running_message))
+                    builder.setOngoing(true)
+                    builder.setAutoCancel(true)
+                    builder.setContentIntent(pendingIntent)
+                    builder.priority = NotificationCompat.PRIORITY_DEFAULT
+                    builder.setWhen(System.currentTimeMillis())
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     builder.setChannelId(chanelId)
                 }

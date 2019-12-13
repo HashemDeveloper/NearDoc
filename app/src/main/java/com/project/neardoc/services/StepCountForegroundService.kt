@@ -49,11 +49,14 @@ class StepCountForegroundService @Inject constructor() : Service(), CoroutineSco
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        val isStartedFromNotification: Boolean = intent!!.getBooleanExtra(Constants.STEP_COUNT_FOREGROUND, false)
-        if (isStartedFromNotification) {
-            stopSelf()
+        if (intent != null) {
+            val isStartedFromNotification: Boolean = intent.getBooleanExtra(Constants.STEP_COUNT_FOREGROUND, false)
+            if (isStartedFromNotification) {
+                stopSelf()
+            }
         }
-        return START_NOT_STICKY
+
+        return START_STICKY
     }
 
     private suspend fun dispatchForegroundService() {
