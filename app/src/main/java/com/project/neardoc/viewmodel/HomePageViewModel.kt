@@ -40,6 +40,7 @@ class HomePageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     private var stepCountForegroundService: StepCountForegroundService?= null
     private var mBound: Boolean = false
     private var isActivityStopped: Boolean = false
+    private var isForegroundServiceAvailable: Boolean = false
 
     override fun onCleared() {
         super.onCleared()
@@ -73,6 +74,7 @@ class HomePageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
                 if (BuildConfig.DEBUG) {
                     Log.i(TAG, "Running step count foreground service")
                 }
+                this.isForegroundServiceAvailable = true
                 startForegroundService()
             }
             Constants.SERVICE_BACKGROUND -> {
@@ -93,14 +95,16 @@ class HomePageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
         }
     }
     private fun bindService() {
-        try {
-            if (!this.mBound) {
-                bindOperator()
-            }
-        } catch (ex: Exception) {
-            if (BuildConfig.DEBUG) {
-                if (ex.localizedMessage != null) {
-                    Log.i(TAG, ex.localizedMessage!!)
+        if (this.isForegroundServiceAvailable) {
+            try {
+                if (!this.mBound) {
+                    bindOperator()
+                }
+            } catch (ex: Exception) {
+                if (BuildConfig.DEBUG) {
+                    if (ex.localizedMessage != null) {
+                        Log.i(TAG, ex.localizedMessage!!)
+                    }
                 }
             }
         }
@@ -113,30 +117,34 @@ class HomePageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     }
 
     fun unBindService() {
-        if (!this.mBound) {
-            try {
-                unBindOperator()
-                this.mBound = false
-                this.isActivityStopped = true
-            } catch (ex: Exception) {
-                if (BuildConfig.DEBUG) {
-                    if (ex.localizedMessage != null) {
-                        Log.i(TAG, ex.localizedMessage!!)
+        if (this.isForegroundServiceAvailable) {
+            if (!this.mBound) {
+                try {
+                    unBindOperator()
+                    this.mBound = false
+                    this.isActivityStopped = true
+                } catch (ex: Exception) {
+                    if (BuildConfig.DEBUG) {
+                        if (ex.localizedMessage != null) {
+                            Log.i(TAG, ex.localizedMessage!!)
+                        }
                     }
+                    startForegroundService()
                 }
-                startForegroundService()
             }
         }
     }
 
     fun reBindService() {
-        if (this.isActivityStopped && !this.mBound) {
-            try {
-                bindOperator()
-            } catch (ex: Exception) {
-                if (BuildConfig.DEBUG) {
-                    if (ex.localizedMessage != null) {
-                        Log.i(TAG, ex.localizedMessage!!)
+        if (this.isForegroundServiceAvailable) {
+            if (this.isActivityStopped && !this.mBound) {
+                try {
+                    bindOperator()
+                } catch (ex: Exception) {
+                    if (BuildConfig.DEBUG) {
+                        if (ex.localizedMessage != null) {
+                            Log.i(TAG, ex.localizedMessage!!)
+                        }
                     }
                 }
             }
@@ -144,13 +152,15 @@ class HomePageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     }
 
     fun stopBindService() {
-        if (isServiceRunning()) {
-            try {
-                unBindOperator()
-            } catch (ex: Exception) {
-                if (BuildConfig.DEBUG) {
-                    if (ex.localizedMessage != null) {
-                        Log.i(TAG, ex.localizedMessage!!)
+        if (this.isForegroundServiceAvailable) {
+            if (isServiceRunning()) {
+                try {
+                    unBindOperator()
+                } catch (ex: Exception) {
+                    if (BuildConfig.DEBUG) {
+                        if (ex.localizedMessage != null) {
+                            Log.i(TAG, ex.localizedMessage!!)
+                        }
                     }
                 }
             }
