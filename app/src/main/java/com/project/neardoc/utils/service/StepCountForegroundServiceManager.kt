@@ -50,14 +50,12 @@ class StepCountForegroundServiceManager @Inject constructor(): IStepCountForegro
             if (this.isActivityStopped && !this.mBound) {
                 try {
                     bindOperator()
-                    this.mBound = false
                 } catch (ex: Exception) {
                     if (BuildConfig.DEBUG) {
                         if (ex.localizedMessage != null) {
                             Log.i(TAG, ex.localizedMessage!!)
                         }
                     }
-                    startForegroundService()
                 }
             }
         }
@@ -76,6 +74,7 @@ class StepCountForegroundServiceManager @Inject constructor(): IStepCountForegro
                             Log.i(TAG, ex.localizedMessage!!)
                         }
                     }
+                    startForegroundService()
                 }
             }
         }
