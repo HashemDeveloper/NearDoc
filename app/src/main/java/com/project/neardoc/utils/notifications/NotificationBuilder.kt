@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
@@ -15,6 +16,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavDeepLinkBuilder
 import com.project.neardoc.NearDocMainActivity
 import com.project.neardoc.R
+import com.project.neardoc.services.StepCountForegroundService
 import com.project.neardoc.utils.Constants
 import javax.inject.Inject
 
@@ -63,9 +65,11 @@ class NotificationBuilder @Inject constructor():
             }
             NotificationType.NOTIFICATION_FOREGROUND -> {
                 val data = Bundle()
-                data.putString(Constants.STEP_COUNT_FOREGROUND, "STEP_COUNT_FOREGROUND")
+                data.putBoolean(Constants.STEP_COUNT_FOREGROUND, true)
                 val pendingComponentName = ComponentName(this.context, NearDocMainActivity::class.java)
                 val appName: String = this.context.getString(R.string.app_name)
+                val intent = Intent(this.context, StepCountForegroundService::class.java)
+                val servicePendingIntent: PendingIntent = PendingIntent.getService(this.context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
                 val pendingIntent: PendingIntent = NavDeepLinkBuilder(this.context)
                     .setComponentName(pendingComponentName)
                     .setArguments(data)
@@ -73,6 +77,7 @@ class NotificationBuilder @Inject constructor():
                     .setDestination(R.id.accountPage)
                     .createPendingIntent()
                 val builder: NotificationCompat.Builder = getNotificationBuilder(chanelId)
+                    .addAction(R.drawable.ic_cancel, context.getString(R.string.stop_step_counter), servicePendingIntent)
                     .setSmallIcon(smallIcon)
                     .setContentTitle(appName)
                     .setContentText(context.getString(R.string.foreground_step_count_running_message))
