@@ -51,7 +51,7 @@ class HomePage: Fragment(), Injectable, IPermissionListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
-        this.homePageViewModel.startStepCountService(activity!!)
+        this.homePageViewModel.startStepCountService()
     }
 
     override fun onCreateView(
@@ -115,6 +115,7 @@ class HomePage: Fragment(), Injectable, IPermissionListener {
         this.iLocationService.setPermissionListener(this)
         observeLocationUpdates()
         EventBus.getDefault().register(this)
+        this.homePageViewModel.unBindService()
     }
     private fun observeLocationUpdates() {
         this.iLocationService.getObserver().observe(this, Observer {location ->
@@ -132,6 +133,12 @@ class HomePage: Fragment(), Injectable, IPermissionListener {
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
+        this.homePageViewModel.reBindService()
+    }
+
+    override fun onDestroy() {
+        this.homePageViewModel.stopBindService()
+        super.onDestroy()
     }
 
     override fun requestPermission() {
