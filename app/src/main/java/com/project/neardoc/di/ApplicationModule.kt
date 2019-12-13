@@ -19,6 +19,8 @@ import com.project.neardoc.utils.networkconnections.ConnectionStateMonitor
 import com.project.neardoc.utils.networkconnections.IConnectionStateMonitor
 import com.project.neardoc.utils.notifications.*
 import com.project.neardoc.utils.sensors.*
+import com.project.neardoc.utils.service.StepCountForegroundServiceManager
+import com.project.neardoc.utils.service.IStepCountForegroundServiceManager
 import com.project.neardoc.utils.widgets.INearDockMessageViewer
 import com.project.neardoc.utils.widgets.NearDockMessageViewer
 import dagger.Module
@@ -121,5 +123,10 @@ class ApplicationModule {
     @Provides
     fun provideNotificationChanelBuilder(notificationChanelBuilder: NotificationChanelBuilder): INotificationChanelBuilder {
         return notificationChanelBuilder
+    }
+    @Singleton
+    @Provides
+    fun provideForegroundServiceManager(foregroundServiceManager: StepCountForegroundServiceManager): IStepCountForegroundServiceManager {
+        return foregroundServiceManager
     }
 }

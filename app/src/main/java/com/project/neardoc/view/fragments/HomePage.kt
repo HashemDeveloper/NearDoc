@@ -12,7 +12,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.project.neardoc.R
@@ -33,7 +33,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
-class HomePage: Fragment(), Injectable, IPermissionListener {
+class HomePage: Fragment(), Injectable, IPermissionListener, LifecycleObserver {
     companion object {
         private const val LOCATION_UPDATE_REQUEST_CODE = 34
         private const val ACCESS_COARSE_AND_FINE_LOCATION_CODE = 1
@@ -51,7 +51,7 @@ class HomePage: Fragment(), Injectable, IPermissionListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
-        this.homePageViewModel.startStepCountService(activity!!)
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
     }
 
     override fun onCreateView(
@@ -132,6 +132,22 @@ class HomePage: Fragment(), Injectable, IPermissionListener {
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    fun onActivityCreate() {
+        this.homePageViewModel.startStepCountService()
+    }
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onActivityStart() {
+        this.homePageViewModel.unBindOnActivityStart()
+    }
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onActivityStop() {
+        this.homePageViewModel.bindOnActivityStop()
     }
 
     override fun requestPermission() {

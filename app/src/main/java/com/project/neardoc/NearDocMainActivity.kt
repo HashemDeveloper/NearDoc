@@ -29,6 +29,7 @@ import com.project.neardoc.events.*
 import com.project.neardoc.services.StepCounterService
 import com.project.neardoc.utils.networkconnections.IConnectionStateMonitor
 import com.project.neardoc.utils.networkconnections.NearDocNetworkType
+import com.project.neardoc.utils.service.IStepCountForegroundServiceManager
 import com.project.neardoc.utils.widgets.PageType
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -51,6 +52,8 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
     @Inject
     lateinit var iUserStateService: IUserStateService
+    @Inject
+    lateinit var iStepCountForegroundServiceManager: IStepCountForegroundServiceManager
 
     private lateinit var navController: NavController
     private var isWifiConnected = false
@@ -395,6 +398,7 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
                             if (BuildConfig.DEBUG) {
                                 Log.i(TAG, "Running step count foreground service")
                             }
+                            this.iStepCountForegroundServiceManager.startForegroundService()
                         }
                         Constants.SERVICE_BACKGROUND -> {
                             if (BuildConfig.DEBUG) {
