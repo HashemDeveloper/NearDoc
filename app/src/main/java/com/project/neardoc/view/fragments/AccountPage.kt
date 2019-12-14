@@ -72,7 +72,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     private var dialogUserInfoMainContainerView: ScrollView?= null
     private var rootDialog: AlertDialog?= null
     private var isUserPersonalInfoAvailable = false
-    private val userPersonalInfo: UserPersonalInfo?= null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -157,7 +157,12 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
                 }
 
                 fragment_account_step_counter_view_id?.let {
-                    it.text = "0"
+                    val totalStepCount: Int = this.accountPageViewModel.getTotalStepCounted()
+                    if (totalStepCount > 0) {
+                        it.text = totalStepCount.toString()
+                    } else {
+                        it.text = "0"
+                    }
                 }
                 fragment_account_personal_info_container_id?.let {
                     it.visibility = View.VISIBLE
@@ -371,7 +376,12 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
             displayUserInfoForm()
         } else {
             fragment_account_page_start_step_count_bt_id.visibility = View.GONE
-            fragment_account_step_counter_view_id.text = "0"
+            val totalStepCount: Int = this.accountPageViewModel.getTotalStepCounted()
+            if (totalStepCount > 0) {
+                fragment_account_step_counter_view_id.text = totalStepCount.toString()
+            } else {
+                fragment_account_step_counter_view_id.text = "0"
+            }
             fragment_account_personal_info_container_id.visibility = View.VISIBLE
             this.accountPageViewModel.getUserInfoLiveData().observe(activity!!, userPersonalInfoObserver())
         }

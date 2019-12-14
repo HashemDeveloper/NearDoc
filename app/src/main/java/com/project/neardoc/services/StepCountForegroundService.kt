@@ -9,8 +9,13 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import com.project.neardoc.R
+import com.project.neardoc.data.local.ISharedPrefService
+import com.project.neardoc.data.local.IUserInfoDao
+import com.project.neardoc.model.localstoragemodels.UserPersonalInfo
 import com.project.neardoc.utils.Constants
+import com.project.neardoc.utils.calories.ICalorieBurnedCalculator
 import com.project.neardoc.utils.notifications.INotificationBuilder
+import com.project.neardoc.utils.notifications.INotificationScheduler
 import com.project.neardoc.utils.notifications.NotificationType
 import com.project.neardoc.utils.sensors.IStepCountSensor
 import dagger.android.AndroidInjection
@@ -25,7 +30,14 @@ class StepCountForegroundService @Inject constructor() : Service(), CoroutineSco
         @JvmStatic
         private val CHANEL_ID = "STEP_COUNT_FOREGROUND"
     }
-
+    @Inject
+    lateinit var iNotificationScheduler: INotificationScheduler
+    @Inject
+    lateinit var iCalorieBurnedCalculator: ICalorieBurnedCalculator
+    @Inject
+    lateinit var iUserInfoDao: IUserInfoDao
+    @Inject
+    lateinit var iSharedPrefService: ISharedPrefService
     @Inject
     lateinit var context: Context
     @Inject
@@ -55,8 +67,26 @@ class StepCountForegroundService @Inject constructor() : Service(), CoroutineSco
                 stopSelf()
             }
         }
+        launch {
+            scheduleRegularNotification()
+        }
 
         return START_STICKY
+    }
+    private suspend fun scheduleRegularNotification() {
+        withContext(Dispatchers.IO) {
+            launch {
+                val stepCount: Int = iSharedPrefService.getLastStepCountValue()
+                val email: String = iSharedPrefService.getUserEmail()
+                val userPersonalInfo: UserPersonalInfo = iUserInfoDao.getUserByEmail(email)
+                val height: Double = userPersonalInfo.userHeight
+                val weight: Double = userPersonalInfo.userWeight
+                val burnedCalories: Double = iCalorieBurnedCalculator.calculateCalorieBurned(height, weight, stepCount)
+                iNotificationScheduler.scheduleJob(Constants.STEP_COUNTER_SERVICE_ACTION,
+                    StepCounterService.STEP_COUNT_NOTIFICATION_REQ_CODE,
+                    1, 0, burnedCalories.toInt())
+            }
+        }
     }
 
     private suspend fun dispatchForegroundService() {
