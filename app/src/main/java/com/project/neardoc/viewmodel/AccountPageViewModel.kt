@@ -1,6 +1,7 @@
 package com.project.neardoc.viewmodel
 
 import android.content.Context
+import android.content.DialogInterface
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -30,10 +31,7 @@ import com.project.neardoc.utils.sensors.IDeviceSensors
 import com.project.neardoc.utils.widgets.PageType
 import com.ramotion.fluidslider.FluidSlider
 import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import java.text.MessageFormat
 import javax.inject.Inject
@@ -270,8 +268,30 @@ class AccountPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
         return this.userPersonalInfoLiveData
     }
 
-    fun stepCountServiceShouldRunOnFgOrBg(service: String) {
-        this.iSharedPrefService.saveStepCountServiceType(service)
+    fun stepCountServiceShouldRunOnFgOrBg(
+        service: String,
+        d: DialogInterface
+    ) {
+        launch {
+            saveStepCountServiceTypeOnSeparateThread(service)
+        }.invokeOnCompletion {
+            if (it != null && it.localizedMessage != null) {
+                if (BuildConfig.DEBUG) {
+                    Log.i(TAG, it.localizedMessage!!)
+                }
+            } else {
+                d.dismiss()
+            }
+        }
+    }
+    private suspend fun saveStepCountServiceTypeOnSeparateThread(service: String) {
+        withContext(Dispatchers.IO) {
+            iSharedPrefService.saveStepCountServiceType(service)
+        }
+    }
+
+    fun checkIfAnyServiceRunning(): Boolean {
+        return this.iSharedPrefService.getStepCountServiceType() == Constants.SERVICE_FOREGROUND || this.iSharedPrefService.getStepCountServiceType() == Constants.SERVICE_BACKGROUND
     }
 
     override val coroutineContext: CoroutineContext

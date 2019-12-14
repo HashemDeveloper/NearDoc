@@ -103,9 +103,6 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        this.accountPageViewModel.init()
-        this.accountPageViewModel.getIsAnyEventTriggered().observe(activity!!, observeEvents())
-        this.accountPageViewModel.getUserInfoLiveData().observe(activity!!, userPersonalInfoObserver())
         this.accountPageViewModel.setupUserProfile(context!!, fragment_account_user_image_view_id, fragment_account_user_name_id,
             fragment_account_user_email_view_id, fragment_account_user_location_view_id)
         this.accountPageViewModel.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id, fragment_step_count_parent_layout)
@@ -194,7 +191,10 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     private fun observeEvents(): Observer<Boolean> {
         return Observer { event ->
             if (event) {
-                stepCountWarnDialog()
+                val isAnyServiceRunning: Boolean = this.accountPageViewModel.checkIfAnyServiceRunning()
+                if (!isAnyServiceRunning) {
+                    stepCountWarnDialog()
+                }
             } else {
                 if (BuildConfig.DEBUG) {
                     Log.i(TAG, "Failed to save user data")
@@ -203,25 +203,31 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         }
     }
     private fun stepCountWarnDialog() {
-        val builder: AlertDialog.Builder = AlertDialog.Builder(this.activity!!)
-        builder.setTitle(R.string.step_count_service_start_message)
-        builder.setCancelable(false)
-        builder.setPositiveButton(("Yes")) {d,k ->
-            this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(Constants.SERVICE_FOREGROUND)
-            d.dismiss()
+        val alertDialog: AlertDialog? = activity?.let {
+            val builder: AlertDialog.Builder = AlertDialog.Builder(it)
+            builder.apply {
+                setTitle(R.string.step_count_service_start_message)
+                setPositiveButton("Yes", null)
+                setNegativeButton("No", null)
+            }
+            builder.create()
         }
-        builder.setNegativeButton(("No")) {d,k ->
-            this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(Constants.SERVICE_BACKGROUND)
-            d.dismiss()
+        alertDialog?.let {
+            it.setOnShowListener {
+                val yesBt: Button = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+                val noBt: Button = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+                yesBt.setTextColor(ContextCompat.getColor(this.context!!, R.color.blue_500))
+                noBt.setTextColor(ContextCompat.getColor(this.context!!, R.color.purple_400))
+                yesBt.setOnClickListener {
+                    this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(Constants.SERVICE_FOREGROUND, alertDialog)
+                }
+                noBt.setOnClickListener {
+                    this.accountPageViewModel.stepCountServiceShouldRunOnFgOrBg(Constants.SERVICE_BACKGROUND, alertDialog)
+                }
+            }
+            it.setCanceledOnTouchOutside(false)
+            it.show()
         }
-
-        val alertDialog: AlertDialog = builder.create()
-        alertDialog.setCanceledOnTouchOutside(false)
-        alertDialog.show()
-        val yesBt: Button = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
-        val noBt: Button = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
-        yesBt.setTextColor(ContextCompat.getColor(this.context!!, R.color.blue_500))
-        noBt.setTextColor(ContextCompat.getColor(this.context!!, R.color.purple_400))
     }
 
     private fun displayCaloriesBurnedDialog(caloriesBurned: Int, totalStepTaken: Int, gender: GenderType) {
