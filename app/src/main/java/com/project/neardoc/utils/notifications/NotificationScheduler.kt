@@ -32,8 +32,8 @@ class NotificationScheduler @Inject constructor(private val context: Context) :
             this.context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,
-            1000L,
-            1000L,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
             pendingIntent
         )
     }

@@ -84,7 +84,7 @@ class StepCountForegroundService @Inject constructor() : Service(), CoroutineSco
                 val burnedCalories: Double = iCalorieBurnedCalculator.calculateCalorieBurned(height, weight, stepCount)
                 iNotificationScheduler.scheduleJob(Constants.STEP_COUNTER_SERVICE_ACTION,
                     StepCounterService.STEP_COUNT_NOTIFICATION_REQ_CODE,
-                    1, 0, burnedCalories.toInt())
+                    13, 18, burnedCalories.toInt())
             }
         }
     }
