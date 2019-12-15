@@ -236,7 +236,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     }
 
     private fun displayCaloriesBurnedDialog(caloriesBurned: Int, totalStepTaken: Int, gender: GenderType) {
-        var calorieBurnGoalPerDay: Int? = null
+        var calorieBurnGoalPerDay: Int?
         calorieBurnGoalPerDay = when (gender) {
             GenderType.MALE -> {
                 2000
@@ -277,7 +277,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         val stepsTakenMessage = "$totalStepTaken Steps Taken"
         val caloriesBurnedMessage = "$caloriesBurned Calories Burned"
         val goalMessage = "Your Goal $calorieBurnGoalPerDay"
-        caloriesStatProgressView.progress =  totalStepTaken
+        caloriesStatProgressView.progress =  caloriesBurned
 
         goalView.text = goalMessage
         caloriesBurnedTextView.text = caloriesBurnedMessage

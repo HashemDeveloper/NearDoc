@@ -7,6 +7,7 @@ import android.content.Intent
 import com.project.neardoc.broadcast.NearDocBroadcastReceiver
 import com.project.neardoc.utils.Constants
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -14,10 +15,11 @@ class NotificationScheduler @Inject constructor(private val context: Context) :
     INotificationScheduler {
 
     override fun scheduleJob(action: String, requestCode: Int,  min: Int, hr: Int, result: Int) {
-        val calendar: Calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY, hr)
-        calendar.set(Calendar.MINUTE, min)
-        calendar.set(Calendar.SECOND, 0)
+        val calendar: Calendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(Calendar.HOUR_OF_DAY, hr)
+            set(Calendar.MINUTE, min)
+        }
         cancelJob(action, requestCode)
         val broadCastIntent = Intent(this.context, NearDocBroadcastReceiver::class.java)
             .putExtra(Constants.STEP_COUNT_VALUE, result)

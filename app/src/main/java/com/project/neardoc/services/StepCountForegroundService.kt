@@ -67,9 +67,6 @@ class StepCountForegroundService @Inject constructor() : Service(), CoroutineSco
                 stopSelf()
             }
         }
-        launch {
-            scheduleRegularNotification()
-        }
 
         return START_STICKY
     }
@@ -84,7 +81,7 @@ class StepCountForegroundService @Inject constructor() : Service(), CoroutineSco
                 val burnedCalories: Double = iCalorieBurnedCalculator.calculateCalorieBurned(height, weight, stepCount)
                 iNotificationScheduler.scheduleJob(Constants.STEP_COUNTER_SERVICE_ACTION,
                     StepCounterService.STEP_COUNT_NOTIFICATION_REQ_CODE,
-                    13, 18, burnedCalories.toInt())
+                    2, 0, burnedCalories.toInt())
             }
         }
     }

@@ -5,18 +5,25 @@ import android.content.Intent
 import android.location.Address
 import android.location.Geocoder
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import androidx.work.*
 import com.project.neardoc.BuildConfig
 import com.project.neardoc.data.local.ISharedPrefService
+import com.project.neardoc.data.local.IUserInfoDao
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
+import com.project.neardoc.model.localstoragemodels.UserPersonalInfo
 import com.project.neardoc.services.StepCounterService
 import com.project.neardoc.utils.Constants
+import com.project.neardoc.utils.calories.ICalorieBurnedCalculator
+import com.project.neardoc.utils.notifications.INotificationScheduler
 import com.project.neardoc.utils.service.IStepCountForegroundServiceManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import com.project.neardoc.worker.StepCountNotificationWorker
+import kotlinx.coroutines.*
 import java.io.IOException
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -34,10 +41,6 @@ class HomePageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     lateinit var iStepCountForegroundServiceManager: IStepCountForegroundServiceManager
     private val job = Job()
     private var geoCoder: Geocoder?= null
-
-    override fun onCleared() {
-        super.onCleared()
-    }
 
     override val coroutineContext: CoroutineContext
         get() = this.job + Dispatchers.Main
@@ -91,5 +94,8 @@ class HomePageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     }
     private fun checkIfStepCountForegroundAvailable(): Boolean {
         return this.iSharedPrefService.getStepCountServiceType() == Constants.SERVICE_FOREGROUND
+    }
+    override fun onCleared() {
+        super.onCleared()
     }
 }

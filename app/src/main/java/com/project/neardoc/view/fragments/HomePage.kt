@@ -20,6 +20,7 @@ import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.LocationUpdateEvent
 import com.project.neardoc.events.NetworkStateEvent
+import com.project.neardoc.events.SetupStepCountNotificationEvent
 import com.project.neardoc.utils.networkconnections.ConnectionSettings
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.ILocationService

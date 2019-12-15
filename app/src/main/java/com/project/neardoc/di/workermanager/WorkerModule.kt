@@ -10,7 +10,7 @@ import dagger.multibindings.IntoMap
 
 @Module(subcomponents = [LoginWorkerComponent::class, RegistrationWorkerComponent::class, FetchUserWorkerComponent::class,
 UpdateEmailWorkerComponent::class, UpdateUserWorkerComponent::class, UpdatePasswordWorkerComponent::class, DeleteUsernameWorkerComponent::class,
-DeleteUserInfoWorkerComponent::class, DeleteAccountWorkerComponent::class, LocationUpdateWorkerComponent::class])
+DeleteUserInfoWorkerComponent::class, DeleteAccountWorkerComponent::class, LocationUpdateWorkerComponent::class, StepCountNotificationWorkerComponent::class])
 abstract class WorkerModule {
     @Binds
     @IntoMap
@@ -52,4 +52,8 @@ abstract class WorkerModule {
     @IntoMap
     @WorkerKey(LocationUpdateWorker::class)
     abstract fun buildLocationUpdateWorkerFactory(locationUpdateWorkerComponent: LocationUpdateWorkerComponent.Builder): AndroidInjector.Factory<out Worker>
+    @Binds
+    @IntoMap
+    @WorkerKey(StepCountNotificationWorker::class)
+    abstract fun buildStepCountNotificationWorkerFactory(stepCountNotificationWorkerComponent: StepCountNotificationWorkerComponent.Builder): AndroidInjector.Factory<out Worker>
 }
