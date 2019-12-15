@@ -236,8 +236,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     }
 
     private fun displayCaloriesBurnedDialog(caloriesBurned: Int, totalStepTaken: Int, gender: GenderType) {
-        var calorieBurnGoalPerDay: Int?
-        calorieBurnGoalPerDay = when (gender) {
+        val calorieBurnGoalPerDay: Int? = when (gender) {
             GenderType.MALE -> {
                 2000
             }
@@ -493,6 +492,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     fun onSilentNotificationEvent(event: NotifySilentEvent) {
         if (event.getHasNotification()) {
             val totalStepCount: Int = this.accountPageViewModel.getTotalStepCounted()
+            this.accountPageViewModel.flashStepCounter()
             val caloriesBurnedResult: Int = event.getCaloriesBurnedResult()
             displayCaloriesBurnedDialog(caloriesBurnedResult, totalStepCount, GenderType.MALE)
         }
