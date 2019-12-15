@@ -129,4 +129,9 @@ class ApplicationModule {
     fun provideForegroundServiceManager(foregroundServiceManager: StepCountForegroundServiceManager): IStepCountForegroundServiceManager {
         return foregroundServiceManager
     }
+    @Singleton
+    @Provides
+    fun provideScheduleNotificationManager(scheduleNotificationManager: ScheduleNotificationManager): IScheduleNotificationManager {
+        return scheduleNotificationManager
+    }
 }
