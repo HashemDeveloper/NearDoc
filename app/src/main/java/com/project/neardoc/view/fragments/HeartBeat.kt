@@ -10,13 +10,18 @@ import android.os.PowerManager
 import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.project.neardoc.BuildConfig
+import androidx.navigation.Navigation
+import com.bumptech.glide.Glide
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
+import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.utils.heartbeats.HeartBeatIndicatorType
 import com.project.neardoc.utils.heartbeats.IImageProcessor
 import com.project.neardoc.utils.widgets.HeartBeatsView
+import com.project.neardoc.viewmodel.HeartBeatViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_heart_beat.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -42,6 +47,11 @@ class HeartBeat : Fragment(), Injectable, HeartBeatsView.OnRequestHeartBeatIndic
 
     @Inject
     lateinit var iImageProcessor: IImageProcessor
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    private val heartBeatViewModel: HeartBeatViewModel by viewModels {
+        this.viewModelFactory
+    }
     private var preview: SurfaceView? = null
     private var previewHolder: SurfaceHolder? = null
     private var camera: Camera? = null
@@ -56,10 +66,16 @@ class HeartBeat : Fragment(), Injectable, HeartBeatsView.OnRequestHeartBeatIndic
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
-        val powerManager: PowerManager? = this.context!!.getSystemService(Context.POWER_SERVICE) as PowerManager
-        if (powerManager != null) {
-            powerManager.let {
-                this.wakeLock = it.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG +": DoNotDimScreen")
+        (context!!.getSystemService(Context.POWER_SERVICE) as PowerManager).let {
+            this.wakeLock = it.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "$TAG: DoNotDimScreen")
+        }
+        this.heartBeatViewModel.init()
+        this.heartBeatViewModel.getUserImageLiveData().observe(activity!!, userDataLiveDataObserver())
+    }
+    private fun userDataLiveDataObserver(): Observer<String> {
+        return Observer {
+            if (it.isNotEmpty()) {
+                Glide.with(this.context!!).load(it).into(fragment_heart_beat_user_image_view_id)
             }
         }
     }
@@ -93,8 +109,8 @@ class HeartBeat : Fragment(), Injectable, HeartBeatsView.OnRequestHeartBeatIndic
         fragment_heart_beat_heart_view_id?.let {
             this.heartBeatView = it
         }
-        fragment_heart_beat_back_bt_id?.let {
-            it.setOnClickListener {
+        fragment_heart_beat_back_bt_id?.let { bt ->
+            bt.setOnClickListener {
                 Navigation.findNavController(it).navigate(R.id.accountPage)
             }
         }
@@ -131,6 +147,11 @@ class HeartBeat : Fragment(), Injectable, HeartBeatsView.OnRequestHeartBeatIndic
         this.camera = null
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        this.heartBeatViewModel.getUserImageLiveData().removeObserver(userDataLiveDataObserver())
+    }
+
     override fun requestHeartBeatIndicator(): Bitmap {
         val indicatorIcon: Bitmap? = when (getIndicatorType()) {
             HeartBeatIndicatorType.GREEN -> {
@@ -151,9 +172,6 @@ class HeartBeat : Fragment(), Injectable, HeartBeatsView.OnRequestHeartBeatIndic
         paramters.flashMode = Camera.Parameters.FLASH_MODE_TORCH
         val size: Camera.Size = getSmallestPreviewSize(width, height, paramters)!!
         paramters.setPreviewSize(size.width, size.height)
-        if (BuildConfig.DEBUG) {
-            Log.i(TAG, "{SurfaceChanged} using widht ${size.width} & Using height ${size.height}")
-        }
         this.camera!!.parameters = paramters
         this.camera!!.startPreview()
     }

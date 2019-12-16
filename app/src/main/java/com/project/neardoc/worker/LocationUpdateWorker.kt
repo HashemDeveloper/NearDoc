@@ -8,6 +8,7 @@ import androidx.work.Data
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.google.android.gms.location.*
+import com.project.neardoc.BuildConfig
 import com.project.neardoc.di.workermanager.NearDocWorkerInjection
 import com.project.neardoc.utils.Constants
 import java.lang.Exception
@@ -76,7 +77,9 @@ class LocationUpdateWorker @Inject constructor(private val context: Context, wor
             try {
                 this.countDownLatch.await()
             } catch (interruptedEx: InterruptedException) {
-                Log.i("InterruptedEx: ", interruptedEx.localizedMessage!!)
+                if (BuildConfig.DEBUG) {
+                    Log.i("InterruptedEx: ", interruptedEx.localizedMessage!!)
+                }
             }
             outputData = createOutPutData(lat!!, lon!!)
         } catch (ex: Exception) {
