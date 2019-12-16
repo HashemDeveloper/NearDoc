@@ -20,6 +20,8 @@ import kotlin.coroutines.CoroutineContext
 class ScheduleNotificationManager @Inject constructor(): IScheduleNotificationManager, CoroutineScope {
     companion object {
        @JvmStatic private val TAG: String = ScheduleNotificationManager::class.java.canonicalName!!
+       @JvmStatic private val MIN_PERIODIC_INTERVAL_MILLIS: Long = 20L
+       @JvmStatic private val MIN_PERIODIC_FLEX_MILLIS: Long = 18L
     }
     @Inject
     lateinit var context: Context

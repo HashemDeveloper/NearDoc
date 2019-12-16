@@ -15,6 +15,8 @@ import com.project.neardoc.rxeventbus.RxEventBus
 import com.project.neardoc.utils.*
 import com.project.neardoc.utils.calories.CalorieBurnedCalculator
 import com.project.neardoc.utils.calories.ICalorieBurnedCalculator
+import com.project.neardoc.utils.heartbeats.IImageProcessor
+import com.project.neardoc.utils.heartbeats.ImageProcessor
 import com.project.neardoc.utils.networkconnections.ConnectionStateMonitor
 import com.project.neardoc.utils.networkconnections.IConnectionStateMonitor
 import com.project.neardoc.utils.notifications.*
@@ -133,5 +135,10 @@ class ApplicationModule {
     @Provides
     fun provideScheduleNotificationManager(scheduleNotificationManager: ScheduleNotificationManager): IScheduleNotificationManager {
         return scheduleNotificationManager
+    }
+    @Singleton
+    @Provides
+    fun provideImageProcessorForHeartBeats(imageProcessor: ImageProcessor): IImageProcessor {
+        return imageProcessor
     }
 }

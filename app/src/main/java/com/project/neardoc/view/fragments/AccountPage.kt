@@ -2,6 +2,7 @@ package com.project.neardoc.view.fragments
 
 
 import android.Manifest
+import android.animation.StateListAnimator
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.pm.PackageManager
@@ -20,6 +21,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
@@ -57,6 +59,7 @@ import javax.inject.Inject
 class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     companion object {
         const val ACTIVITY_RECOGNITION_REQ_CODE: Int = 2
+        const val CAMERA_REQUEST_CODE: Int = 200
         @JvmStatic
         private val TAG: String = AccountPage::class.java.canonicalName!!
     }
@@ -236,8 +239,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     }
 
     private fun displayCaloriesBurnedDialog(caloriesBurned: Int, totalStepTaken: Int, gender: GenderType) {
-        var calorieBurnGoalPerDay: Int?
-        calorieBurnGoalPerDay = when (gender) {
+        val calorieBurnGoalPerDay: Int? = when (gender) {
             GenderType.MALE -> {
                 2000
             }
@@ -340,14 +342,25 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     }
 
     override fun onMenuItemClick(view: View?, position: Int) {
-        if (view!!.id == R.id.account_signout_bt) {
-            signOut()
-        } else if (view.id == R.id.account_heart_rate_bt) {
-            Toast.makeText(this.context, "Heart rate", Toast.LENGTH_SHORT).show()
-        } else if (view.id == R.id.account_edit_personal_info_bt) {
-            displayUserInfoForm()
+        when {
+            view!!.id == R.id.account_signout_bt -> {
+                signOut()
+            }
+            view.id == R.id.account_heart_rate_bt -> {
+                if (ActivityCompat.checkSelfPermission(this.context!!, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(arrayOf(Manifest.permission.CAMERA), CAMERA_REQUEST_CODE)
+                } else {
+                    view.let {
+                        Navigation.findNavController(it).navigate(R.id.heartBeat)
+                    }
+                }
+            }
+            view.id == R.id.account_edit_personal_info_bt -> {
+                displayUserInfoForm()
+            }
         }
     }
+
     private fun signOut() {
         this.accountPageViewModel.signOut()
         val navigateToWelcome = findNavController()
@@ -366,6 +379,11 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
               } else {
                   fragment_account_page_start_step_count_bt_id.visibility = View.VISIBLE
               }
+           }
+       } else if (requestCode == CAMERA_REQUEST_CODE) {
+           if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+               val heartBeatController: NavController = findNavController()
+               heartBeatController.navigate(R.id.heartBeat)
            }
        }
     }
@@ -493,6 +511,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     fun onSilentNotificationEvent(event: NotifySilentEvent) {
         if (event.getHasNotification()) {
             val totalStepCount: Int = this.accountPageViewModel.getTotalStepCounted()
+            this.accountPageViewModel.flashStepCounter()
             val caloriesBurnedResult: Int = event.getCaloriesBurnedResult()
             displayCaloriesBurnedDialog(caloriesBurnedResult, totalStepCount, GenderType.MALE)
         }
