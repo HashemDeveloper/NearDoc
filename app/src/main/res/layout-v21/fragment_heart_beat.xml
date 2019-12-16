@@ -10,8 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <SurfaceView
+            android:id="@+id/fragment_heart_beat_surface_view_id"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            />
     </FrameLayout>
     <LinearLayout
         android:id="@+id/fragment_heart_beat_ui_container_id"
@@ -27,12 +29,10 @@
             android:src="@drawable/ic_user_black_24dp"
             android:layout_gravity="center_horizontal"
             />
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/fragment_heart_beat_indicator_icon_view_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/heart_rate_24_white"
-            app:tint="@color/green_800"
+        <com.project.neardoc.utils.widgets.HeartBeatsView
+            android:id="@+id/fragment_heart_beat_heart_view_id"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="center_horizontal"
             />
         <com.google.android.material.textview.MaterialTextView
@@ -51,12 +51,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="32dp"
-        android:layout_marginLeft="@dimen/padding_16dp"
         android:src="@drawable/arrow_normal_left"
         app:tint="@color/white"
         android:layout_alignParentStart="true"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
-        android:layout_alignParentLeft="true"
         android:layout_marginStart="@dimen/padding_16dp" />
 </RelativeLayout>
