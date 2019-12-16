@@ -40,19 +40,18 @@ class ScheduleNotificationManager @Inject constructor(): IScheduleNotificationMa
         var workManager: WorkManager?= null
         withContext(Dispatchers.IO) {
             launch {
-                val stepCount: Int = iSharedPrefService.getLastStepCountValue()
-                val email: String = iSharedPrefService.getUserEmail()
-                val userPersonalInfo: UserPersonalInfo = iUserInfoDao.getUserByEmail(email)
-                val height: Double = userPersonalInfo.userHeight
-                val weight: Double = userPersonalInfo.userWeight
-                val burnedCalories: Double = iCalorieBurnedCalculator.calculateCalorieBurned(height, weight, stepCount)
-                val data: Data = Data.Builder()
-                    .putInt(Constants.STEP_COUNT_VALUE, burnedCalories.toInt())
-                    .build()
+//                val stepCount: Int = iSharedPrefService.getLastStepCountValue()
+//                val email: String = iSharedPrefService.getUserEmail()
+//                val userPersonalInfo: UserPersonalInfo = iUserInfoDao.getUserByEmail(email)
+//                val height: Double = userPersonalInfo.userHeight
+//                val weight: Double = userPersonalInfo.userWeight
+//                val burnedCalories: Double = iCalorieBurnedCalculator.calculateCalorieBurned(height, weight, stepCount)
+//                val data: Data = Data.Builder()
+//                    .putInt(Constants.STEP_COUNT_VALUE, burnedCalories.toInt())
+//                    .build()
                 notificationRequest = PeriodicWorkRequest.Builder(
                     StepCountNotificationWorker::class.java, PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS
                     , TimeUnit.MILLISECONDS, PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS, TimeUnit.MILLISECONDS)
-                    .setInputData(data)
                     .build()
                 workManager = WorkManager.getInstance(context)
                 workManager!!.enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.REPLACE, notificationRequest!!)

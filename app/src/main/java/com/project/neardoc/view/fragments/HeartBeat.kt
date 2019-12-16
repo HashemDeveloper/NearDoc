@@ -12,7 +12,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.multidex.BuildConfig
+import com.project.neardoc.BuildConfig
 import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
 import com.project.neardoc.R
@@ -109,8 +109,8 @@ class HeartBeat : Fragment(), Injectable, HeartBeatsView.OnRequestHeartBeatIndic
         fragment_heart_beat_heart_view_id?.let {
             this.heartBeatView = it
         }
-        fragment_heart_beat_back_bt_id?.let {
-            it.setOnClickListener {
+        fragment_heart_beat_back_bt_id?.let { bt ->
+            bt.setOnClickListener {
                 Navigation.findNavController(it).navigate(R.id.accountPage)
             }
         }

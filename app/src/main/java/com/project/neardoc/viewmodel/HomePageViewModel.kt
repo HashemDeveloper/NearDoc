@@ -5,25 +5,16 @@ import android.content.Intent
 import android.location.Address
 import android.location.Geocoder
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import androidx.work.*
 import com.project.neardoc.BuildConfig
 import com.project.neardoc.data.local.ISharedPrefService
-import com.project.neardoc.data.local.IUserInfoDao
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
-import com.project.neardoc.model.localstoragemodels.UserPersonalInfo
 import com.project.neardoc.services.StepCounterService
 import com.project.neardoc.utils.Constants
-import com.project.neardoc.utils.calories.ICalorieBurnedCalculator
-import com.project.neardoc.utils.notifications.INotificationScheduler
 import com.project.neardoc.utils.service.IStepCountForegroundServiceManager
-import com.project.neardoc.worker.StepCountNotificationWorker
 import kotlinx.coroutines.*
 import java.io.IOException
 import java.util.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
