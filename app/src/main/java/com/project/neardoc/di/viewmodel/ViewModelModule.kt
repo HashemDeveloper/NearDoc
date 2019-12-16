@@ -49,4 +49,8 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(AccountPageViewModel::class)
     internal abstract fun provideAccountPageViewModel(accountPageViewModel: AccountPageViewModel): ViewModel
+    @Binds
+    @IntoMap
+    @ViewModelKey(HeartBeatViewModel::class)
+    internal abstract fun provideHeartBeatViewModel(heartBeatViewModel: HeartBeatViewModel): ViewModel
 }
