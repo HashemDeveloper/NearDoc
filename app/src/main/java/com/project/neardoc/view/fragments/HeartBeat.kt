@@ -2,7 +2,6 @@ package com.project.neardoc.view.fragments
 
 
 import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.hardware.Camera
