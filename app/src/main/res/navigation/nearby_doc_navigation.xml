@@ -102,6 +102,13 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/actionHeartBeat"
+            app:destination="@id/heartBeat"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -178,5 +185,18 @@
         <action
             android:id="@+id/actionSignInSecurity"
             app:destination="@id/signInSecurity" />
+    </fragment>
+    <fragment
+        android:id="@+id/heartBeat"
+        android:name="com.project.neardoc.view.fragments.HeartBeat"
+        android:label="fragment_heart_beat"
+        tools:layout="@layout/fragment_heart_beat" >
+        <action
+            android:id="@+id/actionAccountPage"
+            app:destination="@id/accountPage"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 </navigation>
