@@ -9,4 +9,7 @@ class LocalDBService @Inject constructor(context: Context){
     fun getUserInfoDao(): IUserInfoDao {
         return this.localDB.getUserPersonalInfoDao()
     }
+    fun getStepCountDurationListDao(): IStepCountDurationListDao {
+        return this.localDB.getStepCountDurationListDao()
+    }
 }

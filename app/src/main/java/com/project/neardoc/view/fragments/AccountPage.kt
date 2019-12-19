@@ -277,7 +277,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         caloriesDateView.text = dateString
 
         val stepsTakenMessage = "$totalStepTaken Steps Taken"
-        val caloriesBurnedMessage = "$caloriesBurned Calories Burned"
+        val caloriesBurnedMessage = "Calories Burned $caloriesBurned kcal"
         val goalMessage = "Your Goal $calorieBurnGoalPerDay"
         caloriesStatProgressView.progress =  caloriesBurned
 
