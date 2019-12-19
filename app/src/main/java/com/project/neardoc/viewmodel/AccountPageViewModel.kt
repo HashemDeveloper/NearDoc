@@ -30,8 +30,11 @@ import com.project.neardoc.model.localstoragemodels.DurationList
 import com.project.neardoc.model.localstoragemodels.StepCountDurationList
 import com.project.neardoc.model.localstoragemodels.UserPersonalInfo
 import com.project.neardoc.utils.Constants
+import com.project.neardoc.utils.GenderType
+import com.project.neardoc.utils.calories.IAdvancedCalorieBurnCalculator
 import com.project.neardoc.utils.sensors.IDeviceSensors
 import com.project.neardoc.utils.widgets.PageType
+import com.project.neardoc.worker.StepCountNotificationWorker
 import com.ramotion.fluidslider.FluidSlider
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.*
@@ -62,15 +65,64 @@ class AccountPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     lateinit var iUserInfoDao: IUserInfoDao
     @Inject
     lateinit var iStepCountDurationListDao: IStepCountDurationListDao
+    @Inject
+    lateinit var iAdvancedCalorieBurnCalculator: IAdvancedCalorieBurnCalculator
     private val job = Job()
     private val eventObserver: MutableLiveData<Boolean> = MutableLiveData()
     private val userPersonalInfoLiveData: MutableLiveData<UserPersonalInfo> = MutableLiveData()
 
     fun init() {
+        val stepCount: Int = iSharedPrefService.getLastStepCountValue()
         val email: String = this.iSharedPrefService.getUserEmail()
         var userPersonalInfo: UserPersonalInfo?= null
+        var caloriesBurnedResult: Float?= null
+        var firstDuration: StepCountDurationList?
+        var lastDuration: StepCountDurationList?
+        var stepCountDurationList: List<StepCountDurationList>?
         launch {
             userPersonalInfo = iUserInfoDao.getUserByEmail(email)
+
+            //------//
+            val genderType: GenderType?
+            if (userPersonalInfo != null) {
+                val height: Double = userPersonalInfo!!.userHeight
+                val weight: Double = userPersonalInfo!!.userWeight
+                val age: Float = userPersonalInfo!!.userAge.toFloat()
+                val gender: String = userPersonalInfo!!.genderType
+                val strideLengthInMeter: Float?
+                if (gender == "Male") {
+                    genderType = GenderType.MALE
+                    strideLengthInMeter = (height * StepCountNotificationWorker.MALE_STRIDE_LENGTH_CONSTANT).toFloat()
+                } else {
+                    genderType = GenderType.FEMALE
+                    strideLengthInMeter = (height * StepCountNotificationWorker.FEMALE_STRIDE_LENGTH_CONSTANT).toFloat()
+                }
+
+                stepCountDurationList = iStepCountDurationListDao.getAllDurationList()
+                firstDuration = iStepCountDurationListDao.getFirstDuration()
+                lastDuration = iStepCountDurationListDao.getLastDuration()
+                var startTime = 0L
+                var endTime = 0L
+                if (firstDuration != null && lastDuration != null) {
+                    startTime = TimeUnit.MILLISECONDS.toSeconds(firstDuration!!.time)
+                    endTime = TimeUnit.MILLISECONDS.toSeconds(lastDuration!!.time)
+                }
+
+
+                if (BuildConfig.DEBUG) {
+                    for (durationList: StepCountDurationList in stepCountDurationList!!) {
+                        Log.i(StepCountNotificationWorker.TAG, "Duration ${durationList.time}")
+                    }
+                }
+                if (BuildConfig.DEBUG) {
+                    Log.i(StepCountNotificationWorker.TAG, "Start Time: $startTime")
+                    Log.i(StepCountNotificationWorker.TAG, "End Time: $endTime")
+                }
+                val durationInSeconds: Long = endTime - startTime
+                caloriesBurnedResult = iAdvancedCalorieBurnCalculator.calculateEnergyExpenditure(height.toFloat(),
+                    age, weight.toFloat(), genderType, durationInSeconds, stepCount, strideLengthInMeter)
+                Log.i(TAG, "Burned $caloriesBurnedResult kcl")
+            }
         }.invokeOnCompletion {
             if (it != null && it.localizedMessage != null) {
                 if (BuildConfig.DEBUG) {

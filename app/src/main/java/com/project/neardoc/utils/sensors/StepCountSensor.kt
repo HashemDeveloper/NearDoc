@@ -122,7 +122,7 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
         this.mEventDelays[this.mEventData] = System.currentTimeMillis() - (event.timestamp / 1000000L).toFloat()
         // increment the event length
         val email: String = this.iSharedPrefService.getUserEmail()
-        val currentTime: Long = (event.timestamp / 1000000L)
+        val currentTime: Long = System.currentTimeMillis() - (event.timestamp / 1000000L)
         val uniqueId: String = UUID.randomUUID().toString()
         val stepCountDuration = StepCountDurationList(uniqueId, email, currentTime)
         this.mutableList!!.add(stepCountDuration)

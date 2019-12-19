@@ -49,8 +49,8 @@ class StepCountNotificationWorker @Inject constructor(
 
     override fun doWork(): Result {
         NearDocWorkerInjection.inject(this)
-        var burnedCalories: Double?= null
-        var caloriesBurnedResult: Float?= null // old value
+        var burnedCalories: Double?= null // old
+        var caloriesBurnedResult: Float?= null
         var firstDuration: StepCountDurationList?
         var lastDuration: StepCountDurationList?
         var stepCountDurationList: List<StepCountDurationList>?
@@ -59,7 +59,7 @@ class StepCountNotificationWorker @Inject constructor(
                 val stepCount: Int = iSharedPrefService.getLastStepCountValue()
                 val email: String = iSharedPrefService.getUserEmail()
                 val userPersonalInfo: UserPersonalInfo = iUserInfoDao.getUserByEmail(email)
-                var genderType: GenderType?= null
+                val genderType: GenderType?
                 val height: Double = userPersonalInfo.userHeight
                 val weight: Double = userPersonalInfo.userWeight
                 val age: Float = userPersonalInfo.userAge.toFloat()

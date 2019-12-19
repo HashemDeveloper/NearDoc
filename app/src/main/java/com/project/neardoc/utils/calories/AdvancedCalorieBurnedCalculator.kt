@@ -32,7 +32,8 @@ class AdvancedCalorieBurnedCalculator @Inject constructor(): IAdvancedCalorieBur
         val metValue: Float = getMetForActivity(speedInMph)
         val constant = 3.5f
         val correctedMets: Float = metValue * (constant / harrisBenedictRmR)
-        return correctedMets * hours * weight
+        val w: Float = convertPoundToKg(weight)
+        return correctedMets * w
     }
 
     private fun getAgeFromDateOfBirth(age: Date): Float {
@@ -73,7 +74,7 @@ class AdvancedCalorieBurnedCalculator @Inject constructor(): IAdvancedCalorieBur
         return metres * 100
     }
 
-    fun calculateDistanceTravelledInKM(
+    private fun calculateDistanceTravelledInKM(
         stepsTaken: Int,
         entityStrideLength: Float
     ): Float {
