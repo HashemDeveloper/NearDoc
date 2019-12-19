@@ -3,11 +3,12 @@ package com.project.neardoc.data.local
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Base64
-import androidx.preference.PreferenceManager
-import javax.inject.Inject
 import androidx.core.content.edit
+import androidx.preference.PreferenceManager
 import com.project.neardoc.utils.Constants
 import java.util.*
+import javax.inject.Inject
+import kotlin.collections.HashSet
 
 class SharedPrefService @Inject constructor(): ISharedPrefService {
 

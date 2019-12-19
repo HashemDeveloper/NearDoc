@@ -21,10 +21,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.project.neardoc.BuildConfig
 import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
+import com.project.neardoc.data.local.IStepCountDurationListDao
 import com.project.neardoc.data.local.IUserInfoDao
 import com.project.neardoc.events.BottomBarEvent
 import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.events.UserStateEvent
+import com.project.neardoc.model.localstoragemodels.DurationList
+import com.project.neardoc.model.localstoragemodels.StepCountDurationList
 import com.project.neardoc.model.localstoragemodels.UserPersonalInfo
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.sensors.IDeviceSensors
@@ -34,6 +37,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import java.text.MessageFormat
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -56,6 +60,8 @@ class AccountPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     lateinit var context: Context
     @Inject
     lateinit var iUserInfoDao: IUserInfoDao
+    @Inject
+    lateinit var iStepCountDurationListDao: IStepCountDurationListDao
     private val job = Job()
     private val eventObserver: MutableLiveData<Boolean> = MutableLiveData()
     private val userPersonalInfoLiveData: MutableLiveData<UserPersonalInfo> = MutableLiveData()

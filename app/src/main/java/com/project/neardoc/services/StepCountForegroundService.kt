@@ -130,7 +130,7 @@ class StepCountForegroundService @Inject constructor() : Service(), CoroutineSco
             NotificationType.NOTIFICATION_FOREGROUND,
             STEP_COUNT_FOREGROUND_SERVICE_REQ_CODE,
             CHANEL_ID,
-            R.drawable.heart_j,
+            R.drawable.heart,
             0,
             "",
             "",

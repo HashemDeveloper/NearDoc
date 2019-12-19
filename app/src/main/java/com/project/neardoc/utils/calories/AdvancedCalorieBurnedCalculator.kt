@@ -2,44 +2,39 @@ package com.project.neardoc.utils.calories
 import com.project.neardoc.utils.GenderType
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 
-class AdvancedCalorieBurnedCalculator {
+class AdvancedCalorieBurnedCalculator @Inject constructor(): IAdvancedCalorieBurnCalculator {
 
-    fun calculateEnergyExpenditure(
+    override fun calculateEnergyExpenditure(
         height: Float,
-        age: Date,
+        age: Float,
         weight: Float,
         gender: GenderType,
         durationInSeconds: Long,
         stepsTaken: Int,
         strideLengthInMetres: Float
     ): Float {
-        val ageCalculated = getAgeFromDateOfBirth(age)
-        val harrisBenedictRmR = convertKilocaloriesToMlKmin(
+
+        val harrisBenedictRmR: Float = convertKilocaloriesToMlKmin(
             harrisBenedictRmr(
                 gender,
-                weight,
-                ageCalculated,
-                convertMetresToCentimetre(height)
+                convertPoundToKg(weight),
+                age,
+                height
             ), weight
         )
-        val kmTravelled =
+        val kmTravelled: Float =
             calculateDistanceTravelledInKM(stepsTaken, strideLengthInMetres)
         val hours: Float = TimeUnit.SECONDS.toHours(durationInSeconds).toFloat()
         val speedInMph: Float = (0.621371 * kmTravelled).toFloat()
-        val metValue = getMetForActivity(speedInMph)
+        val metValue: Float = getMetForActivity(speedInMph)
         val constant = 3.5f
-        val correctedMets = metValue * (constant / harrisBenedictRmR)
+        val correctedMets: Float = metValue * (constant / harrisBenedictRmR)
         return correctedMets * hours * weight
     }
 
-    /**
-     * Gets a users age from a date. Only takes into account years.
-     *
-     * @param age The date of birth.
-     * @return The age in years.
-     */
     private fun getAgeFromDateOfBirth(age: Date): Float {
         val currentDate: Calendar = Calendar.getInstance()
         val dateOfBirth: Calendar = Calendar.getInstance()
@@ -60,6 +55,9 @@ class AdvancedCalorieBurnedCalculator {
             }
         }
         return age2.toFloat()
+    }
+    private fun convertPoundToKg(weightInPound: Float): Float {
+        return weightInPound * 0.454f
     }
 
     private fun convertKilocaloriesToMlKmin(
@@ -150,7 +148,7 @@ class AdvancedCalorieBurnedCalculator {
         age: Float,
         heightCm: Float
     ): Float {
-        return if (gender == GenderType.MALE) {
+        return if (gender == GenderType.FEMALE) {
             655.0955f + 1.8496f * heightCm + 9.5634f * weightKg - 4.6756f * age
         } else {
             66.4730f + 5.0033f * heightCm + 13.7516f * weightKg - 6.7550f * age
