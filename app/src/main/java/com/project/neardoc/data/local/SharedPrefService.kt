@@ -8,7 +8,6 @@ import androidx.preference.PreferenceManager
 import com.project.neardoc.utils.Constants
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.HashSet
 
 class SharedPrefService @Inject constructor(): ISharedPrefService {
 

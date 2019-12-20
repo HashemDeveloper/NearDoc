@@ -1,8 +1,6 @@
 package com.project.neardoc.utils.notifications
 
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
@@ -13,7 +11,6 @@ import android.os.Build
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import androidx.navigation.NavDeepLinkBuilder
 import com.project.neardoc.NearDocMainActivity
 import com.project.neardoc.R
@@ -89,7 +86,6 @@ class NotificationBuilder @Inject constructor():
                     builder.setWhen(System.currentTimeMillis())
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     builder.setChannelId(chanelId)
-                    builder.color = ContextCompat.getColor(this.context, R.color.red_900)
                 }
                 notification = builder.build()
                 return notification

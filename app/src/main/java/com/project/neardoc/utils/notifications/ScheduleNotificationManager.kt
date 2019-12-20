@@ -20,8 +20,6 @@ import kotlin.coroutines.CoroutineContext
 class ScheduleNotificationManager @Inject constructor(): IScheduleNotificationManager, CoroutineScope {
     companion object {
        @JvmStatic private val TAG: String = ScheduleNotificationManager::class.java.canonicalName!!
-       @JvmStatic private val MIN_PERIODIC_INTERVAL_MILLIS: Long = 20L
-       @JvmStatic private val MIN_PERIODIC_FLEX_MILLIS: Long = 18L
     }
     @Inject
     lateinit var context: Context
@@ -40,15 +38,6 @@ class ScheduleNotificationManager @Inject constructor(): IScheduleNotificationMa
         var workManager: WorkManager?= null
         withContext(Dispatchers.IO) {
             launch {
-//                val stepCount: Int = iSharedPrefService.getLastStepCountValue()
-//                val email: String = iSharedPrefService.getUserEmail()
-//                val userPersonalInfo: UserPersonalInfo = iUserInfoDao.getUserByEmail(email)
-//                val height: Double = userPersonalInfo.userHeight
-//                val weight: Double = userPersonalInfo.userWeight
-//                val burnedCalories: Double = iCalorieBurnedCalculator.calculateCalorieBurned(height, weight, stepCount)
-//                val data: Data = Data.Builder()
-//                    .putInt(Constants.STEP_COUNT_VALUE, burnedCalories.toInt())
-//                    .build()
                 notificationRequest = PeriodicWorkRequest.Builder(
                     StepCountNotificationWorker::class.java, PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS
                     , TimeUnit.MILLISECONDS, PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS, TimeUnit.MILLISECONDS)
