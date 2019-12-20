@@ -348,13 +348,6 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         val editProfileBt = AppCompatImageView(this.context)
         editProfileBt.setBackgroundResource(R.drawable.ic_edit_white_24dp)
         editProfileBt.id = R.id.account_edit_personal_info_bt
-//        return FilterMenu.Builder(this.context)
-//            .addItem(signOutBt)
-//            .addItem(heartRate)
-//            .addItem(editProfileBt)
-//            .attach(layout)
-//            .withListener(this)
-//            .build()
         val menuBuilder: FilterMenu.Builder = FilterMenu.Builder(this.context)
         menuBuilder.addItem(signOutBt)
         menuBuilder.addItem(heartRate)
