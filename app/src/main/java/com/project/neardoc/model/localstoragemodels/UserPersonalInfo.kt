@@ -7,9 +7,9 @@ import com.project.neardoc.utils.GenderType
 
 @Entity(tableName = "personal_info")
 data class UserPersonalInfo(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     @ColumnInfo(name = "personal_info_id")
-    val id: Long,
+    val id: String,
     @ColumnInfo(name = "email")
     val userEmail: String,
     @ColumnInfo(name = "weight")

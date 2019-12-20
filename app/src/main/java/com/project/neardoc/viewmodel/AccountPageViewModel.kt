@@ -34,6 +34,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import java.text.MessageFormat
+import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -244,9 +245,9 @@ class AccountPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
         gender: String
     ) {
         val email: String = this.iSharedPrefService.getUserEmail()
-        val userPersonalInfo = UserPersonalInfo(0, email, userWeight.toDouble(), userHeight.toDouble(), userAge.toInt(), gender)
+        val id: String = UUID.randomUUID().toString()
+        val userPersonalInfo = UserPersonalInfo(id, email, userWeight.toDouble(), userHeight.toDouble(), userAge.toInt(), gender)
         launch {
-            iUserInfoDao.deleteUserPersonalInfo()
             iUserInfoDao.insertUserInfo(userPersonalInfo)
         }.invokeOnCompletion {
             if (it != null && it.localizedMessage != null) {
