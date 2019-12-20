@@ -74,6 +74,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     private var dialogUserInfoMainContainerView: ScrollView?= null
     private var rootDialog: AlertDialog?= null
     private var isUserPersonalInfoAvailable = false
+    private var isStepCountAvailable: Boolean?= true
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,6 +109,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         this.accountPageViewModel.setupUserProfile(context!!, fragment_account_user_image_view_id, fragment_account_user_name_id,
             fragment_account_user_email_view_id, fragment_account_user_location_view_id)
         this.accountPageViewModel.setupDeviceSensor(activity!!, fragment_account_room_temp_view_id, fragment_step_count_parent_layout)
+        this.isStepCountAvailable = fragment_step_count_parent_layout.visibility != View.GONE
         val lastStepCountValue: Int = this.accountPageViewModel.getLastStepCountValue()
         if (!fragment_account_page_start_step_count_bt_id.isVisible) {
             fragment_account_step_counter_view_id.text = lastStepCountValue.toString()
@@ -346,13 +348,21 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
         val editProfileBt = AppCompatImageView(this.context)
         editProfileBt.setBackgroundResource(R.drawable.ic_edit_white_24dp)
         editProfileBt.id = R.id.account_edit_personal_info_bt
-        return FilterMenu.Builder(this.context)
-            .addItem(signOutBt)
-            .addItem(heartRate)
-            .addItem(editProfileBt)
-            .attach(layout)
-            .withListener(this)
-            .build()
+//        return FilterMenu.Builder(this.context)
+//            .addItem(signOutBt)
+//            .addItem(heartRate)
+//            .addItem(editProfileBt)
+//            .attach(layout)
+//            .withListener(this)
+//            .build()
+        val menuBuilder: FilterMenu.Builder = FilterMenu.Builder(this.context)
+        menuBuilder.addItem(signOutBt)
+        menuBuilder.addItem(heartRate)
+        if (this.isStepCountAvailable!!) {
+            menuBuilder.addItem(editProfileBt)
+        }
+        menuBuilder.attach(layout).withListener(this)
+        return menuBuilder.build()
     }
 
     override fun onMenuCollapse() {
