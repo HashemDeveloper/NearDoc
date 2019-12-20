@@ -127,6 +127,11 @@ class ApplicationModule {
     }
     @Singleton
     @Provides
+    fun provideStepCountDataDb(dbService: LocalDBService): IStepCountDataDao {
+        return dbService.getStepCountDataDao()
+    }
+    @Singleton
+    @Provides
     fun provideNotificationChanelBuilder(notificationChanelBuilder: NotificationChanelBuilder): INotificationChanelBuilder {
         return notificationChanelBuilder
     }

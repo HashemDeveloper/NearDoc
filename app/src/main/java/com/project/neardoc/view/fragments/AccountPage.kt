@@ -89,7 +89,7 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
                 val caloriresBurned: Int = bundle.getInt(Constants.CALORIES_BURNED_RESULT)
                 this.accountPageViewModel.flashStepCounter()
                 val totalStepCount: Int = this.accountPageViewModel.getTotalStepCounted()
-                displayCaloriesBurnedDialog(caloriresBurned.toInt(), totalStepCount, GenderType.MALE)
+                displayCaloriesBurnedDialog(caloriresBurned, totalStepCount, GenderType.MALE)
             }
         }
         this.accountPageViewModel.init()
