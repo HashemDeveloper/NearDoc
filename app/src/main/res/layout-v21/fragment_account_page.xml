@@ -67,7 +67,7 @@
                 >
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/fragment_account_user_image_holder"
-                    android:layout_width="300dp"
+                    android:layout_width="320dp"
                     android:layout_height="300dp"
                     android:layout_marginTop="@dimen/padding_16dp"
                     android:layout_marginLeft="@dimen/padding_16dp"

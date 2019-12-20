@@ -9,10 +9,15 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import com.google.android.material.textview.MaterialTextView
 import com.project.neardoc.BuildConfig
+import kotlinx.coroutines.*
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 class DeviceSensors @Inject constructor(private val context: Context):
-    IDeviceSensors {
+    IDeviceSensors, CoroutineScope {
+    companion object {
+        private val TAG: String = DeviceSensors::class.java.canonicalName!!
+    }
     @Inject
     lateinit var iTempSensor: ITempSensor
     @Inject
@@ -22,6 +27,7 @@ class DeviceSensors @Inject constructor(private val context: Context):
 
     private val mSensorList: MutableList<Any> = arrayListOf()
     private var mSensorManager: SensorManager?= null
+    private val job = Job()
 
     override fun setupDeviceSensor(
         activity: FragmentActivity,
@@ -34,42 +40,84 @@ class DeviceSensors @Inject constructor(private val context: Context):
             }
            when (sensorList.type) {
                Sensor.TYPE_AMBIENT_TEMPERATURE -> {
-                   this.mSensorList.add(this.iTempSensor)
-                   roomTempTextView.visibility = View.VISIBLE
-                   this.iTempSensor.initiateTempSensor(this.mSensorManager!!)
-                       .registerListener(this.mSensorManager!!)
-                   this.iTempSensor.getSensorEvent().observe(activity, tempSensorEventObserver(roomTempTextView))
+                   launch {
+                       withContext(Dispatchers.IO) {
+                           mSensorList.add(iTempSensor)
+                           roomTempTextView.visibility = View.VISIBLE
+                           iTempSensor.initiateTempSensor(mSensorManager!!)
+                               .registerListener(mSensorManager!!)
+                       }
+                   }.invokeOnCompletion {
+                       if (it != null && it.localizedMessage != null) {
+                           if (BuildConfig.DEBUG) {
+                               Log.i(TAG + "TEMP Sensor", it.localizedMessage!!)
+                           }
+                       } else {
+                           this.iTempSensor.getSensorEvent().observe(activity, tempSensorEventObserver(roomTempTextView))
+                       }
+                   }
                }
                Sensor.TYPE_LIGHT -> {
-                   this.mSensorList.add(this.iLightSensor)
-                   this.iLightSensor.initiateLightSensor(this.mSensorManager!!)
-                       .registerListener(this.mSensorManager!!)
-                   this.iLightSensor.getSensorEventLiveData().observe(activity, lightSensorEventObserver())
+                   launch {
+                       withContext(Dispatchers.IO) {
+                           mSensorList.add(iLightSensor)
+                           iLightSensor.initiateLightSensor(mSensorManager!!)
+                               .registerListener(mSensorManager!!)
+                       }
+                   }.invokeOnCompletion {
+                       if (it != null && it.localizedMessage != null) {
+                           if (BuildConfig.DEBUG) {
+                               Log.i(TAG + "LIGHT SENSOR", it.localizedMessage!!)
+                           }
+                       } else {
+                           this.iLightSensor.getSensorEventLiveData().observe(activity, lightSensorEventObserver())
+                       }
+                   }
                }
                Sensor.TYPE_STEP_COUNTER -> {
                    stepCountParentLayout.visibility = View.VISIBLE
-//                   val stepCountServiceIntent = Intent(this.context, StepCounterService::class.java)
-//                   activity.startService(stepCountServiceIntent)
                }
            }
         }
     }
 
-    private fun stepCountSensorEventObserver(view: MaterialTextView): Observer<Int> {
-        return Observer {
-            view.text = it.toString()
-        }
-    }
-
     private fun tempSensorEventObserver(view: MaterialTextView): Observer<SensorEvent> {
         return Observer {
-            view.text = it.values[0].toString()
+            var sensorValue: String? = null
+            launch {
+                withContext(Dispatchers.IO) {
+                    sensorValue = it.values[0].toString()
+                }
+            }.invokeOnCompletion {
+                if (it != null && it.localizedMessage != null) {
+                    if (BuildConfig.DEBUG) {
+                        Log.i(TAG + "TEMP SENSOR: ", "Exception: ${it.localizedMessage!!}")
+                    }
+                } else {
+                    sensorValue?.let {
+                        view.text = it
+                    }
+                }
+            }
         }
     }
     private fun lightSensorEventObserver(): Observer<SensorEvent> {
         return Observer {
+            var values: String?= null
             if (BuildConfig.DEBUG) {
-                Log.i("LigtSensor: ", it.values[0].toString())
+                launch {
+                    withContext(Dispatchers.IO) {
+                        values = it.values[0].toString()
+                    }
+                }.invokeOnCompletion {
+                    if (it != null && it.localizedMessage != null) {
+                        if (BuildConfig.DEBUG) {
+                            Log.i(TAG, "Exception: ${it.localizedMessage!!}")
+                        }
+                    } else {
+                        Log.i(TAG + "LigtSensor: ", values)
+                    }
+                }
             }
         }
     }
@@ -98,4 +146,7 @@ class DeviceSensors @Inject constructor(private val context: Context):
     override fun flashStepCounter() {
         this.iStepCountSensor.flashStepCounter()
     }
+
+    override val coroutineContext: CoroutineContext
+        get() = this.job + Dispatchers.Main
 }

@@ -9,6 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
+import com.project.neardoc.BuildConfig
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.events.NotifySilentEvent
 import com.project.neardoc.events.UserStateEvent
@@ -25,6 +26,9 @@ import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver(), LifecycleObserver {
+    companion object {
+        private val TAG: String = NearDocBroadcastReceiver::class.java.canonicalName!!
+    }
     @Inject
     lateinit var iStepCounterSensor: IStepCountSensor
     @Inject
@@ -61,6 +65,9 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver(), Lifec
                         getMessage(),
                         result.toInt()
                      )
+                    if (BuildConfig.DEBUG) {
+                        Log.i(TAG, "Burned ${result.toInt()} kcl")
+                    }
                 } else {
                     if (this.isUserLoggedIn!!) {
                         EventBus.getDefault().postSticky(NotifySilentEvent(true, result.toInt()))

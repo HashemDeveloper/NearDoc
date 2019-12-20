@@ -121,7 +121,6 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
             EventBus.getDefault().postSticky(BottomBarEvent(true))
             Navigation.findNavController(it).navigate(AccountPageDirections.actionHomePage())
         }
-
         fragment_account_page_start_step_count_bt_id.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 if (!checkActivityRecognitionPermission()) {
@@ -145,6 +144,17 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
             if (info != null) {
                 displayUserInfo(info, true)
                 this.isUserPersonalInfoAvailable = true
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                    fragment_account_page_start_step_count_bt_id.visibility = View.GONE
+                    fragment_account_step_counter_view_id?.let {
+                        val totalStepCount: Int = this.accountPageViewModel.getTotalStepCounted()
+                        if (totalStepCount > 0) {
+                            it.text = totalStepCount.toString()
+                        } else {
+                            it.text = "0"
+                        }
+                    }
+                }
             } else {
                 displayUserInfo(null, false)
                 this.isUserPersonalInfoAvailable = false
@@ -153,37 +163,13 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
     }
     private fun displayUserInfo(info: UserPersonalInfo?, show: Boolean) {
         if (show) {
-            if (info != null && checkActivityRecognitionPermission()) {
-                fragment_account_page_start_step_count_bt_id?.let {
-                    it.visibility = View.GONE
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                if (info != null && checkActivityRecognitionPermission()) {
+                    displayUserInfo(info)
                 }
-
-                fragment_account_step_counter_view_id?.let {
-                    val totalStepCount: Int = this.accountPageViewModel.getTotalStepCounted()
-                    if (totalStepCount > 0) {
-                        it.text = totalStepCount.toString()
-                    } else {
-                        it.text = "0"
-                    }
-                }
-                fragment_account_personal_info_container_id?.let {
-                    it.visibility = View.VISIBLE
-                }
-                val age = "Age: ${info.userAge}"
-                val gender = "Gender: ${info.genderType}"
-                fragment_account_page_age_view_id?.let {
-                    it.text = age
-                }
-                fragment_account_page_gender_view_id?.let {
-                    it.text = gender
-                }
-                val height = "Height: ${info.userHeight}"
-                val weight = "Weight: ${info.userWeight}"
-                fragment_account_page_height_view_id?.let {
-                    it.text = height
-                }
-                fragment_account_page_weight_view_id?.let {
-                    it.text = weight
+            } else {
+                if (info != null) {
+                   displayUserInfo(info)
                 }
             }
         } else {
@@ -193,6 +179,39 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
             fragment_account_page_start_step_count_bt_id?.let {
                 it.visibility = View.VISIBLE
             }
+        }
+    }
+    private fun displayUserInfo(info: UserPersonalInfo?) {
+        fragment_account_page_start_step_count_bt_id?.let {
+            it.visibility = View.GONE
+        }
+
+        fragment_account_step_counter_view_id?.let {
+            val totalStepCount: Int = this.accountPageViewModel.getTotalStepCounted()
+            if (totalStepCount > 0) {
+                it.text = totalStepCount.toString()
+            } else {
+                it.text = "0"
+            }
+        }
+        fragment_account_personal_info_container_id?.let {
+            it.visibility = View.VISIBLE
+        }
+        val age = "Age: ${info!!.userAge}"
+        val gender = "Gender: ${info.genderType}"
+        fragment_account_page_age_view_id?.let {
+            it.text = age
+        }
+        fragment_account_page_gender_view_id?.let {
+            it.text = gender
+        }
+        val height = "Height: ${info.userHeight}"
+        val weight = "Weight: ${info.userWeight}"
+        fragment_account_page_height_view_id?.let {
+            it.text = height
+        }
+        fragment_account_page_weight_view_id?.let {
+            it.text = weight
         }
     }
     private fun observeEvents(): Observer<Boolean> {
