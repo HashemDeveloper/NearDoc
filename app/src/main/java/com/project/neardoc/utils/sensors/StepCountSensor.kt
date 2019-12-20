@@ -11,9 +11,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.project.neardoc.BuildConfig
 import com.project.neardoc.data.local.ISharedPrefService
-import com.project.neardoc.data.local.IStepCountDurationListDao
 import com.project.neardoc.events.StepCounterEvent
-import com.project.neardoc.model.localstoragemodels.StepCountDurationList
 import com.project.neardoc.utils.Constants
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -21,7 +19,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
-import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.min
@@ -45,9 +42,6 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
     private var mDelayStringBuffer: StringBuffer = StringBuffer()
     @Inject
     lateinit var iSharedPrefService: ISharedPrefService
-    @Inject
-    lateinit var iDurationListDao: IStepCountDurationListDao
-    private val mutableList: MutableList<StepCountDurationList>?= arrayListOf()
     private val job = Job()
 
     @RequiresApi(VERSION_CODES.KITKAT)
@@ -121,16 +115,6 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
         // calculate the delay event was recorded until it was received
         this.mEventDelays[this.mEventData] = System.currentTimeMillis() - (event.timestamp / 1000000L).toFloat()
         // increment the event length
-        val email: String = this.iSharedPrefService.getUserEmail()
-        val currentTime: Long = System.currentTimeMillis() - (event.timestamp / 1000000L)
-        val uniqueId: String = UUID.randomUUID().toString()
-        val stepCountDuration = StepCountDurationList(uniqueId, email, currentTime)
-        this.mutableList!!.add(stepCountDuration)
-        launch {
-            withContext(Dispatchers.IO) {
-                iDurationListDao.insertDurationList(mutableList)
-            }
-        }
         this.mEventLength = min(EVENT_QUEUE_LENGTH, this.mEventLength)
         // move pointer to the next oldest location
         this.mEventData = (this.mEventData + 1) % EVENT_QUEUE_LENGTH

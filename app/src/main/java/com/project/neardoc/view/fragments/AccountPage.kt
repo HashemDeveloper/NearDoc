@@ -2,7 +2,6 @@ package com.project.neardoc.view.fragments
 
 
 import android.Manifest
-import android.animation.StateListAnimator
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.pm.PackageManager

@@ -33,7 +33,7 @@ class AdvancedCalorieBurnedCalculator @Inject constructor(): IAdvancedCalorieBur
         val constant = 3.5f
         val correctedMets: Float = metValue * (constant / harrisBenedictRmR)
         val w: Float = convertPoundToKg(weight)
-        return correctedMets * w
+        return (correctedMets * w) / hours
     }
 
     private fun getAgeFromDateOfBirth(age: Date): Float {
