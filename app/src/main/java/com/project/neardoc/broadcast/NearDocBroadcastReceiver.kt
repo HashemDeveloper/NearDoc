@@ -21,6 +21,7 @@ import com.project.neardoc.utils.calories.CalorieMessageGenerator
 import com.project.neardoc.utils.notifications.INotificationBuilder
 import com.project.neardoc.utils.notifications.NotificationType
 import com.project.neardoc.utils.sensors.IStepCountSensor
+import com.project.neardoc.utils.service.IStepCountForegroundServiceManager
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
@@ -34,6 +35,8 @@ class NearDocBroadcastReceiver @Inject constructor(): BroadcastReceiver(), Lifec
     companion object {
         private val TAG: String = NearDocBroadcastReceiver::class.java.canonicalName!!
     }
+    @Inject
+    lateinit var iStepCountServiceManager: IStepCountForegroundServiceManager
     @Inject
     lateinit var iStepCounterSensor: IStepCountSensor
     @Inject

@@ -11,6 +11,7 @@ import android.os.IBinder
 import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.IUserInfoDao
+import com.project.neardoc.events.UserStateEvent
 import com.project.neardoc.model.localstoragemodels.UserPersonalInfo
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.calories.ICalorieBurnedCalculator
@@ -20,6 +21,9 @@ import com.project.neardoc.utils.notifications.NotificationType
 import com.project.neardoc.utils.sensors.IStepCountSensor
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -51,6 +55,7 @@ class StepCountForegroundService @Inject constructor() : Service(), CoroutineSco
 
     override fun onCreate() {
         AndroidInjection.inject(this)
+        EventBus.getDefault().register(this)
         launch {
             sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
             iStepCounterSensor.initiateStepCounterSensor(sensorManager!!)
@@ -69,6 +74,19 @@ class StepCountForegroundService @Inject constructor() : Service(), CoroutineSco
         }
 
         return START_STICKY
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
+    fun onSignOutEvent(event: UserStateEvent) {
+        if (!event.isLoggedIn) {
+            stopForegroundService()
+            stopSelf()
+        }
     }
     private suspend fun scheduleRegularNotification() {
         withContext(Dispatchers.IO) {

@@ -2,6 +2,7 @@ package com.project.neardoc.viewmodel
 
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,7 @@ import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.auth.FirebaseAuth
 import com.project.neardoc.BuildConfig
 import com.project.neardoc.R
+import com.project.neardoc.broadcast.NearDocBroadcastReceiver
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.IUserInfoDao
 import com.project.neardoc.events.BottomBarEvent
