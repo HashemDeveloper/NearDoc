@@ -12,4 +12,7 @@ class LocalDBService @Inject constructor(context: Context){
     fun getStepCountDurationListDao(): IStepCountDurationListDao {
         return this.localDB.getStepCountDurationListDao()
     }
+    fun getStepCountDataDao(): IStepCountDataDao {
+        return this.localDB.getStepCountDataDao()
+    }
 }
