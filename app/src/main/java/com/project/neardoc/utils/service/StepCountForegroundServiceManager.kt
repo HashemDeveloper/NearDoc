@@ -10,6 +10,7 @@ import android.os.IBinder
 import android.util.Log
 import com.project.neardoc.BuildConfig
 import com.project.neardoc.services.StepCountForegroundService
+import com.project.neardoc.utils.Constants
 import javax.inject.Inject
 
 class StepCountForegroundServiceManager @Inject constructor(): IStepCountForegroundServiceManager {
@@ -43,6 +44,12 @@ class StepCountForegroundServiceManager @Inject constructor(): IStepCountForegro
             this.context.startService(Intent(this.context, StepCountForegroundService::class.java))
             bindService()
         }
+    }
+
+    override fun stopStepCountService() {
+        val intent = Intent(this.context, StepCountForegroundService::class.java)
+        intent.putExtra(Constants.SIGN_OUT, true)
+        this.context.stopService(intent)
     }
 
     override fun unBindOnActivityStart(isForegroundServiceAvailable: Boolean) {

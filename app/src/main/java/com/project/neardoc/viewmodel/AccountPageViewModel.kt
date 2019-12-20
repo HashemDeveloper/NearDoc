@@ -2,6 +2,7 @@ package com.project.neardoc.viewmodel
 
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,7 @@ import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.auth.FirebaseAuth
 import com.project.neardoc.BuildConfig
 import com.project.neardoc.R
+import com.project.neardoc.broadcast.NearDocBroadcastReceiver
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.IUserInfoDao
 import com.project.neardoc.events.BottomBarEvent
@@ -34,6 +36,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import java.text.MessageFormat
+import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -244,9 +247,9 @@ class AccountPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
         gender: String
     ) {
         val email: String = this.iSharedPrefService.getUserEmail()
-        val userPersonalInfo = UserPersonalInfo(0, email, userWeight.toDouble(), userHeight.toDouble(), userAge.toInt(), gender)
+        val id: String = UUID.randomUUID().toString()
+        val userPersonalInfo = UserPersonalInfo(id, email, userWeight.toDouble(), userHeight.toDouble(), userAge.toInt(), gender)
         launch {
-            iUserInfoDao.deleteUserPersonalInfo()
             iUserInfoDao.insertUserInfo(userPersonalInfo)
         }.invokeOnCompletion {
             if (it != null && it.localizedMessage != null) {
