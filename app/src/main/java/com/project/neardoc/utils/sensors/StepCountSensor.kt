@@ -4,6 +4,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.os.Build
 import android.os.Build.VERSION_CODES
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -50,6 +51,9 @@ class StepCountSensor @Inject constructor(): IStepCountSensor, SensorEventListen
     ) {
         this.mStepCounter = 0
         this.mStepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+        if (this.mStepSensor == null) {
+            this.mStepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+        }
         val isRegistered: Boolean = sensorManager.registerListener(this, this.mStepSensor, SensorManager.SENSOR_DELAY_NORMAL,
             DEFAULT_LATENCY
         )
