@@ -81,7 +81,7 @@ class StepCountForegroundService @Inject constructor() : Service(), CoroutineSco
         EventBus.getDefault().unregister(this)
     }
 
-    @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
+    @Subscribe(sticky = false, threadMode = ThreadMode.ASYNC)
     fun onSignOutEvent(event: UserStateEvent) {
         if (!event.isLoggedIn) {
             stopForegroundService()
