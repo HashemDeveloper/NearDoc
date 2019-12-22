@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.iammert.library.ui.multisearchviewlib.MultiSearchView
 import com.project.neardoc.BuildConfig
 
 import com.project.neardoc.R
@@ -34,7 +35,7 @@ import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-class SearchPage : Fragment(), Injectable, CoroutineScope{
+class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.MultiSearchViewListener{
     companion object {
         @JvmStatic private val TAG: String = SearchPage::class.java.canonicalName!!
     }
@@ -68,6 +69,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         this.betterDocApiKey = resources.getString(R.string.better_doc_api_key)
+        fragment_search_page_search_container_id.setSearchViewListener(this)
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
@@ -219,4 +221,20 @@ class SearchPage : Fragment(), Injectable, CoroutineScope{
 
     override val coroutineContext: CoroutineContext
         get() = this.job + Dispatchers.Main
+
+    override fun onItemSelected(index: Int, s: CharSequence) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onSearchComplete(index: Int, s: CharSequence) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onSearchItemRemoved(index: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onTextChanged(index: Int, s: CharSequence) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }

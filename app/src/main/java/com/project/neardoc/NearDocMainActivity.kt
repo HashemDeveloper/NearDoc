@@ -22,28 +22,19 @@ import kotlinx.android.synthetic.main.near_by_main_layout.*
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 import android.view.WindowManager
-import androidx.lifecycle.LiveData
 import androidx.navigation.findNavController
-import androidx.work.*
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseUser
-import com.project.neardoc.data.local.IUserInfoDao
 import com.project.neardoc.events.*
-import com.project.neardoc.model.localstoragemodels.UserPersonalInfo
 import com.project.neardoc.services.StepCounterService
-import com.project.neardoc.utils.calories.ICalorieBurnedCalculator
 import com.project.neardoc.utils.networkconnections.IConnectionStateMonitor
 import com.project.neardoc.utils.networkconnections.NearDocNetworkType
-import com.project.neardoc.utils.notifications.INotificationScheduler
 import com.project.neardoc.utils.notifications.IScheduleNotificationManager
 import com.project.neardoc.utils.service.IStepCountForegroundServiceManager
 import com.project.neardoc.utils.widgets.PageType
-import com.project.neardoc.viewmodel.HomePageViewModel
-import com.project.neardoc.worker.StepCountNotificationWorker
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 
 

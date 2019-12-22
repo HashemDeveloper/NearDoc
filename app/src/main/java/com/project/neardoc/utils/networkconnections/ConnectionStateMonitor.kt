@@ -12,10 +12,12 @@ import androidx.lifecycle.MutableLiveData
 import com.project.neardoc.R
 import com.project.neardoc.broadcast.NearDocBroadcastReceiver
 import com.project.neardoc.utils.Constants
+import kotlinx.coroutines.*
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 class ConnectionStateMonitor @Inject constructor(private val context: Context) : LiveData<Boolean>(),
-    IConnectionStateMonitor {
+    IConnectionStateMonitor, CoroutineScope {
 
     @Inject
     lateinit var nearDocBroadcastReceiver: NearDocBroadcastReceiver
@@ -24,8 +26,7 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
     private val wifiConnectedLiveData: MutableLiveData<Boolean> = MutableLiveData()
     private val usingMobileDataLiveData: MutableLiveData<Boolean> = MutableLiveData()
     private val connectedNoInternetLiveData: MutableLiveData<Boolean> = MutableLiveData()
-
-
+    private val job = Job()
     init {
         this.connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -39,25 +40,37 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
     override fun onActive() {
         super.onActive()
         updateConnection()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            this.connectivityManager!!.registerDefaultNetworkCallback(this.networkCallback!!)
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val networkRequest = NetworkRequest.Builder()
-                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                .build()
-            this.connectivityManager?.registerNetworkCallback(networkRequest, this.networkCallback!!)
-        } else {
-            context.registerReceiver(this.nearDocBroadcastReceiver, IntentFilter(Constants.CONNECTIVITY_ACTION))
+        launch {
+            withContext(Dispatchers.IO) {
+                when {
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> {
+                        connectivityManager!!.registerDefaultNetworkCallback(networkCallback!!)
+                    }
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> {
+                        val networkRequest = NetworkRequest.Builder()
+                            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+                            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                            .build()
+                        connectivityManager?.registerNetworkCallback(networkRequest, networkCallback!!)
+                    }
+                    else -> {
+                        context.registerReceiver(nearDocBroadcastReceiver, IntentFilter(Constants.CONNECTIVITY_ACTION))
+                    }
+                }
+            }
         }
     }
 
     override fun onInactive() {
         super.onInactive()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            this.connectivityManager?.unregisterNetworkCallback(this.networkCallback!!)
-        } else {
-            context.unregisterReceiver(this.nearDocBroadcastReceiver)
+        launch {
+            withContext(Dispatchers.IO) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    connectivityManager?.unregisterNetworkCallback(networkCallback!!)
+                } else {
+                    context.unregisterReceiver(nearDocBroadcastReceiver)
+                }
+            }
         }
     }
 
@@ -72,28 +85,38 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
         return this.connectedNoInternetLiveData
     }
     override fun updateConnection() {
-        if (connectivityManager != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                var network: Network?= null
-                for (networks in this.connectivityManager!!.allNetworks) {
-                    network = networks
-                }
-                if (this.connectivityManager!!.getNetworkCapabilities(network) != null) {
-                    if (this.connectivityManager!!.getNetworkCapabilities(network)!!.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                        this.wifiConnectedLiveData.postValue(true)
-                        this.usingMobileDataLiveData.postValue(false)
-                        Toast.makeText(context, R.string.using_wifi, Toast.LENGTH_SHORT).show()
-                    } else if (this.connectivityManager!!.getNetworkCapabilities(network)!!.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)){
-                        this.usingMobileDataLiveData.postValue(true)
-                        this.wifiConnectedLiveData.postValue(false)
-                        Toast.makeText(context, R.string.using_mobile_data, Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    postValue(false)
-                }
+        launch {
+            withContext(Dispatchers.IO) {
+                if (connectivityManager != null) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        var network: Network?= null
+                        for (networks in connectivityManager!!.allNetworks) {
+                            network = networks
+                        }
+                        if (connectivityManager!!.getNetworkCapabilities(network) != null) {
+                            if (connectivityManager!!.getNetworkCapabilities(network)!!.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                                withContext(Dispatchers.Main) {
+                                    wifiConnectedLiveData.postValue(true)
+                                    usingMobileDataLiveData.postValue(false)
+                                    Toast.makeText(context, R.string.using_wifi, Toast.LENGTH_SHORT).show()
+                                }
+                            } else if (connectivityManager!!.getNetworkCapabilities(network)!!.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)){
+                                withContext(Dispatchers.Main) {
+                                    usingMobileDataLiveData.postValue(true)
+                                    wifiConnectedLiveData.postValue(false)
+                                    Toast.makeText(context, R.string.using_mobile_data, Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        } else {
+                            withContext(Dispatchers.Main) {
+                                postValue(false)
+                            }
+                        }
 
-            } else {
-                // handle for lower api
+                    } else {
+                        // handle for lower api
+                    }
+                }
             }
         }
     }
@@ -107,10 +130,11 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
 
         override fun onAvailable(network: Network) {
             connectionStateMonitor.postValue(true)
-            val handler = Handler()
-            handler.post {
-                this.connectionStateMonitor.updateConnection()
-            }
+//            val handler = Handler()
+////            handler.post {
+////                this.connectionStateMonitor.updateConnection()
+////            }
+            this.connectionStateMonitor.updateConnection()
         }
 
         override fun onLost(network: Network) {
@@ -119,10 +143,11 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
 
         override fun onUnavailable() {
             connectionStateMonitor.postValue(false)
-            val handler = Handler()
-            handler.post {
-                this.connectionStateMonitor.updateConnection()
-            }
+//            val handler = Handler()
+//            handler.post {
+//                this.connectionStateMonitor.updateConnection()
+//            }
+            this.connectionStateMonitor.updateConnection()
         }
 
         override fun onCapabilitiesChanged(
@@ -136,4 +161,7 @@ class ConnectionStateMonitor @Inject constructor(private val context: Context) :
             }
         }
     }
+
+    override val coroutineContext: CoroutineContext
+        get() = this.job + Dispatchers.Main
 }
