@@ -23,7 +23,6 @@ class SearchPageViewModel @Inject constructor(): ViewModel() {
     companion object {
         @JvmStatic private val TAG: String = SearchPageViewModel::class.java.canonicalName!!
     }
-    private val compositeDisposable = CompositeDisposable()
     @Inject
     lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
     @Inject
@@ -32,7 +31,6 @@ class SearchPageViewModel @Inject constructor(): ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        this.compositeDisposable.clear()
     }
 
     val checkBetterDocApiHealth = liveData {
