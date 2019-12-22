@@ -149,11 +149,11 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
     }
 
     override fun getDistanceRadius(): String {
-        return pref?.getString(Constants.SHARED_PREF_DISTANCE_RADIUS, "")!!
+        return pref?.getString(Constants.SHARED_PREF_DISTANCE_RADIUS, "10")!!
     }
 
     override fun getSearchLimit(): String {
-       return pref?.getString(Constants.SHARED_PREF_SEARCH_LIMIT, "")!!
+       return pref?.getString(Constants.SHARED_PREF_SEARCH_LIMIT, "10")!!
     }
 
     override fun setBreath(breath: Int) {
