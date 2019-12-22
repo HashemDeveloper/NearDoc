@@ -12,10 +12,6 @@ interface INearDocRemoteRepo {
     fun sendEmailVerification(url: String, requestType: String, idToken: String, webKey: String): Observable<EmailVerificationRes>
     fun getUsernames(username: String, dbKey: String): Observable<UsernameRes>
     fun sendPasswordResetLink(url: String, apiKey: String, requestType: String, email: String): Observable<PasswordResetRes>
-    fun checkBetterDocApiHealth(url: String, userKey: String): Observable<BetterDocApiHealthRes>
-    suspend fun checkBetterDocApiHealthKtxAsync(url: String, userKey: String): Response<BetterDocApiHealthRes>
-    suspend fun searchDocByDiseaseKtx(url: String, userKey: String, limit: Int, location: String, disease: String, sort: String): Response<BetterDocSearchByDiseaseRes>
-    fun searchDocByDisease(url: String, userKey: String, limit: Int, location: String, disease: String, sort: String): Observable<BetterDocSearchByDiseaseRes>
     fun getKnownConditions(url: String, userKey: String, limit: Int): Observable<KnownConditionRes>
     fun getUsers(email: String, dbKey: String): Observable<UsersRes>
     fun updateEmail(url: String, key: String, idToken: String, email: String, returnSecureToken: Boolean): Observable<UpdateLoginInfoRes>
@@ -24,4 +20,6 @@ interface INearDocRemoteRepo {
     fun deleteUserInfoFromFirebaseDb(email: String, authKey: String): Observable<Void>
     fun deleteUserAccount(url: String, webKey: String, idToken: String): Observable<Void>
     fun deleteUsername(username: String, dbKey: String): Observable<Void>
+    suspend fun checkBetterDocApiHealthKtxAsync(url: String, userKey: String): Response<BetterDocApiHealthRes>
+    suspend fun searchDocByDiseaseKtx(url: String, userKey: String, limit: Int, location: String, disease: String, sort: String): Response<BetterDocSearchByDiseaseRes>
 }

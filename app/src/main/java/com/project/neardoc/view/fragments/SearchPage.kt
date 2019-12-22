@@ -135,7 +135,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                                 if (BuildConfig.DEBUG) {
                                     Log.i(TAG, "Logging BetterDocApiHealth Information---> Status: ${data.status}, Api Version: ${data.apiVersion}")
                                 }
-                                homePageViewModel.fetchDocByDisease(betterDocApiKey, latitude, longitude, "arthritis")
+                                homePageViewModel.fetchDocByDisease(betterDocApiKey, latitude, longitude, "")
                                 searchResultLiveDataHandler()
                             }
                         }
