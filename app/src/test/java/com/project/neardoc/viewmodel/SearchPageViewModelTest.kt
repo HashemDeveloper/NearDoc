@@ -56,22 +56,4 @@ class SearchPageViewModelTest {
         Mockito.any<T>()
         return null as T
     }
-
-
-    @Test
-    fun checkBetterDocApiHealth_healthy() {
-        val betterDocApiHealthRes = BetterDocApiHealthRes("OK", "API_VERSION", "BUILD_VERSION")
-        this.testApiHealthObservable = Observable.just(betterDocApiHealthRes)
-        `when`(this.iNearDocRemoteRepo.checkBetterDocApiHealth(any(), any())).thenReturn(this.testApiHealthObservable)
-        this.sut.checkBetterDocApiHealth("API_KEY")
-        assertEquals(true, this.sut.getStatusOkLiveData().value)
-    }
-
-    @Test
-    fun checkBetterDocApiHealth_not_healthy() {
-        this.testApiHealthObservable = Observable.error(Throwable())
-        `when`(this.iNearDocRemoteRepo.checkBetterDocApiHealth(any(), any())).thenReturn(this.testApiHealthObservable)
-        this.sut.checkBetterDocApiHealth("API_KEY")
-        assertEquals(false, this.sut.getStatusOkLiveData().value)
-    }
 }

@@ -61,6 +61,7 @@ ext {
     fluid_version = "0.3.1"
     view_animator_version = "1.1.0"
     filter_menu_version = "0.2.3"
+    coroutines_scopes = "2.2.0-rc03"
 }
 task clean(type: Delete) {
     delete rootProject.buildDir

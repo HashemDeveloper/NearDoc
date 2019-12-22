@@ -2,6 +2,8 @@ package com.project.neardoc.data.local.remote
 
 import com.project.neardoc.model.*
 import io.reactivex.Observable
+import kotlinx.coroutines.Deferred
+import retrofit2.Response
 
 interface INearDocRemoteRepo {
     fun storeUsername(username: String, dbKey: String, usernameModel: Username) : Observable<Username>
@@ -11,6 +13,8 @@ interface INearDocRemoteRepo {
     fun getUsernames(username: String, dbKey: String): Observable<UsernameRes>
     fun sendPasswordResetLink(url: String, apiKey: String, requestType: String, email: String): Observable<PasswordResetRes>
     fun checkBetterDocApiHealth(url: String, userKey: String): Observable<BetterDocApiHealthRes>
+    suspend fun checkBetterDocApiHealthKtxAsync(url: String, userKey: String): Response<BetterDocApiHealthRes>
+    suspend fun searchDocByDiseaseKtx(url: String, userKey: String, limit: Int, location: String, disease: String, sort: String): Response<BetterDocSearchByDiseaseRes>
     fun searchDocByDisease(url: String, userKey: String, limit: Int, location: String, disease: String, sort: String): Observable<BetterDocSearchByDiseaseRes>
     fun getKnownConditions(url: String, userKey: String, limit: Int): Observable<KnownConditionRes>
     fun getUsers(email: String, dbKey: String): Observable<UsersRes>

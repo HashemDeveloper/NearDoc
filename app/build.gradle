@@ -100,6 +100,10 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$lifeCycleExtensionVersion"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifeCycleExtensionVersion"
 
+    //Coroutines scopes: ViewModelScope, LifecycleScope and LiveData
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$coroutines_scopes"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$coroutines_scopes"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$coroutines_scopes"
 
     // glide
     implementation "com.github.bumptech.glide:glide:$glideVersion"

@@ -2,7 +2,6 @@ package com.project.neardoc.viewmodel
 
 import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +20,6 @@ import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.auth.FirebaseAuth
 import com.project.neardoc.BuildConfig
 import com.project.neardoc.R
-import com.project.neardoc.broadcast.NearDocBroadcastReceiver
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.IUserInfoDao
 import com.project.neardoc.events.BottomBarEvent
@@ -43,6 +41,7 @@ import kotlin.coroutines.CoroutineContext
 class AccountPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
 
     companion object {
+        @JvmStatic private val BREATH_COUNT_MAX: Int = 50
         const val DEFAULT_REPEAT_COUNT = 5
         @JvmStatic
         private val TAG: String = AccountPageViewModel::class.java.canonicalName!!
@@ -65,6 +64,10 @@ class AccountPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
 
     fun init() {
         val email: String = this.iSharedPrefService.getUserEmail()
+        val breathCount: Int = this.iSharedPrefService.getBreath()
+        if (breathCount == BREATH_COUNT_MAX) {
+            //TODO: Unlock the heart rate and save the state into server
+        }
         var userPersonalInfo: UserPersonalInfo?= null
         launch {
             userPersonalInfo = iUserInfoDao.getUserByEmail(email)
@@ -106,10 +109,10 @@ class AccountPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     ) {
         val repeatCount: Int?
         val count: Int = this.iSharedPrefService.getRepeatCount()
-        if (count >= DEFAULT_REPEAT_COUNT) {
-            repeatCount = count
+        repeatCount = if (count >= DEFAULT_REPEAT_COUNT) {
+            count
         } else {
-            repeatCount = DEFAULT_REPEAT_COUNT
+            DEFAULT_REPEAT_COUNT
         }
 
         ViewAnimator
@@ -136,13 +139,13 @@ class AccountPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
                     this.iSharedPrefService.setBreathingSession(this.iSharedPrefService.getBreathingSession() + 1)
                     this.iSharedPrefService.setBreath(this.iSharedPrefService.getBreath() + 1)
                     this.iSharedPrefService.setBreathingDate(System.currentTimeMillis())
-                    displayResultDialog(context, activity)
+                    displayBreathingResultDialog(context, activity)
                     breathingGuideTextView!!.visibility = View.GONE
                 }
             }
             .start()
     }
-    private fun displayResultDialog(context: Context, activity: FragmentActivity) {
+    private fun displayBreathingResultDialog(context: Context, activity: FragmentActivity) {
         val viewGroup: ViewGroup = activity.window.decorView.rootView as ViewGroup
         val resultView: View = activity.layoutInflater.inflate(R.layout.breathing_result_layout, viewGroup, false)
         val breathCountedView: MaterialTextView = resultView.run {
@@ -152,7 +155,7 @@ class AccountPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
             this.findViewById(R.id.breathing_result_last_breath_date_view_id)
         }
 
-        breathCountedView.text = MessageFormat.format("{0} Breaths", this.iSharedPrefService.getBreath().toString())
+        breathCountedView.text = MessageFormat.format("{0} Sets", this.iSharedPrefService.getBreath().toString())
         lastBreathDateView.text = this.iSharedPrefService.getBreathingDate()
         val okBt: MaterialButton = resultView.run {
             this.findViewById(R.id.breathing_result_ok_bt_id)
