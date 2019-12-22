@@ -6,6 +6,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.*
 import com.project.neardoc.BuildConfig
 import com.project.neardoc.R
+import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
 import com.project.neardoc.model.*
 import com.project.neardoc.utils.Constants
@@ -28,6 +29,8 @@ class SearchPageViewModel @Inject constructor(): ViewModel() {
     @Inject
     lateinit var context: Context
     var fetchDocByDiseaseLiveData: LiveData<ResultHandler<Any>>?= null
+    @Inject
+    lateinit var iSharedPrefService: ISharedPrefService
 
     override fun onCleared() {
         super.onCleared()
@@ -52,11 +55,13 @@ class SearchPageViewModel @Inject constructor(): ViewModel() {
     }
 
     fun fetchDocByDisease(apiKey: String, latitude: String, longitude: String,  s: String) {
-        val distance = "$latitude,$longitude,10"
+        val radius: String = this.iSharedPrefService.getDistanceRadius()
+        val limit: String = this.iSharedPrefService.getSearchLimit()
+        val distance = "$latitude,$longitude,$radius"
         this.fetchDocByDiseaseLiveData = liveData {
             try {
                 val result: Response<BetterDocSearchByDiseaseRes> = iNearDocRemoteRepo.searchDocByDiseaseKtx(Constants.SEARCH_DOC_BY_DISEASE_ENDPOINT,
-                    apiKey, 10, distance, s, "distance-asc")
+                    apiKey, limit.toInt(), distance, s, "distance-asc")
                 if (result.isSuccessful) {
                     val body: BetterDocSearchByDiseaseRes = result.body()!!
                     emit(ResultHandler.success(body))

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.iammert.library.ui.multisearchviewlib.MultiSearchView
 import com.project.neardoc.BuildConfig
 
 import com.project.neardoc.R
@@ -21,16 +22,20 @@ import com.project.neardoc.model.BetterDocSearchByDiseaseRes
 import com.project.neardoc.utils.networkconnections.ConnectionSettings
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.livedata.ResultHandler
+import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.SearchPageViewModel
 import com.project.neardoc.viewmodel.listeners.ISearchPageViewModel
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.synthetic.main.fragment_registration.*
 import kotlinx.android.synthetic.main.fragment_search_page.*
+import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
-class SearchPage : Fragment(), Injectable{
+class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.MultiSearchViewListener{
     companion object {
         @JvmStatic private val TAG: String = SearchPage::class.java.canonicalName!!
     }
@@ -41,9 +46,13 @@ class SearchPage : Fragment(), Injectable{
     private var betterDocApiKey = ""
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+    private val globalLoadingBar: GlobalLoadingBar by lazy {
+        GlobalLoadingBar(activity!!, fragment_search_progress_bar_id)
+    }
     private val homePageViewModel: SearchPageViewModel by viewModels {
         this.viewModelFactory
     }
+    private val job = Job()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -60,6 +69,7 @@ class SearchPage : Fragment(), Injectable{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         this.betterDocApiKey = resources.getString(R.string.better_doc_api_key)
+        fragment_search_page_search_container_id.setSearchViewListener(this)
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.ASYNC)
@@ -94,43 +104,39 @@ class SearchPage : Fragment(), Injectable{
             it?.let {
                 when (it.status) {
                     ResultHandler.ResultStatus.LOADING -> {
-                        if (it.data is Boolean) {
-                            val isLoading: Boolean = it.data
-                            if (isLoading) {
-                                Log.i("Loading", "Yes")
+                        var isLoading: Boolean?= null
+                        launch {
+                            withContext(Dispatchers.IO) {
+                                if (it.data is Boolean) {
+                                    isLoading = it.data
+                                }
                             }
-                        }
-                    }
-                    ResultHandler.ResultStatus.SUCCESS -> {
-                        if (it.data is BetterDocApiHealthRes) {
-                            val data: BetterDocApiHealthRes = it.data
-                            this.homePageViewModel.fetchDocByDisease(this.betterDocApiKey, this.latitude, this.longitude, "arthritis")
-                            if (BuildConfig.DEBUG) {
-                                Log.i(TAG, "Logging BetterDocApiHealth Information---> Status: ${data.status}, Api Version: ${data.apiVersion}")
-                            }
-                            this.homePageViewModel.fetchDocByDiseaseLiveData?.let {
-                                it.observe(viewLifecycleOwner, Observer {
-                                    it?.let {
-                                        when (it.status) {
-                                            ResultHandler.ResultStatus.LOADING -> {
-
-                                            }
-                                            ResultHandler.ResultStatus.SUCCESS -> {
-                                                if (it.data is BetterDocSearchByDiseaseRes) {
-                                                    val searchData: BetterDocSearchByDiseaseRes = it.data
-                                                    Log.d(TAG, "Result: ${searchData.metaData}")
-                                                }
-                                            }
-                                            ResultHandler.ResultStatus.ERROR -> {
-                                                if (it.message != null && it.message.isNotEmpty()) {
-                                                    if (BuildConfig.DEBUG) {
-                                                        Log.i(TAG, "BetterDocApiHealth Exception: ${it.message}")
-                                                    }
-                                                }
-                                            }
+                        }.invokeOnCompletion {throwable ->
+                            if (throwable != null && throwable.localizedMessage != null) {
+                                if (BuildConfig.DEBUG) {
+                                    Log.i(TAG, "Check Api Health Coroutines Exception: ${throwable.localizedMessage!!}")
+                                }
+                            } else {
+                                activity!!.runOnUiThread {
+                                    isLoading?.let {loading ->
+                                        if (loading) {
+                                            displayLoading(loading)
                                         }
                                     }
-                                })
+                                }
+                            }
+                        }
+
+                    }
+                    ResultHandler.ResultStatus.SUCCESS -> {
+                        launch {
+                            if (it.data is BetterDocApiHealthRes) {
+                                val data: BetterDocApiHealthRes = it.data
+                                if (BuildConfig.DEBUG) {
+                                    Log.i(TAG, "Logging BetterDocApiHealth Information---> Status: ${data.status}, Api Version: ${data.apiVersion}")
+                                }
+                                homePageViewModel.fetchDocByDisease(betterDocApiKey, latitude, longitude, "")
+                                searchResultLiveDataHandler()
                             }
                         }
                     }
@@ -140,10 +146,53 @@ class SearchPage : Fragment(), Injectable{
                                 Log.i(TAG, "BetterDocApiHealth Exception: ${it.message}")
                             }
                         }
+                        displayLoading(false)
                     }
                 }
             }
         }
+    }
+    private fun searchResultLiveDataHandler() {
+        this.homePageViewModel.fetchDocByDiseaseLiveData?.let { result ->
+            result.observe(viewLifecycleOwner, Observer { resultHandler ->
+                resultHandler?.let {
+                    when (it.status) {
+                        ResultHandler.ResultStatus.LOADING -> {
+
+                        }
+                        ResultHandler.ResultStatus.SUCCESS -> {
+                            launch { withContext(Dispatchers.IO) {
+                                if (it.data is BetterDocSearchByDiseaseRes) {
+                                    val searchData: BetterDocSearchByDiseaseRes = it.data
+                                    Log.d(TAG, "Result: ${searchData.metaData}")
+                                }
+                            }}.invokeOnCompletion { throwable ->
+                                if (throwable != null && throwable.localizedMessage != null) {
+                                    if (BuildConfig.DEBUG) {
+                                        Log.i(TAG, "Search Result Handler Coroutines Exception: ${throwable.localizedMessage!!}")
+                                    }
+                                } else {
+                                    activity!!.runOnUiThread {
+                                        displayLoading(false)
+                                    }
+                                }
+                            }
+                        }
+                        ResultHandler.ResultStatus.ERROR -> {
+                            if (it.message != null && it.message.isNotEmpty()) {
+                                if (BuildConfig.DEBUG) {
+                                    Log.i(TAG, "BetterDocApiHealth Exception: ${it.message}")
+                                }
+                            }
+                            displayLoading(false)
+                        }
+                    }
+                }
+            })
+        }
+    }
+    private fun displayLoading(isLoading: Boolean) {
+        this.globalLoadingBar.setVisibility(isLoading)
     }
     private fun displayConnectionSetting() {
         this.connectionSettings =
@@ -168,5 +217,24 @@ class SearchPage : Fragment(), Injectable{
     override fun onDestroy() {
         super.onDestroy()
         this.homePageViewModel.checkBetterDocApiHealth.removeObserver(checkBetterDocApiHealthObserver())
+    }
+
+    override val coroutineContext: CoroutineContext
+        get() = this.job + Dispatchers.Main
+
+    override fun onItemSelected(index: Int, s: CharSequence) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onSearchComplete(index: Int, s: CharSequence) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onSearchItemRemoved(index: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onTextChanged(index: Int, s: CharSequence) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

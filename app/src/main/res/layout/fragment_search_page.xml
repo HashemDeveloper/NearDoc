@@ -11,6 +11,11 @@
             layout="@layout/server_error_layout"
             android:visibility="gone"
             />
+        <include
+            android:id="@+id/fragment_search_progress_bar_id"
+            layout="@layout/global_progress_bar_layout"
+            android:visibility="gone"
+            />
         <com.iammert.library.ui.multisearchviewlib.MultiSearchView
             android:id="@+id/fragment_search_page_search_container_id"
             android:layout_width="match_parent"

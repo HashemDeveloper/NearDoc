@@ -59,28 +59,6 @@ interface INearDocRemoteApi {
 
     @Headers("Content-Type: application/json")
     @GET
-    fun getBetterDocApiHealth(@Url url: String, @Query("user_key") userKey: String): Observable<BetterDocApiHealthRes>
-
-    //Coroutines Test
-    @Headers("Content-Type: application/json")
-    @GET
-    suspend fun getBetterDocApiHealthKtx(@Url url: String, @Query("user_key") userKey: String): Response<BetterDocApiHealthRes>
-    @Headers("Content-Type: application/json")
-    @GET
-    suspend fun searchDocByDiseaseKtx(@Url url: String, @Query("user_key") userKey: String, @Query("limit")
-    limit: Int, @Query("location") location: String, @Query("query") disease: String, @Query("sort") sort: String): Response<BetterDocSearchByDiseaseRes>
-
-    @Headers("Content-Type: application/json")
-    @GET
-    fun searchDocByDisease(
-        @Url url: String, @Query("user_key") userKey: String, @Query("limit") limit: Int,
-        @Query("location") location: String,
-        @Query("query") disease: String, @Query("sort") sort: String
-    ): Observable<BetterDocSearchByDiseaseRes>
-
-
-    @Headers("Content-Type: application/json")
-    @GET
     fun retrieveKnownConditions(@Url url: String, @Query("user_key") userKey: String, @Query("limit") limit: Int): Observable<KnownConditionRes>
 
     @Headers("Content-Type: application/json")
@@ -109,4 +87,13 @@ interface INearDocRemoteApi {
     @Headers("Content-Type: application/json")
     @POST
     fun deleteUserAccount(@Url url: String, @Query("key") webApiKey: String, @Query("idToken") idToken: String): Observable<Void>
+
+    @Headers("Content-Type: application/json")
+    @GET
+    suspend fun getBetterDocApiHealthKtx(@Url url: String, @Query("user_key") userKey: String): Response<BetterDocApiHealthRes>
+    @Headers("Content-Type: application/json")
+    @GET
+    suspend fun searchDocByDiseaseKtx(@Url url: String, @Query("user_key") userKey: String, @Query("limit")
+    limit: Int, @Query("location") location: String, @Query("query") disease: String, @Query("sort") sort: String): Response<BetterDocSearchByDiseaseRes>
+
 }
