@@ -21,9 +21,11 @@ import com.project.neardoc.model.BetterDocSearchByDiseaseRes
 import com.project.neardoc.utils.networkconnections.ConnectionSettings
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.livedata.ResultHandler
+import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.SearchPageViewModel
 import com.project.neardoc.viewmodel.listeners.ISearchPageViewModel
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.synthetic.main.fragment_registration.*
 import kotlinx.android.synthetic.main.fragment_search_page.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -97,7 +99,7 @@ class SearchPage : Fragment(), Injectable{
                         if (it.data is Boolean) {
                             val isLoading: Boolean = it.data
                             if (isLoading) {
-                                Log.i("Loading", "Yes")
+                                displayLoading(isLoading)
                             }
                         }
                     }
@@ -117,6 +119,7 @@ class SearchPage : Fragment(), Injectable{
                                 Log.i(TAG, "BetterDocApiHealth Exception: ${it.message}")
                             }
                         }
+                        displayLoading(false)
                     }
                 }
             }
@@ -134,6 +137,7 @@ class SearchPage : Fragment(), Injectable{
                             if (it.data is BetterDocSearchByDiseaseRes) {
                                 val searchData: BetterDocSearchByDiseaseRes = it.data
                                 Log.d(TAG, "Result: ${searchData.metaData}")
+                                displayLoading(false)
                             }
                         }
                         ResultHandler.ResultStatus.ERROR -> {
@@ -142,10 +146,19 @@ class SearchPage : Fragment(), Injectable{
                                     Log.i(TAG, "BetterDocApiHealth Exception: ${it.message}")
                                 }
                             }
+                            displayLoading(false)
                         }
                     }
                 }
             })
+        }
+    }
+    private fun displayLoading(isLoading: Boolean) {
+        val globalLoadingBar = GlobalLoadingBar(activity!!, fragment_search_progress_bar_id)
+        if (isLoading) {
+            globalLoadingBar.setVisibility(true)
+        } else {
+            globalLoadingBar.setVisibility(false)
         }
     }
     private fun displayConnectionSetting() {
