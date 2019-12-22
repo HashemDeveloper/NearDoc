@@ -104,34 +104,11 @@ class SearchPage : Fragment(), Injectable{
                     ResultHandler.ResultStatus.SUCCESS -> {
                         if (it.data is BetterDocApiHealthRes) {
                             val data: BetterDocApiHealthRes = it.data
-                            this.homePageViewModel.fetchDocByDisease(this.betterDocApiKey, this.latitude, this.longitude, "arthritis")
                             if (BuildConfig.DEBUG) {
                                 Log.i(TAG, "Logging BetterDocApiHealth Information---> Status: ${data.status}, Api Version: ${data.apiVersion}")
                             }
-                            this.homePageViewModel.fetchDocByDiseaseLiveData?.let {
-                                it.observe(viewLifecycleOwner, Observer {
-                                    it?.let {
-                                        when (it.status) {
-                                            ResultHandler.ResultStatus.LOADING -> {
-
-                                            }
-                                            ResultHandler.ResultStatus.SUCCESS -> {
-                                                if (it.data is BetterDocSearchByDiseaseRes) {
-                                                    val searchData: BetterDocSearchByDiseaseRes = it.data
-                                                    Log.d(TAG, "Result: ${searchData.metaData}")
-                                                }
-                                            }
-                                            ResultHandler.ResultStatus.ERROR -> {
-                                                if (it.message != null && it.message.isNotEmpty()) {
-                                                    if (BuildConfig.DEBUG) {
-                                                        Log.i(TAG, "BetterDocApiHealth Exception: ${it.message}")
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                })
-                            }
+                            this.homePageViewModel.fetchDocByDisease(this.betterDocApiKey, this.latitude, this.longitude, "arthritis")
+                            searchResultLiveDataHandler()
                         }
                     }
                     ResultHandler.ResultStatus.ERROR -> {
@@ -143,6 +120,32 @@ class SearchPage : Fragment(), Injectable{
                     }
                 }
             }
+        }
+    }
+    private fun searchResultLiveDataHandler() {
+        this.homePageViewModel.fetchDocByDiseaseLiveData?.let { result ->
+            result.observe(viewLifecycleOwner, Observer { resultHandler ->
+                resultHandler?.let {
+                    when (it.status) {
+                        ResultHandler.ResultStatus.LOADING -> {
+
+                        }
+                        ResultHandler.ResultStatus.SUCCESS -> {
+                            if (it.data is BetterDocSearchByDiseaseRes) {
+                                val searchData: BetterDocSearchByDiseaseRes = it.data
+                                Log.d(TAG, "Result: ${searchData.metaData}")
+                            }
+                        }
+                        ResultHandler.ResultStatus.ERROR -> {
+                            if (it.message != null && it.message.isNotEmpty()) {
+                                if (BuildConfig.DEBUG) {
+                                    Log.i(TAG, "BetterDocApiHealth Exception: ${it.message}")
+                                }
+                            }
+                        }
+                    }
+                }
+            })
         }
     }
     private fun displayConnectionSetting() {
