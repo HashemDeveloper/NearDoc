@@ -12,7 +12,6 @@ import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.IUserInfoDao
 import com.project.neardoc.events.UserStateEvent
-import com.project.neardoc.model.localstoragemodels.UserPersonalInfo
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.calories.ICalorieBurnedCalculator
 import com.project.neardoc.utils.notifications.INotificationBuilder
@@ -86,21 +85,6 @@ class StepCountForegroundService @Inject constructor() : Service(), CoroutineSco
         if (!event.isLoggedIn) {
             stopForegroundService()
             stopSelf()
-        }
-    }
-    private suspend fun scheduleRegularNotification() {
-        withContext(Dispatchers.IO) {
-            launch {
-                val stepCount: Int = iSharedPrefService.getLastStepCountValue()
-                val email: String = iSharedPrefService.getUserEmail()
-                val userPersonalInfo: UserPersonalInfo = iUserInfoDao.getUserByEmail(email)
-                val height: Double = userPersonalInfo.userHeight
-                val weight: Double = userPersonalInfo.userWeight
-                val burnedCalories: Double = iCalorieBurnedCalculator.calculateCalorieBurned(height, weight, stepCount)
-                iNotificationScheduler.scheduleJob(Constants.STEP_COUNTER_SERVICE_ACTION,
-                    StepCounterService.STEP_COUNT_NOTIFICATION_REQ_CODE,
-                    2, 0, burnedCalories.toInt())
-            }
         }
     }
 

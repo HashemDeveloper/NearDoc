@@ -2,6 +2,8 @@ package com.project.neardoc.data.local.remote
 
 import com.project.neardoc.model.*
 import io.reactivex.Observable
+import kotlinx.coroutines.Deferred
+import retrofit2.Response
 import javax.inject.Inject
 
 class NearDocRemoteRepo @Inject constructor(): INearDocRemoteRepo {
@@ -110,5 +112,23 @@ class NearDocRemoteRepo @Inject constructor(): INearDocRemoteRepo {
 
     override fun deleteUsername(username: String, dbKey: String): Observable<Void> {
        return this.iNearDocRemoteApi.deleteUsername(username, dbKey)
+    }
+
+    override suspend fun checkBetterDocApiHealthKtxAsync(
+        url: String,
+        userKey: String
+    ): Response<BetterDocApiHealthRes> {
+        return this.iNearDocRemoteApi.getBetterDocApiHealthKtx(url, userKey)
+    }
+
+    override suspend fun searchDocByDiseaseKtx(
+        url: String,
+        userKey: String,
+        limit: Int,
+        location: String,
+        disease: String,
+        sort: String
+    ): Response<BetterDocSearchByDiseaseRes> {
+        return this.iNearDocRemoteApi.searchDocByDiseaseKtx(url, userKey, limit, location, disease, sort)
     }
 }

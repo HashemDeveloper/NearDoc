@@ -4,6 +4,8 @@ import com.project.neardoc.model.*
 import com.project.neardoc.model.insuranceplanproviders.InsuranceAndPlans
 import com.project.neardoc.view.settings.UpdateEmail
 import io.reactivex.Observable
+import kotlinx.coroutines.Deferred
+import retrofit2.Response
 import retrofit2.http.*
 
 interface INearDocRemoteApi {
@@ -59,13 +61,23 @@ interface INearDocRemoteApi {
     @GET
     fun getBetterDocApiHealth(@Url url: String, @Query("user_key") userKey: String): Observable<BetterDocApiHealthRes>
 
+    //Coroutines Test
+    @Headers("Content-Type: application/json")
+    @GET
+    suspend fun getBetterDocApiHealthKtx(@Url url: String, @Query("user_key") userKey: String): Response<BetterDocApiHealthRes>
+    @Headers("Content-Type: application/json")
+    @GET
+    suspend fun searchDocByDiseaseKtx(@Url url: String, @Query("user_key") userKey: String, @Query("limit")
+    limit: Int, @Query("location") location: String, @Query("query") disease: String, @Query("sort") sort: String): Response<BetterDocSearchByDiseaseRes>
+
     @Headers("Content-Type: application/json")
     @GET
     fun searchDocByDisease(
-        @Url url: String, @Query("user_key") userKey: String, @Query("limit") limit: Int, @Query(
-            "location"
-        ) location: String, @Query("query") disease: String, @Query("sort") sort: String
+        @Url url: String, @Query("user_key") userKey: String, @Query("limit") limit: Int,
+        @Query("location") location: String,
+        @Query("query") disease: String, @Query("sort") sort: String
     ): Observable<BetterDocSearchByDiseaseRes>
+
 
     @Headers("Content-Type: application/json")
     @GET
