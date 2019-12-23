@@ -2,28 +2,37 @@ package com.project.neardoc.viewmodel
 
 import android.content.Context
 import android.util.Log
-import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.*
 import com.project.neardoc.BuildConfig
 import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
+import com.project.neardoc.data.local.searchdocdaos.IDocDao
+import com.project.neardoc.data.local.searchdocdaos.IDocProfileDao
+import com.project.neardoc.data.local.searchdocdaos.IDocProfileLanguageDao
+import com.project.neardoc.data.local.searchdocdaos.IDocRatingDao
 import com.project.neardoc.model.*
+import com.project.neardoc.model.localstoragemodels.*
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.livedata.ResultHandler
-import com.project.neardoc.viewmodel.listeners.ISearchPageViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
 import retrofit2.Response
+import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-class SearchPageViewModel @Inject constructor(): ViewModel() {
+class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     companion object {
         @JvmStatic private val TAG: String = SearchPageViewModel::class.java.canonicalName!!
     }
+    @Inject
+    lateinit var iDocDao: IDocDao
+    @Inject
+    lateinit var iDocProfileDao: IDocProfileDao
+    @Inject
+    lateinit var iDocRatingDao: IDocRatingDao
+    @Inject
+    lateinit var iDocProfileLanguageDao: IDocProfileLanguageDao
     @Inject
     lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
     @Inject
@@ -31,6 +40,8 @@ class SearchPageViewModel @Inject constructor(): ViewModel() {
     var fetchDocByDiseaseLiveData: LiveData<ResultHandler<Any>>?= null
     @Inject
     lateinit var iSharedPrefService: ISharedPrefService
+    private val job = Job()
+    val list: MutableList<DocProfile> = arrayListOf()
 
     override fun onCleared() {
         super.onCleared()
@@ -55,6 +66,7 @@ class SearchPageViewModel @Inject constructor(): ViewModel() {
     }
 
     fun fetchDocByDisease(apiKey: String, latitude: String, longitude: String,  s: String) {
+        val userEmail: String = this.iSharedPrefService.getUserEmail()
         val radius: String = this.iSharedPrefService.getDistanceRadius()
         val limit: String = this.iSharedPrefService.getSearchLimit()
         val distance = "$latitude,$longitude,$radius"
@@ -64,6 +76,60 @@ class SearchPageViewModel @Inject constructor(): ViewModel() {
                     apiKey, limit.toInt(), distance, s, "distance-asc")
                 if (result.isSuccessful) {
                     val body: BetterDocSearchByDiseaseRes = result.body()!!
+                    var doc: Doc
+                    launch {
+                        withContext(Dispatchers.IO) {
+                            for (doctor: Doctor in body.searchByDiseaseData) {
+                                val docParentId: String = UUID.randomUUID().toString()
+                                val docProfileId: String = UUID.randomUUID().toString()
+                                doc = Doc(docParentId, userEmail, doctor.uid)
+                                iDocDao.insertDoctors(doc)
+                                val doctorProfile: Profile = doctor.profile
+                                doctor.let {
+                                    for (rating: Rating in it.ratingList) {
+                                        val docRatings = DocRatings(0, doc.docParentId, rating.active, rating.provider ?: "", rating.providerUid ?: "", rating.providerUrl ?: "",
+                                            rating.rating ?: 0.0, rating.reviewCount ?: 0, rating.imageUrlSmall ?: "", rating.imageUrlSmall2x ?: "", rating.imageUrlLarge ?: "", rating.imageUrlLarge2x ?: "")
+                                        iDocRatingDao.insertDoctorRatings(docRatings)
+                                    }
+                                }
+                                val docProfile = DocProfile(docProfileId, doc.docParentId, userEmail, doctorProfile.firstName, doctorProfile.lastName, if (doctorProfile.slug.isNotEmpty()) doctorProfile.slug else "",
+                                    doctorProfile.title ?: "", doctorProfile.imageUrl ?: "", doctorProfile.gender ?: "", doctorProfile.bio ?: "", doc.uid)
+                                list.add(docProfile)
+                                iDocProfileDao.insertDocProfile(list)
+                                doctorProfile.let {
+                                    if (it.listOfLanguage.isNotEmpty()) {
+                                        for (languages in it.listOfLanguage) {
+                                            val language: Language = languages
+                                            val docProfileLanguage = DocProfileLanguage(0, docProfile.docProfileId, language.name, language.code)
+                                            iDocProfileLanguageDao.insertDocProfileLanguage(docProfileLanguage)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }.invokeOnCompletion {
+                        if (it != null && it.localizedMessage != null) {
+                            if (BuildConfig.DEBUG) {
+                                Log.i(TAG, "Exception at fetching and saving data: ${it.localizedMessage}")
+                            }
+                        } else {
+                            launch {
+                                withContext(Dispatchers.IO) {
+                                    for (docProfileList in iDocProfileDao.getDocProfileByUserEmail(userEmail)) {
+                                        Log.d(TAG, "Profile: ${docProfileList.firstName}")
+                                    }
+                                    for (relationalDb in iDocProfileDao.getDoctorsProfile()) {
+                                        for (docProfile in relationalDb.docProfile) {
+                                            Log.d(TAG, "Doc Profile: ${docProfile.firstName}")
+                                        }
+                                        for (rating in relationalDb.docRating) {
+                                            Log.d(TAG, "Ratings: ${rating.rating}")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     emit(ResultHandler.success(body))
                 } else {
                     emit(ResultHandler.onError(null, "Failed"))
@@ -75,4 +141,7 @@ class SearchPageViewModel @Inject constructor(): ViewModel() {
             }
         }
     }
+
+    override val coroutineContext: CoroutineContext
+        get() = this.job + Dispatchers.Main
 }

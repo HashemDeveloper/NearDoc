@@ -5,6 +5,10 @@ import com.project.neardoc.NearDocApp
 import com.project.neardoc.data.local.*
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
 import com.project.neardoc.data.local.remote.NearDocRemoteRepo
+import com.project.neardoc.data.local.searchdocdaos.IDocDao
+import com.project.neardoc.data.local.searchdocdaos.IDocProfileDao
+import com.project.neardoc.data.local.searchdocdaos.IDocProfileLanguageDao
+import com.project.neardoc.data.local.searchdocdaos.IDocRatingDao
 import com.project.neardoc.rxauth.IRxAuthentication
 import com.project.neardoc.rxauth.RxAuthentication
 import com.project.neardoc.rxeventbus.IRxEventBus
@@ -115,6 +119,7 @@ class ApplicationModule {
     fun provideCalorieBurnCalculator(calorieBurnedCalculator: CalorieBurnedCalculator): ICalorieBurnedCalculator {
         return calorieBurnedCalculator
     }
+    //start --Local storage providers--
     @Singleton
     @Provides
     fun provideUserInfoDb(dbService: LocalDBService): IUserInfoDao {
@@ -130,6 +135,27 @@ class ApplicationModule {
     fun provideStepCountDataDb(dbService: LocalDBService): IStepCountDataDao {
         return dbService.getStepCountDataDao()
     }
+    @Singleton
+    @Provides
+    fun provideDoctorsDao(dbService: LocalDBService): IDocDao {
+        return dbService.getDocDao()
+    }
+    @Singleton
+    @Provides
+    fun provideDoctorRatingDao(dbService: LocalDBService): IDocRatingDao {
+        return dbService.getDocRatingDao()
+    }
+    @Singleton
+    @Provides
+    fun provideDocProfileDao(dbService: LocalDBService): IDocProfileDao {
+        return dbService.getDocProfileDao()
+    }
+    @Singleton
+    @Provides
+    fun provideDocProfileLanguageDao(dbService: LocalDBService): IDocProfileLanguageDao {
+        return dbService.getDocProfileLanguageDao()
+    }
+    // end -- local storage provider
     @Singleton
     @Provides
     fun provideNotificationChanelBuilder(notificationChanelBuilder: NotificationChanelBuilder): INotificationChanelBuilder {

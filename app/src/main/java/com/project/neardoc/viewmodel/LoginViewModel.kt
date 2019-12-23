@@ -20,9 +20,9 @@ import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.DeCryptor
 import com.project.neardoc.utils.EnCryptor
 import com.project.neardoc.viewmodel.listeners.ILoginViewModel
-import com.project.neardoc.worker.FetchUserWorker
-import com.project.neardoc.worker.LoginWorker
-import com.project.neardoc.worker.UpdateUserInfoWorker
+import com.project.neardoc.workers.FetchUserWorker
+import com.project.neardoc.workers.LoginWorker
+import com.project.neardoc.workers.UpdateUserInfoWorker
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers

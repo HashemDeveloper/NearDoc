@@ -35,7 +35,8 @@ ext {
     mockitoVersion = "2.11.0"
     rxJavaVersion = '2.1.4'
     rxAndroidVersion = '2.1.1'
-    room_version = "2.2.2"
+    room_version = "2.2.3"
+    room_compiler_version = "2.2.2"
     materialDesignVersion = '1.2.0-alpha02'
     designSupportLib ='1.0.0'
     gsonVersion = '2.7.0'

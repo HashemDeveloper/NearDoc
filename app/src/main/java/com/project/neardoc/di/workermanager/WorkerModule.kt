@@ -2,7 +2,7 @@ package com.project.neardoc.di.workermanager
 
 import androidx.work.Worker
 import com.project.neardoc.di.scopes.WorkerKey
-import com.project.neardoc.worker.*
+import com.project.neardoc.workers.*
 import dagger.Binds
 import dagger.Module
 import dagger.android.AndroidInjector
