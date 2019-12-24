@@ -19,7 +19,7 @@ import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.events.UserStateEvent
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.widgets.PageType
-import com.project.neardoc.worker.UpdatePasswordWorker
+import com.project.neardoc.workers.UpdatePasswordWorker
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 

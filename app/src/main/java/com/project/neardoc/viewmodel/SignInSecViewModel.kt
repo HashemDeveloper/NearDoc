@@ -18,9 +18,9 @@ import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.events.UserStateEvent
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.widgets.PageType
-import com.project.neardoc.worker.DeleteAccountWorker
-import com.project.neardoc.worker.DeleteUserInfoWorker
-import com.project.neardoc.worker.DeleteUsernameWorker
+import com.project.neardoc.workers.DeleteAccountWorker
+import com.project.neardoc.workers.DeleteUserInfoWorker
+import com.project.neardoc.workers.DeleteUsernameWorker
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 

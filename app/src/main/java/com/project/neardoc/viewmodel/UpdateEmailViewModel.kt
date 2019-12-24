@@ -20,8 +20,8 @@ import com.project.neardoc.events.UserStateEvent
 import com.project.neardoc.rxauth.IRxAuthentication
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.widgets.PageType
-import com.project.neardoc.worker.UpdateEmailWorker
-import com.project.neardoc.worker.UpdateUserInfoWorker
+import com.project.neardoc.workers.UpdateEmailWorker
+import com.project.neardoc.workers.UpdateUserInfoWorker
 import io.reactivex.disposables.CompositeDisposable
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject

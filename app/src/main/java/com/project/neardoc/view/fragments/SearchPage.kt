@@ -19,6 +19,7 @@ import com.project.neardoc.events.LocationUpdateEvent
 import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.model.BetterDocApiHealthRes
 import com.project.neardoc.model.BetterDocSearchByDiseaseRes
+import com.project.neardoc.model.localstoragemodels.DocAndRelations
 import com.project.neardoc.utils.networkconnections.ConnectionSettings
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.livedata.ResultHandler
@@ -162,9 +163,11 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                         }
                         ResultHandler.ResultStatus.SUCCESS -> {
                             launch { withContext(Dispatchers.IO) {
-                                if (it.data is BetterDocSearchByDiseaseRes) {
-                                    val searchData: BetterDocSearchByDiseaseRes = it.data
-                                    Log.d(TAG, "Result: ${searchData.metaData}")
+                                val docAndRelations: List<DocAndRelations> = it.data as List<DocAndRelations>
+                                for (list in docAndRelations) {
+                                    for (rating in list.docRating) {
+                                        Log.d(TAG, "Rating: ${rating.rating}")
+                                    }
                                 }
                             }}.invokeOnCompletion { throwable ->
                                 if (throwable != null && throwable.localizedMessage != null) {

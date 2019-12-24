@@ -8,10 +8,8 @@ import androidx.work.*
 import com.project.neardoc.BuildConfig
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.IUserInfoDao
-import com.project.neardoc.model.localstoragemodels.UserPersonalInfo
-import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.calories.ICalorieBurnedCalculator
-import com.project.neardoc.worker.StepCountNotificationWorker
+import com.project.neardoc.workers.StepCountNotificationWorker
 import kotlinx.coroutines.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject

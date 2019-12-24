@@ -2,8 +2,6 @@ package com.project.neardoc.viewmodel
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,19 +12,15 @@ import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
 import com.project.neardoc.events.EmailVerificationEvent
-import com.project.neardoc.model.UsernameRes
 import com.project.neardoc.rxeventbus.IRxEventBus
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.DeCryptor
 import com.project.neardoc.utils.EnCryptor
 import com.project.neardoc.viewmodel.listeners.IRegistrationViewModel
-import com.project.neardoc.worker.RegistrationWorker
-import io.reactivex.Observable
+import com.project.neardoc.workers.RegistrationWorker
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import org.greenrobot.eventbus.EventBus
-import java.util.concurrent.Callable
 import javax.inject.Inject
 
 class RegistrationViewModel @Inject constructor(): ViewModel() {

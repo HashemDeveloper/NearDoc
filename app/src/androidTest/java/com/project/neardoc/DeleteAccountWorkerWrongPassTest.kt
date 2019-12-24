@@ -8,7 +8,7 @@ import androidx.work.*
 import androidx.work.impl.utils.SynchronousExecutor
 import androidx.work.testing.WorkManagerTestInitHelper
 import com.project.neardoc.utils.Constants
-import com.project.neardoc.worker.DeleteAccountWorker
+import com.project.neardoc.workers.DeleteAccountWorker
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.junit.Before
