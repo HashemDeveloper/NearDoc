@@ -155,4 +155,9 @@ dependencies {
     implementation "com.github.florent37:viewanimator:$view_animator_version"
     // filtered menu
     implementation "com.linroid.filtermenu:library:$filter_menu_version"
+    // pagination
+    implementation "androidx.paging:paging-runtime:$pagingVersion"
+    // material rating bar
+    implementation "me.zhanghai.android.materialratingbar:library:$material_rating_bar"
+
 }

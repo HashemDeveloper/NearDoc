@@ -63,6 +63,8 @@ ext {
     view_animator_version = "1.1.0"
     filter_menu_version = "0.2.3"
     coroutines_scopes = "2.2.0-rc03"
+    pagingVersion = '2.1.1'
+    material_rating_bar = '1.4.0'
 }
 task clean(type: Delete) {
     delete rootProject.buildDir

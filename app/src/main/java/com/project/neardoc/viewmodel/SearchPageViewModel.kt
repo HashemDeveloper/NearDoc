@@ -65,49 +65,54 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
         }
     }
 
-    fun fetchDocByDisease(apiKey: String, latitude: String, longitude: String,  s: String) {
+    fun initNearByDocList(apiKey: String, latitude: String, longitude: String, s: String) {
         val userEmail: String = this.iSharedPrefService.getUserEmail()
         val radius: String = this.iSharedPrefService.getDistanceRadius()
         val limit: String = this.iSharedPrefService.getSearchLimit()
         val distance = "$latitude,$longitude,$radius"
         this.fetchDocByDiseaseLiveData = liveData {
+
             try {
                 iDocDao.clearDocList()
-                iDocProfileDao.clearDocProfile()
-                iDocProfileLanguageDao.clearLanguage()
                 val result: Response<BetterDocSearchByDiseaseRes> = iNearDocRemoteRepo.searchDocByDiseaseKtx(Constants.SEARCH_DOC_BY_DISEASE_ENDPOINT,
                     apiKey, limit.toInt(), distance, s, "distance-asc")
                 if (result.isSuccessful) {
                     val body: BetterDocSearchByDiseaseRes = result.body()!!
                     var doc: Doc
-                    for (doctor: Doctor in body.searchByDiseaseData) {
-                        val docParentId: String = UUID.randomUUID().toString()
-                        val docProfileId: String = UUID.randomUUID().toString()
-                        doc = Doc(docParentId, userEmail, doctor.uid)
-                        iDocDao.insertDoctors(doc)
-                        val doctorProfile: Profile = doctor.profile
-                        doctor.let {
-                            for (rating: Rating in it.ratingList) {
-                                val docRatings = DocRatings(0, doc.docParentId, rating.active, rating.provider ?: "", rating.providerUid ?: "", rating.providerUrl ?: "",
-                                    rating.rating ?: 0.0, rating.reviewCount ?: 0, rating.imageUrlSmall ?: "", rating.imageUrlSmall2x ?: "", rating.imageUrlLarge ?: "", rating.imageUrlLarge2x ?: "")
-                                iDocRatingDao.insertDoctorRatings(docRatings)
+                    if (body.searchByDiseaseData.isNotEmpty()) {
+                        for (doctor: Doctor in body.searchByDiseaseData) {
+                            val docParentId: String = UUID.randomUUID().toString()
+                            val docProfileId: String = UUID.randomUUID().toString()
+                            val ratingId: String = UUID.randomUUID().toString()
+                            val profileLanguageId = UUID.randomUUID().toString()
+                            doc = Doc(docParentId, userEmail, doctor.uid)
+                            iDocDao.insertDoctors(doc)
+                            val doctorProfile: Profile = doctor.profile
+                            doctor.let {
+                                if (it.ratingList.isNotEmpty()) {
+                                    for (rating: Rating in it.ratingList) {
+                                        val docRatings = DocRatings(ratingId, doc.docParentId, rating.active, rating.provider ?: "", rating.providerUid ?: "", rating.providerUrl ?: "",
+                                            rating.rating ?: 0.0, rating.reviewCount ?: 0, rating.imageUrlSmall ?: "", rating.imageUrlSmall2x ?: "", rating.imageUrlLarge ?: "", rating.imageUrlLarge2x ?: "")
+                                        iDocRatingDao.insertDoctorRatings(docRatings)
+                                    }
+                                }
                             }
-                        }
-                        val docProfile = DocProfile(docProfileId, doc.docParentId, userEmail, doctorProfile.firstName, doctorProfile.lastName, if (doctorProfile.slug.isNotEmpty()) doctorProfile.slug else "",
-                            doctorProfile.title ?: "", doctorProfile.imageUrl ?: "", doctorProfile.gender ?: "", doctorProfile.bio ?: "", doc.uid)
-                        list.add(docProfile)
-                        iDocProfileDao.insertDocProfile(list)
-                        doctorProfile.let {
-                            if (it.listOfLanguage.isNotEmpty()) {
-                                for (languages in it.listOfLanguage) {
-                                    val language: Language = languages
-                                    val docProfileLanguage = DocProfileLanguage(0, docProfile.docProfileId, language.name, language.code)
-                                    iDocProfileLanguageDao.insertDocProfileLanguage(docProfileLanguage)
+                            val docProfile = DocProfile(docProfileId, doc.docParentId, userEmail, doctorProfile.firstName, doctorProfile.lastName, if (doctorProfile.slug.isNotEmpty()) doctorProfile.slug else "",
+                                doctorProfile.title ?: "", doctorProfile.imageUrl ?: "", doctorProfile.gender ?: "", doctorProfile.bio ?: "", doc.uid)
+                            list.add(docProfile)
+                            iDocProfileDao.insertDocProfile(list)
+                            doctorProfile.let {
+                                if (it.listOfLanguage.isNotEmpty()) {
+                                    for (languages in it.listOfLanguage) {
+                                        val language: Language = languages
+                                        val docProfileLanguage = DocProfileLanguage(profileLanguageId, docProfile.docProfileId, language.name, language.code)
+                                        iDocProfileLanguageDao.insertDocProfileLanguage(docProfileLanguage)
+                                    }
                                 }
                             }
                         }
+                        emit(ResultHandler.success(iDocProfileDao.getDoctorsProfile()))
                     }
-                    emit(ResultHandler.success(iDocProfileDao.getDoctorsProfile()))
                 } else {
                     emit(ResultHandler.onError(null, "Failed"))
                 }
