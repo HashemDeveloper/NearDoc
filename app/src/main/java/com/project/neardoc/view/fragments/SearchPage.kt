@@ -18,16 +18,13 @@ import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.events.LocationUpdateEvent
 import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.model.BetterDocApiHealthRes
-import com.project.neardoc.model.BetterDocSearchByDiseaseRes
 import com.project.neardoc.model.localstoragemodels.DocAndRelations
 import com.project.neardoc.utils.networkconnections.ConnectionSettings
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.livedata.ResultHandler
 import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.SearchPageViewModel
-import com.project.neardoc.viewmodel.listeners.ISearchPageViewModel
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.fragment_registration.*
 import kotlinx.android.synthetic.main.fragment_search_page.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
@@ -136,7 +133,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                                 if (BuildConfig.DEBUG) {
                                     Log.i(TAG, "Logging BetterDocApiHealth Information---> Status: ${data.status}, Api Version: ${data.apiVersion}")
                                 }
-                                homePageViewModel.fetchDocByDisease(betterDocApiKey, latitude, longitude, "")
+                                homePageViewModel.initNearByDocList(betterDocApiKey, latitude, longitude, "")
                                 searchResultLiveDataHandler()
                             }
                         }
@@ -226,18 +223,17 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
         get() = this.job + Dispatchers.Main
 
     override fun onItemSelected(index: Int, s: CharSequence) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun onSearchComplete(index: Int, s: CharSequence) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun onSearchItemRemoved(index: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onTextChanged(index: Int, s: CharSequence) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 }

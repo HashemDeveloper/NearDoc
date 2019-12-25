@@ -116,4 +116,8 @@
     <string name="turn_on_step_count_notification_message">Turn on to get notification about how much calories you burn every day.</string>
     <string name="stop_step_counter">Stop NearDoc Step Counter</string>
     <string name="heart_beat_result">---</string>
+    <string name="doctors_name">Doctors Name</string>
+    <string name="doc_description">Description</string>
+    <string name="doc_distance">Distance</string>
+    <string name="distance_result_in_meater">1.5 mi</string>
 </resources>
