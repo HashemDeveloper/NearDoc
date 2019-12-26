@@ -18,8 +18,11 @@ import com.project.neardoc.R
 import com.project.neardoc.model.localstoragemodels.DocAndRelations
 import com.project.neardoc.model.localstoragemodels.DocProfile
 import com.project.neardoc.model.localstoragemodels.DocRatings
+import com.project.neardoc.utils.GlideApp
 import kotlinx.android.synthetic.main.search_page_list_of_doc_layout.view.*
 import me.zhanghai.android.materialratingbar.MaterialRatingBar
+import java.net.URLDecoder
+import java.net.URLEncoder
 
 class ListOfAllDocAdapter constructor(private val context: Context): PagedListAdapter<DocAndRelations, RecyclerView.ViewHolder>(
     DOC_AND_RELATION_COMPARATOR) {
@@ -64,8 +67,9 @@ class ListOfAllDocAdapter constructor(private val context: Context): PagedListAd
             for (docProfile in docProfileList) {
                 docProfile.let {profile ->
                     this.doctorImageView?.let {imageView ->
-                        val imageUrl: String = Uri.parse(profile.imageUrl).toString()
-                        Glide.with(context).load(imageUrl).into(imageView)
+                        val decodeImageUrl: String = URLEncoder.encode(profile.imageUrl, "UTF-8")
+                        val imageUrl: String = Uri.parse(decodeImageUrl).toString()
+                        GlideApp.with(context).load(profile.imageUrl).into(imageView)
                     }
                     this.doctorsNameTextView?.let {nameView ->
                         val docName: String = profile.firstName + " " + profile.lastName
