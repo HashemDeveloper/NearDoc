@@ -1,6 +1,7 @@
 package com.project.neardoc.view.adapters
 
 import android.content.Context
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,11 +64,20 @@ class ListOfAllDocAdapter constructor(private val context: Context): PagedListAd
             for (docProfile in docProfileList) {
                 docProfile.let {profile ->
                     this.doctorImageView?.let {imageView ->
-                        Glide.with(context).load(profile.imageUrl).into(imageView)
+                        val imageUrl: String = Uri.parse(profile.imageUrl).toString()
+                        Glide.with(context).load(imageUrl).into(imageView)
                     }
                     this.doctorsNameTextView?.let {nameView ->
                         val docName: String = profile.firstName + " " + profile.lastName
                         nameView.text = docName
+                    }
+                    this.doctorsDescriptionTextView?.let {
+                        val description: String = if (profile.bio.length > 100) {
+                            profile.bio.substring(0, 100) + "..."
+                        } else {
+                            profile.bio
+                        }
+                        it.text = description
                     }
                 }
             }
