@@ -1,6 +1,7 @@
 package com.project.neardoc.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.*
 import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
@@ -14,9 +15,11 @@ import com.project.neardoc.model.localstoragemodels.*
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.LocalDbInsertionOption
 import com.project.neardoc.utils.livedata.ResultHandler
+import com.project.neardoc.view.fragments.SearchPage
 import kotlinx.coroutines.*
 import retrofit2.Response
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -37,6 +40,7 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     @Inject
     lateinit var context: Context
     var fetchDocByDiseaseLiveData: LiveData<ResultHandler<Any>>?= null
+    var checkBetterDocApiHealth: LiveData<ResultHandler<Any>>? = null
     @Inject
     lateinit var iSharedPrefService: ISharedPrefService
     private val job = Job()
@@ -49,26 +53,48 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     override fun onCleared() {
         super.onCleared()
     }
-
-    val checkBetterDocApiHealth = liveData {
-        emit(ResultHandler.onLoading(true))
-        val apiKey: String = context.resources.getString(R.string.better_doc_api_key)
-        try {
-            val result: Response<BetterDocApiHealthRes> = iNearDocRemoteRepo.checkBetterDocApiHealthKtxAsync(Constants.BETTER_DOC_API_HEALTH_ENDPOINT, apiKey)
-            if (result.isSuccessful) {
-                val betterDocHealthRes: BetterDocApiHealthRes = result.body()!!
-                emit(ResultHandler.success(betterDocHealthRes))
-            } else {
-                emit(ResultHandler.onError(null, "Failed"))
-            }
-        } catch (ex: Exception) {
-            if (ex.localizedMessage != null) {
-                emit(ResultHandler.onError(ex.localizedMessage!!, ex.localizedMessage!!))
+    fun getDoctorsData() {
+        val expireTime: Long = TimeUnit.MINUTES.toMillis(1)
+        val createdTime: Long = this.iSharedPrefService.getCachingTime()
+        val currentTime: Long = System.currentTimeMillis()
+        if (createdTime < (currentTime - expireTime)) {
+            fetchDataFromServer()
+        } else {
+            fetchDataFromLocalDb()
+        }
+    }
+    private fun fetchDataFromServer() {
+        this.checkBetterDocApiHealth = liveData {
+            emit(ResultHandler.onLoading(true))
+            val apiKey: String = context.resources.getString(R.string.better_doc_api_key)
+            try {
+                val result: Response<BetterDocApiHealthRes> = iNearDocRemoteRepo.checkBetterDocApiHealthKtxAsync(Constants.BETTER_DOC_API_HEALTH_ENDPOINT, apiKey)
+                if (result.isSuccessful) {
+                    val betterDocHealthRes: BetterDocApiHealthRes = result.body()!!
+                    emit(ResultHandler.success(betterDocHealthRes))
+                } else {
+                    emit(ResultHandler.onError(null, "Failed"))
+                }
+            } catch (ex: Exception) {
+                if (ex.localizedMessage != null) {
+                    emit(ResultHandler.onError(ex.localizedMessage!!, ex.localizedMessage!!))
+                }
             }
         }
     }
 
-    fun initNearByDocList(
+    private fun fetchDataFromLocalDb() {
+        this.fetchDocByDiseaseLiveData = liveData {
+            val list: List<DocAndRelations> = iDocProfileDao.getDoctorsProfile()
+            if (list.isNotEmpty()) {
+                emit(ResultHandler.success(iDocProfileDao.getDoctorsProfile()))
+            } else {
+                emit(ResultHandler.onError("", "Failed"))
+            }
+        }
+    }
+
+   fun initNearByDocList(
         apiKey: String,
         latitude: String,
         longitude: String,
@@ -130,6 +156,7 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
                                 }
                             }
                         }
+                        iSharedPrefService.saveCachingTime(System.currentTimeMillis())
                         emit(ResultHandler.success(iDocProfileDao.getDoctorsProfile()))
                     }
                 } else {

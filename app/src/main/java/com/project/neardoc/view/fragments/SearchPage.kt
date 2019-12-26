@@ -89,7 +89,9 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
         }
         if (this.isInternetAvailable) {
             activity!!.runOnUiThread {
-                this.homePageViewModel.checkBetterDocApiHealth.observe(viewLifecycleOwner, checkBetterDocApiHealthObserver())
+                this.homePageViewModel.getDoctorsData()
+                this.homePageViewModel.checkBetterDocApiHealth?.observe(viewLifecycleOwner, checkBetterDocApiHealthObserver())
+                doctorResultHandler()
             }
             if (this.connectionSettings != null && this.connectionSettings?.getSnackBar() != null) {
                 this.connectionSettings?.getSnackBar()!!.dismiss()
@@ -135,7 +137,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                                     Log.i(TAG, "Logging BetterDocApiHealth Information---> Status: ${data.status}, Api Version: ${data.apiVersion}")
                                 }
                                 homePageViewModel.initNearByDocList(betterDocApiKey, latitude, longitude, "", LocalDbInsertionOption.INSERT)
-                                searchResultLiveDataHandler()
+                                doctorResultHandler()
                             }
                         }
                     }
@@ -151,7 +153,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
             }
         }
     }
-    private fun searchResultLiveDataHandler() {
+    private fun doctorResultHandler() {
         this.homePageViewModel.fetchDocByDiseaseLiveData?.let { result ->
             result.observe(viewLifecycleOwner, Observer { resultHandler ->
                 resultHandler?.let {
@@ -238,7 +240,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
 
     override fun onDestroy() {
         super.onDestroy()
-        this.homePageViewModel.checkBetterDocApiHealth.removeObserver(checkBetterDocApiHealthObserver())
+        this.homePageViewModel.checkBetterDocApiHealth?.removeObserver(checkBetterDocApiHealthObserver())
     }
 
     override val coroutineContext: CoroutineContext
@@ -256,7 +258,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
             s.toString(),
             LocalDbInsertionOption.UPDATE
         )
-        searchResultLiveDataHandler()
+        doctorResultHandler()
     }
 
     override fun onSearchItemRemoved(index: Int) {
