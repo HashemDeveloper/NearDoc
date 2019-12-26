@@ -7,10 +7,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.paging.PagedList
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.iammert.library.ui.multisearchviewlib.MultiSearchView
 import com.project.neardoc.BuildConfig
 
@@ -25,6 +27,7 @@ import com.project.neardoc.utils.networkconnections.ConnectionSettings
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.LocalDbInsertionOption
 import com.project.neardoc.utils.livedata.ResultHandler
+import com.project.neardoc.view.adapters.ListOfAllDocAdapter
 import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.SearchPageViewModel
 import dagger.android.support.AndroidSupportInjection
@@ -37,9 +40,7 @@ import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.MultiSearchViewListener{
-    companion object {
-        @JvmStatic private val TAG: String = SearchPage::class.java.canonicalName!!
-    }
+    private var listOfDocAdapter: ListOfAllDocAdapter?= null
     private var connectionSettings: ConnectionSettings?= null
     private var isInternetAvailable = false
     private var latitude: String = ""
@@ -71,6 +72,9 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
         super.onViewCreated(view, savedInstanceState)
         this.betterDocApiKey = resources.getString(R.string.better_doc_api_key)
         this.homePageViewModel.init()
+        this.listOfDocAdapter = ListOfAllDocAdapter(this.context!!)
+        fragment_search_recycler_view_id.layoutManager = LinearLayoutManager(this.context)
+        fragment_search_recycler_view_id.adapter = this.listOfDocAdapter
         fragment_search_page_search_container_id.setSearchViewListener(this)
     }
 
@@ -190,7 +194,10 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                                 val docListLiveData: LiveData<PagedList<DocAndRelations>> = it.data as LiveData<PagedList<DocAndRelations>>
                                 activity!!.runOnUiThread {
                                     docListLiveData.observe(activity!!, Observer { it ->
-                                        Log.i(TAG, "Number of items: ${it.loadedCount}")
+                                        listOfDocAdapter!!.setData(it)
+                                        if (BuildConfig.DEBUG) {
+                                            Log.i(TAG, "Total count: ${it.loadedCount}")
+                                        }
                                     })
                                 }
                             }}.invokeOnCompletion { throwable ->
@@ -269,5 +276,8 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
 
     override fun onTextChanged(index: Int, s: CharSequence) {
 
+    }
+    companion object {
+        @JvmStatic private val TAG: String = SearchPage::class.java.canonicalName!!
     }
 }
