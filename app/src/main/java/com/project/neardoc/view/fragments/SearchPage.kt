@@ -194,10 +194,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                                 val docListLiveData: LiveData<PagedList<DocAndRelations>> = it.data as LiveData<PagedList<DocAndRelations>>
                                 activity!!.runOnUiThread {
                                     docListLiveData.observe(activity!!, Observer { it ->
-                                        listOfDocAdapter!!.setData(it)
-                                        if (BuildConfig.DEBUG) {
-                                            Log.i(TAG, "Total count: ${it.loadedCount}")
-                                        }
+                                        listOfDocAdapter!!.submitList(it)
                                     })
                                 }
                             }}.invokeOnCompletion { throwable ->
@@ -261,14 +258,21 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
     }
 
     override fun onSearchComplete(index: Int, s: CharSequence) {
-        homePageViewModel.initNearByDocList(
-            betterDocApiKey,
-            latitude,
-            longitude,
-            s.toString(),
-            LocalDbInsertionOption.UPDATE
-        )
-        doctorResultHandler()
+        s.trim().let {
+            if (it.isNotEmpty()) {
+                fragment_search_recycler_view_id.scrollToPosition(0)
+                this.homePageViewModel.initNearByDocList(
+                    betterDocApiKey,
+                    latitude,
+                    longitude,
+                    s.toString(),
+                    LocalDbInsertionOption.UPDATE
+                )
+                doctorResultHandler()
+                this.listOfDocAdapter!!.submitList(null)
+            }
+        }
+
     }
 
     override fun onSearchItemRemoved(index: Int) {
