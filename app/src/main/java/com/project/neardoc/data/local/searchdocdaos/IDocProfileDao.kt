@@ -1,5 +1,6 @@
 package com.project.neardoc.data.local.searchdocdaos
 
+import androidx.paging.DataSource
 import androidx.room.*
 import com.project.neardoc.model.localstoragemodels.DocAndRelations
 import com.project.neardoc.model.localstoragemodels.DocProfile
@@ -15,5 +16,5 @@ interface IDocProfileDao {
     @Transaction @Query("select * from doc_profile where user_email==:userEmail")
     suspend fun getDocProfileByUserEmail(userEmail: String): List<DocProfile>
     @Transaction @Query("select * from doc_parent where doc_parent_id in(select distinct(doc_id) from doc_profile)")
-    suspend fun getDoctorsProfile(): List<DocAndRelations>
+    fun getDoctorsProfile(): DataSource.Factory<Int, DocAndRelations>
 }

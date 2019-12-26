@@ -8,7 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.paging.PagedList
 import com.iammert.library.ui.multisearchviewlib.MultiSearchView
 import com.project.neardoc.BuildConfig
 
@@ -68,6 +70,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         this.betterDocApiKey = resources.getString(R.string.better_doc_api_key)
+        this.homePageViewModel.init()
         fragment_search_page_search_container_id.setSearchViewListener(this)
     }
 
@@ -184,11 +187,11 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                         }
                         ResultHandler.ResultStatus.SUCCESS -> {
                             launch { withContext(Dispatchers.IO) {
-                                val docAndRelations: List<DocAndRelations> = it.data as List<DocAndRelations>
-                                for (list in docAndRelations) {
-                                    for (rating in list.docRating) {
-                                        Log.d(TAG, "Rating: ${rating.rating}")
-                                    }
+                                val docListLiveData: LiveData<PagedList<DocAndRelations>> = it.data as LiveData<PagedList<DocAndRelations>>
+                                activity!!.runOnUiThread {
+                                    docListLiveData.observe(activity!!, Observer { it ->
+                                        Log.i(TAG, "Number of items: ${it.loadedCount}")
+                                    })
                                 }
                             }}.invokeOnCompletion { throwable ->
                                 if (throwable != null && throwable.localizedMessage != null) {

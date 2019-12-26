@@ -2,7 +2,6 @@ package com.project.neardoc.data.local.remote
 
 import com.project.neardoc.model.*
 import io.reactivex.Observable
-import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import javax.inject.Inject
 

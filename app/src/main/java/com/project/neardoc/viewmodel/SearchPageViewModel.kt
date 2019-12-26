@@ -1,8 +1,9 @@
 package com.project.neardoc.viewmodel
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.*
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
@@ -15,7 +16,6 @@ import com.project.neardoc.model.localstoragemodels.*
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.LocalDbInsertionOption
 import com.project.neardoc.utils.livedata.ResultHandler
-import com.project.neardoc.view.fragments.SearchPage
 import kotlinx.coroutines.*
 import retrofit2.Response
 import java.util.*
@@ -24,9 +24,6 @@ import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
-    companion object {
-        @JvmStatic private val TAG: String = SearchPageViewModel::class.java.canonicalName!!
-    }
     @Inject
     lateinit var iDocDao: IDocDao
     @Inject
@@ -49,10 +46,17 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     private var docProfileId: String?= null
     private var ratingId: String?= null
     private var profileLanguageId: String?= null
+    private var pagedListConfig: PagedList.Config?= null
 
-    override fun onCleared() {
-        super.onCleared()
+    fun init() {
+        val limit: String = this.iSharedPrefService.getSearchLimit()
+        this.pagedListConfig = PagedList.Config.Builder()
+            .setEnablePlaceholders(true)
+            .setInitialLoadSizeHint(INITIAL_PAGE_LOAD_HINT)
+            .setPageSize(limit.toInt())
+            .build()
     }
+
     fun getDoctorsData() {
         val expireTime: Long = TimeUnit.MINUTES.toMillis(1)
         val createdTime: Long = this.iSharedPrefService.getCachingTime()
@@ -85,9 +89,9 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
 
     private fun fetchDataFromLocalDb() {
         this.fetchDocByDiseaseLiveData = liveData {
-            val list: List<DocAndRelations> = iDocProfileDao.getDoctorsProfile()
-            if (list.isNotEmpty()) {
-                emit(ResultHandler.success(iDocProfileDao.getDoctorsProfile()))
+            val docList = LivePagedListBuilder<Int, DocAndRelations>(iDocProfileDao.getDoctorsProfile(), pagedListConfig!!).build()
+            if (docList != null) {
+                emit(ResultHandler.success(docList))
             } else {
                 emit(ResultHandler.onError("", "Failed"))
             }
@@ -157,7 +161,8 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
                             }
                         }
                         iSharedPrefService.saveCachingTime(System.currentTimeMillis())
-                        emit(ResultHandler.success(iDocProfileDao.getDoctorsProfile()))
+                        val docList = LivePagedListBuilder<Int, DocAndRelations>(iDocProfileDao.getDoctorsProfile(), pagedListConfig!!).build()
+                        emit(ResultHandler.success(docList))
                     }
                 } else {
                     emit(ResultHandler.onError(null, "Failed"))
@@ -170,6 +175,15 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
         }
     }
 
+    override fun onCleared() {
+        super.onCleared()
+    }
+
     override val coroutineContext: CoroutineContext
         get() = this.job + Dispatchers.Main
+
+    companion object {
+        @JvmStatic private val TAG: String = SearchPageViewModel::class.java.canonicalName!!
+        private const val INITIAL_PAGE_LOAD_HINT = 20
+    }
 }

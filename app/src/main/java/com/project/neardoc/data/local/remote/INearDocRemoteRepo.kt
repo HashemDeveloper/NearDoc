@@ -1,6 +1,7 @@
 package com.project.neardoc.data.local.remote
 
 import com.project.neardoc.model.*
+import com.project.neardoc.utils.LocalDbInsertionOption
 import io.reactivex.Observable
 import kotlinx.coroutines.Deferred
 import retrofit2.Response

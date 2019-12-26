@@ -3,6 +3,8 @@ package com.project.neardoc.view.adapters
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.LiveData
+import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -23,6 +25,9 @@ class ListOfAllDocAdapter constructor(private val context: Context): PagedListAd
                 newItem: DocAndRelations
             ): Boolean = oldItem == newItem
         }
+    }
+    fun setData(docList: PagedList<DocAndRelations>) {
+        this.submitList(docList)
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
