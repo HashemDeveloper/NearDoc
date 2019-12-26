@@ -134,7 +134,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                                 if (BuildConfig.DEBUG) {
                                     Log.i(TAG, "Logging BetterDocApiHealth Information---> Status: ${data.status}, Api Version: ${data.apiVersion}")
                                 }
-                                homePageViewModel.initNearByDocList(betterDocApiKey, latitude, longitude, "")
+                                homePageViewModel.initNearByDocList(betterDocApiKey, latitude, longitude, "", LocalDbInsertionOption.INSERT)
                                 searchResultLiveDataHandler()
                             }
                         }
@@ -157,7 +157,28 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                 resultHandler?.let {
                     when (it.status) {
                         ResultHandler.ResultStatus.LOADING -> {
-
+                            var isLoading: Boolean?= null
+                            launch {
+                                withContext(Dispatchers.IO) {
+                                    if (it.data is Boolean) {
+                                        isLoading = it.data
+                                    }
+                                }
+                            }.invokeOnCompletion {throwable ->
+                                if (throwable != null && throwable.localizedMessage != null) {
+                                    if (BuildConfig.DEBUG) {
+                                        Log.i(TAG, "Check Api Health Coroutines Exception: ${throwable.localizedMessage!!}")
+                                    }
+                                } else {
+                                    activity!!.runOnUiThread {
+                                        isLoading?.let {loading ->
+                                            if (loading) {
+                                                displayLoading(loading)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                         ResultHandler.ResultStatus.SUCCESS -> {
                             launch { withContext(Dispatchers.IO) {
@@ -228,7 +249,13 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
     }
 
     override fun onSearchComplete(index: Int, s: CharSequence) {
-        homePageViewModel.initNearByDocList(betterDocApiKey, latitude, longitude, s.toString())
+        homePageViewModel.initNearByDocList(
+            betterDocApiKey,
+            latitude,
+            longitude,
+            s.toString(),
+            LocalDbInsertionOption.UPDATE
+        )
         searchResultLiveDataHandler()
     }
 

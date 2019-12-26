@@ -72,14 +72,22 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
         apiKey: String,
         latitude: String,
         longitude: String,
-        s: String
+        s: String,
+        insertionType: LocalDbInsertionOption
     ) {
         val userEmail: String = this.iSharedPrefService.getUserEmail()
         val radius: String = this.iSharedPrefService.getDistanceRadius()
         val limit: String = this.iSharedPrefService.getSearchLimit()
         val distance = "$latitude,$longitude,$radius"
         this.fetchDocByDiseaseLiveData = liveData {
+            when (insertionType) {
+                LocalDbInsertionOption.INSERT -> {
 
+                }
+                LocalDbInsertionOption.UPDATE -> {
+                    emit(ResultHandler.onLoading(true))
+                }
+            }
             try {
                 val result: Response<BetterDocSearchByDiseaseRes> = iNearDocRemoteRepo.searchDocByDiseaseKtx(Constants.SEARCH_DOC_BY_DISEASE_ENDPOINT,
                     apiKey, limit.toInt(), distance, s, "distance-asc")
