@@ -21,6 +21,7 @@ import com.project.neardoc.model.BetterDocApiHealthRes
 import com.project.neardoc.model.localstoragemodels.DocAndRelations
 import com.project.neardoc.utils.networkconnections.ConnectionSettings
 import com.project.neardoc.utils.Constants
+import com.project.neardoc.utils.LocalDbInsertionOption
 import com.project.neardoc.utils.livedata.ResultHandler
 import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.SearchPageViewModel
@@ -227,7 +228,8 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
     }
 
     override fun onSearchComplete(index: Int, s: CharSequence) {
-
+        homePageViewModel.initNearByDocList(betterDocApiKey, latitude, longitude, s.toString())
+        searchResultLiveDataHandler()
     }
 
     override fun onSearchItemRemoved(index: Int) {

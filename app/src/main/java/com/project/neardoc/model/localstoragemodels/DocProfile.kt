@@ -6,9 +6,7 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.project.neardoc.model.Language
 
-@Entity(tableName = "doc_profile",
-    foreignKeys = [ForeignKey(entity = Doc::class, parentColumns = ["doc_parent_id"], childColumns = ["doc_id"], onDelete = CASCADE, onUpdate = CASCADE)],
-    indices = [Index("doc_id")])
+@Entity(tableName = "doc_profile")
 data class DocProfile(
     @PrimaryKey
     @ColumnInfo(name = "id")
