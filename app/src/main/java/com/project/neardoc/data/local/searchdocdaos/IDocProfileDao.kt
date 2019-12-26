@@ -8,6 +8,8 @@ import com.project.neardoc.model.localstoragemodels.DocProfile
 interface IDocProfileDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDocProfile(listOfDocProfile: List<DocProfile>)
+    @Update
+    suspend fun updateDocProfile(listOfDocProfile: List<DocProfile>)
     @Transaction @Query("delete from doc_profile")
     suspend fun clearDocProfile()
     @Transaction @Query("select * from doc_profile where user_email==:userEmail")
