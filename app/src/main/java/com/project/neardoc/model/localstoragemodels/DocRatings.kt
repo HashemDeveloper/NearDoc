@@ -1,11 +1,8 @@
 package com.project.neardoc.model.localstoragemodels
 
 import androidx.room.*
-import androidx.room.ForeignKey.CASCADE
 
-@Entity(tableName = "doc_ratings",
-    foreignKeys = [ForeignKey(entity = Doc::class, parentColumns = ["doc_parent_id"], childColumns = ["doc_id"], onDelete = CASCADE, onUpdate = CASCADE)],
-    indices = [Index("doc_id")])
+@Entity(tableName = "doc_ratings")
 data class DocRatings(
     @PrimaryKey
     @ColumnInfo(name = "id")

@@ -7,6 +7,8 @@ import com.project.neardoc.model.localstoragemodels.Doc
 interface IDocDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDoctors(doc: Doc)
+    @Update
+    suspend fun updateDoctors(doc: Doc)
     @Transaction @Query("delete from doc_parent")
     suspend fun clearDocList()
     @Transaction @Query("select * from doc_parent where user_email==:userEmail")

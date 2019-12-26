@@ -256,4 +256,14 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
     override fun getStepCountServiceType(): String {
         return pref?.getString(Constants.SERVICE_TYPE, "")!!
     }
+
+    override fun saveCachingTime(nanoTime: Long) {
+        pref?.edit(commit = true) {
+            putLong(Constants.SEARCH_DOC_CACHE_TIME, nanoTime)
+        }
+    }
+
+    override fun getCachingTime(): Long {
+        return pref?.getLong(Constants.SEARCH_DOC_CACHE_TIME, 0L)!!
+    }
 }

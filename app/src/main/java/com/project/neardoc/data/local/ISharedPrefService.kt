@@ -47,4 +47,6 @@ interface ISharedPrefService {
     fun getTotalStepCount(): Int
     fun saveStepCountServiceType(serviceType: String)
     fun getStepCountServiceType(): String
+    fun saveCachingTime(nanoTime: Long)
+    fun getCachingTime(): Long
 }

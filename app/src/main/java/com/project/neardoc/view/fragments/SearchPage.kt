@@ -7,8 +7,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.paging.PagedList
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.iammert.library.ui.multisearchviewlib.MultiSearchView
 import com.project.neardoc.BuildConfig
 
@@ -21,7 +25,9 @@ import com.project.neardoc.model.BetterDocApiHealthRes
 import com.project.neardoc.model.localstoragemodels.DocAndRelations
 import com.project.neardoc.utils.networkconnections.ConnectionSettings
 import com.project.neardoc.utils.Constants
+import com.project.neardoc.utils.LocalDbInsertionOption
 import com.project.neardoc.utils.livedata.ResultHandler
+import com.project.neardoc.view.adapters.ListOfAllDocAdapter
 import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.viewmodel.SearchPageViewModel
 import dagger.android.support.AndroidSupportInjection
@@ -34,9 +40,7 @@ import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.MultiSearchViewListener{
-    companion object {
-        @JvmStatic private val TAG: String = SearchPage::class.java.canonicalName!!
-    }
+    private var listOfDocAdapter: ListOfAllDocAdapter?= null
     private var connectionSettings: ConnectionSettings?= null
     private var isInternetAvailable = false
     private var latitude: String = ""
@@ -67,6 +71,10 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         this.betterDocApiKey = resources.getString(R.string.better_doc_api_key)
+        this.homePageViewModel.init()
+        this.listOfDocAdapter = ListOfAllDocAdapter(this.context!!)
+        fragment_search_recycler_view_id.layoutManager = LinearLayoutManager(this.context)
+        fragment_search_recycler_view_id.adapter = this.listOfDocAdapter
         fragment_search_page_search_container_id.setSearchViewListener(this)
     }
 
@@ -88,7 +96,9 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
         }
         if (this.isInternetAvailable) {
             activity!!.runOnUiThread {
-                this.homePageViewModel.checkBetterDocApiHealth.observe(viewLifecycleOwner, checkBetterDocApiHealthObserver())
+                this.homePageViewModel.getDoctorsData()
+                this.homePageViewModel.checkBetterDocApiHealth?.observe(viewLifecycleOwner, checkBetterDocApiHealthObserver())
+                doctorResultHandler()
             }
             if (this.connectionSettings != null && this.connectionSettings?.getSnackBar() != null) {
                 this.connectionSettings?.getSnackBar()!!.dismiss()
@@ -133,8 +143,8 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                                 if (BuildConfig.DEBUG) {
                                     Log.i(TAG, "Logging BetterDocApiHealth Information---> Status: ${data.status}, Api Version: ${data.apiVersion}")
                                 }
-                                homePageViewModel.initNearByDocList(betterDocApiKey, latitude, longitude, "")
-                                searchResultLiveDataHandler()
+                                homePageViewModel.initNearByDocList(betterDocApiKey, latitude, longitude, "", LocalDbInsertionOption.INSERT)
+                                doctorResultHandler()
                             }
                         }
                     }
@@ -150,21 +160,45 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
             }
         }
     }
-    private fun searchResultLiveDataHandler() {
+    private fun doctorResultHandler() {
         this.homePageViewModel.fetchDocByDiseaseLiveData?.let { result ->
             result.observe(viewLifecycleOwner, Observer { resultHandler ->
                 resultHandler?.let {
                     when (it.status) {
                         ResultHandler.ResultStatus.LOADING -> {
-
+                            var isLoading: Boolean?= null
+                            launch {
+                                withContext(Dispatchers.IO) {
+                                    if (it.data is Boolean) {
+                                        isLoading = it.data
+                                    }
+                                }
+                            }.invokeOnCompletion {throwable ->
+                                if (throwable != null && throwable.localizedMessage != null) {
+                                    if (BuildConfig.DEBUG) {
+                                        Log.i(TAG, "Check Api Health Coroutines Exception: ${throwable.localizedMessage!!}")
+                                    }
+                                } else {
+                                    activity!!.runOnUiThread {
+                                        isLoading?.let {loading ->
+                                            if (loading) {
+                                                displayLoading(loading)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                         ResultHandler.ResultStatus.SUCCESS -> {
                             launch { withContext(Dispatchers.IO) {
-                                val docAndRelations: List<DocAndRelations> = it.data as List<DocAndRelations>
-                                for (list in docAndRelations) {
-                                    for (rating in list.docRating) {
-                                        Log.d(TAG, "Rating: ${rating.rating}")
-                                    }
+                                val docListLiveData: LiveData<PagedList<DocAndRelations>> = it.data as LiveData<PagedList<DocAndRelations>>
+                                activity!!.runOnUiThread {
+                                    docListLiveData.observe(activity!!, Observer { it ->
+                                        listOfDocAdapter!!.setData(it)
+                                        if (BuildConfig.DEBUG) {
+                                            Log.i(TAG, "Total count: ${it.loadedCount}")
+                                        }
+                                    })
                                 }
                             }}.invokeOnCompletion { throwable ->
                                 if (throwable != null && throwable.localizedMessage != null) {
@@ -216,7 +250,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
 
     override fun onDestroy() {
         super.onDestroy()
-        this.homePageViewModel.checkBetterDocApiHealth.removeObserver(checkBetterDocApiHealthObserver())
+        this.homePageViewModel.checkBetterDocApiHealth?.removeObserver(checkBetterDocApiHealthObserver())
     }
 
     override val coroutineContext: CoroutineContext
@@ -227,7 +261,14 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
     }
 
     override fun onSearchComplete(index: Int, s: CharSequence) {
-
+        homePageViewModel.initNearByDocList(
+            betterDocApiKey,
+            latitude,
+            longitude,
+            s.toString(),
+            LocalDbInsertionOption.UPDATE
+        )
+        doctorResultHandler()
     }
 
     override fun onSearchItemRemoved(index: Int) {
@@ -235,5 +276,8 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
 
     override fun onTextChanged(index: Int, s: CharSequence) {
 
+    }
+    companion object {
+        @JvmStatic private val TAG: String = SearchPage::class.java.canonicalName!!
     }
 }
