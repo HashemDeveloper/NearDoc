@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -39,7 +40,7 @@ import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.MultiSearchViewListener{
+class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.MultiSearchViewListener, ListOfAllDocAdapter.DocListClickListener{
     private var listOfDocAdapter: ListOfAllDocAdapter?= null
     private var connectionSettings: ConnectionSettings?= null
     private var isInternetAvailable = false
@@ -72,7 +73,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
         super.onViewCreated(view, savedInstanceState)
         this.betterDocApiKey = resources.getString(R.string.better_doc_api_key)
         this.homePageViewModel.init()
-        this.listOfDocAdapter = ListOfAllDocAdapter(this.context!!)
+        this.listOfDocAdapter = ListOfAllDocAdapter(this.context!!, this)
         fragment_search_recycler_view_id.layoutManager = LinearLayoutManager(this.context)
         fragment_search_recycler_view_id.adapter = this.listOfDocAdapter
         fragment_search_page_search_container_id.setSearchViewListener(this)
@@ -286,5 +287,13 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
     }
     companion object {
         @JvmStatic private val TAG: String = SearchPage::class.java.canonicalName!!
+    }
+
+    override fun onDistanceContainerClicked(data: DocAndRelations) {
+        Toast.makeText(this.context, "Clicked", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onViewMoreBtClicked(data: DocAndRelations) {
+        Toast.makeText(this.context, "Clicked", Toast.LENGTH_SHORT).show()
     }
 }
