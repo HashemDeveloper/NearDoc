@@ -9,6 +9,8 @@ data class DocPractice(
     @PrimaryKey
     @ColumnInfo(name = "id")
     var practiceId: String,
+    @ColumnInfo(name = "doc_id")
+    var docId: String,
     @ColumnInfo(name = "location_slug")
     var locationSlug: String,
     @ColumnInfo(name = "within_search_area")

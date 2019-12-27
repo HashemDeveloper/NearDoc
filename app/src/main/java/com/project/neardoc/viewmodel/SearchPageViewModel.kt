@@ -7,10 +7,7 @@ import androidx.paging.PagedList
 import com.project.neardoc.R
 import com.project.neardoc.data.local.ISharedPrefService
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
-import com.project.neardoc.data.local.searchdocdaos.IDocDao
-import com.project.neardoc.data.local.searchdocdaos.IDocProfileDao
-import com.project.neardoc.data.local.searchdocdaos.IDocProfileLanguageDao
-import com.project.neardoc.data.local.searchdocdaos.IDocRatingDao
+import com.project.neardoc.data.local.searchdocdaos.*
 import com.project.neardoc.model.*
 import com.project.neardoc.model.localstoragemodels.*
 import com.project.neardoc.utils.Constants
@@ -33,6 +30,8 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     @Inject
     lateinit var iDocProfileLanguageDao: IDocProfileLanguageDao
     @Inject
+    lateinit var iDocPractice: IDocPracticeDao
+    @Inject
     lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
     @Inject
     lateinit var context: Context
@@ -46,6 +45,7 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     private var docProfileId: String?= null
     private var ratingId: String?= null
     private var profileLanguageId: String?= null
+    private var docPracticeId: String?= null
     private var pagedListConfig: PagedList.Config?= null
 
     fun init() {
@@ -89,7 +89,7 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
 
     private fun fetchDataFromLocalDb() {
         this.fetchDocByDiseaseLiveData = liveData {
-            val docList = LivePagedListBuilder<Int, DocAndRelations>(iDocProfileDao.getDoctorsProfile(), pagedListConfig!!).build()
+            val docList = LivePagedListBuilder<Int, DocAndRelations>(iDocDao.getAllDoctorsInformation(), pagedListConfig!!).build()
             if (docList != null) {
                 emit(ResultHandler.success(docList))
             } else {
@@ -134,8 +134,10 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
                             docProfileId = UUID.randomUUID().toString()
                             ratingId = UUID.randomUUID().toString()
                             profileLanguageId = UUID.randomUUID().toString()
+                            docPracticeId = UUID.randomUUID().toString()
                             doc = Doc(docParentId!!, userEmail, doctor.uid)
                             iDocDao.insertDoctors(doc)
+
                             val doctorProfile: Profile = doctor.profile
                             doctor.let {
                                 if (it.ratingList.isNotEmpty()) {
@@ -143,6 +145,14 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
                                         val docRatings = DocRatings(ratingId!!, doc.docParentId, rating.active, rating.provider ?: "", rating.providerUid ?: "", rating.providerUrl ?: "",
                                             rating.rating ?: 0.0, rating.reviewCount ?: 0, rating.imageUrlSmall ?: "", rating.imageUrlSmall2x ?: "", rating.imageUrlLarge ?: "", rating.imageUrlLarge2x ?: "")
                                         iDocRatingDao.insertDoctorRatings(docRatings)
+                                    }
+                                }
+                                if (it.practiceList.isNotEmpty()) {
+                                    for (practice: Practice in it.practiceList) {
+                                        val docPractice = DocPractice(docPracticeId!!, doc.docParentId, practice.locationSlug ?: "", practice.withinSearchArea.toString() ?: "",
+                                            practice.distance, practice.lat, practice.lon, practice.uid, practice.name, practice.acceptsNewPatients.toString() ?: "", practice.website ?: "",
+                                            practice.email ?: "", practice.npi ?: "", practice.slug ?: "", practice.description ?: "", practice.totalDocInPractice, practice.paginationUrlForDoc ?: "")
+                                        iDocPractice.insertDocPractice(docPractice)
                                     }
                                 }
                             }
@@ -161,7 +171,7 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
                             }
                         }
                         iSharedPrefService.saveCachingTime(System.currentTimeMillis())
-                        val docList = LivePagedListBuilder<Int, DocAndRelations>(iDocProfileDao.getDoctorsProfile(), pagedListConfig!!).build()
+                        val docList = LivePagedListBuilder<Int, DocAndRelations>(iDocDao.getAllDoctorsInformation(), pagedListConfig!!).build()
                         emit(ResultHandler.success(docList))
                     }
                 } else {

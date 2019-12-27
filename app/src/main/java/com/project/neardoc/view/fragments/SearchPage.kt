@@ -195,19 +195,10 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                                 activity!!.runOnUiThread {
                                     docListLiveData.observe(activity!!, Observer { it ->
                                         listOfDocAdapter!!.submitList(it)
+                                        displayLoading(false)
                                     })
                                 }
-                            }}.invokeOnCompletion { throwable ->
-                                if (throwable != null && throwable.localizedMessage != null) {
-                                    if (BuildConfig.DEBUG) {
-                                        Log.i(TAG, "Search Result Handler Coroutines Exception: ${throwable.localizedMessage!!}")
-                                    }
-                                } else {
-                                    activity!!.runOnUiThread {
-                                        displayLoading(false)
-                                    }
-                                }
-                            }
+                            }}
                         }
                         ResultHandler.ResultStatus.ERROR -> {
                             if (it.message != null && it.message.isNotEmpty()) {
@@ -254,7 +245,20 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
         get() = this.job + Dispatchers.Main
 
     override fun onItemSelected(index: Int, s: CharSequence) {
-
+        s.trim().let {
+            if (it.isNotEmpty()) {
+                fragment_search_recycler_view_id.scrollToPosition(0)
+                this.homePageViewModel.initNearByDocList(
+                    betterDocApiKey,
+                    latitude,
+                    longitude,
+                    s.toString(),
+                    LocalDbInsertionOption.UPDATE
+                )
+                doctorResultHandler()
+                this.listOfDocAdapter!!.submitList(null)
+            }
+        }
     }
 
     override fun onSearchComplete(index: Int, s: CharSequence) {
@@ -272,7 +276,6 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                 this.listOfDocAdapter!!.submitList(null)
             }
         }
-
     }
 
     override fun onSearchItemRemoved(index: Int) {

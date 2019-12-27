@@ -7,19 +7,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.google.android.material.textview.MaterialTextView
 import com.project.neardoc.R
 import com.project.neardoc.model.localstoragemodels.DocAndRelations
+import com.project.neardoc.model.localstoragemodels.DocPractice
 import com.project.neardoc.model.localstoragemodels.DocProfile
 import com.project.neardoc.model.localstoragemodels.DocRatings
-import kotlinx.android.synthetic.main.search_page_list_of_doc_layout.view.*
+import com.project.neardoc.utils.GlideApp
+import com.project.neardoc.utils.roundOff1DecimalPoint
+import com.project.neardoc.utils.roundOff2DecimalPoint
 import me.zhanghai.android.materialratingbar.MaterialRatingBar
+import java.net.URLEncoder
 
 class ListOfAllDocAdapter constructor(private val context: Context): PagedListAdapter<DocAndRelations, RecyclerView.ViewHolder>(
     DOC_AND_RELATION_COMPARATOR) {
@@ -60,12 +62,26 @@ class ListOfAllDocAdapter constructor(private val context: Context): PagedListAd
         fun bindView(data: DocAndRelations) {
             val docProfileList: List<DocProfile> = data.docProfile
             val docRatingList: List<DocRatings> = data.docRating
+            val docPracticeList: List<DocPractice> = data.docPractice
 
+            for (docPractice: DocPractice in docPracticeList) {
+                docPractice.let {practice ->
+                    this.distanceInMeterTextView?.let {
+                        val distance: String = if (practice.distance >= 10.0) {
+                            roundOff1DecimalPoint(practice.distance).toString() + "mi"
+                        } else {
+                            roundOff2DecimalPoint(practice.distance).toString() + "mi"
+                        }
+                        it.text = distance
+                    }
+                }
+            }
             for (docProfile in docProfileList) {
                 docProfile.let {profile ->
                     this.doctorImageView?.let {imageView ->
-                        val imageUrl: String = Uri.parse(profile.imageUrl).toString()
-                        Glide.with(context).load(imageUrl).into(imageView)
+                        val decodeImageUrl: String = URLEncoder.encode(profile.imageUrl, "UTF-8")
+                        val imageUrl: String = Uri.parse(decodeImageUrl).toString()
+                        GlideApp.with(context).load(profile.imageUrl).into(imageView)
                     }
                     this.doctorsNameTextView?.let {nameView ->
                         val docName: String = profile.firstName + " " + profile.lastName
