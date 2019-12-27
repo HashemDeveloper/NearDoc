@@ -8,6 +8,7 @@ enum class NavigationType(
     val titleResourceId: Int
 ) {
     GOOGLE(1, "google.navigation:q=", R.string.navtype_google),
-    WAZE(2, "waze://?navigate=yes&q=", R.string.navtype_waze)
+    WAZE(2, "waze://?navigate=yes&q=", R.string.navtype_waze),
+    NONE(0, "", 0)
 
 }
