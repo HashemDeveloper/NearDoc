@@ -153,6 +153,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                         if (it.message != null && it.message.isNotEmpty()) {
                             if (BuildConfig.DEBUG) {
                                 Log.i(TAG, "BetterDocApiHealth Exception: ${it.message}")
+                                // display a refresh button to refresh the list if error happens
                             }
                         }
                         displayLoading(false)

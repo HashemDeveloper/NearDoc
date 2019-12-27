@@ -2,36 +2,41 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".view.fragments.SearchPage">
-    <RelativeLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/search_page_list_main_container_id"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-        <include
-            android:id="@+id/fragment_search_page_server_error_layout_id"
-            layout="@layout/server_error_layout"
-            android:visibility="gone"
-            />
-        <include
-            android:id="@+id/fragment_search_progress_bar_id"
-            layout="@layout/global_progress_bar_layout"
-            android:visibility="gone"
-            />
-        <com.iammert.library.ui.multisearchviewlib.MultiSearchView
-            android:id="@+id/fragment_search_page_search_container_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/SearchTextStyle"
-            android:background="@drawable/dr_search_view_border"
-            />
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/fragment_search_recycler_view_id"
+        android:layout_height="match_parent">
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/fragment_search_page_search_container_id"
-            />
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:id="@+id/fragment_search_page_snackbar_id"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </RelativeLayout>
+            >
+            <include
+                android:id="@+id/fragment_search_page_server_error_layout_id"
+                layout="@layout/server_error_layout"
+                android:visibility="gone"
+                />
+            <include
+                android:id="@+id/fragment_search_progress_bar_id"
+                layout="@layout/global_progress_bar_layout"
+                android:visibility="gone"
+                />
+            <com.iammert.library.ui.multisearchviewlib.MultiSearchView
+                android:id="@+id/fragment_search_page_search_container_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/SearchTextStyle"
+                android:background="@drawable/dr_search_view_border"
+                />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/fragment_search_recycler_view_id"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/fragment_search_page_search_container_id"
+                />
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
+                android:id="@+id/fragment_search_page_snackbar_id"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </RelativeLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
