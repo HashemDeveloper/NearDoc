@@ -105,7 +105,10 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                 this.connectionSettings?.getSnackBar()!!.dismiss()
             }
         } else {
-            displayConnectionSetting()
+            activity!!.runOnUiThread {
+                this.homePageViewModel.fetchDataForOfflineState()
+                doctorResultHandler()
+            }
         }
     }
     private fun checkBetterDocApiHealthObserver(): Observer<ResultHandler<Any>> {
@@ -196,8 +199,14 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                                 val docListLiveData: LiveData<PagedList<DocAndRelations>> = it.data as LiveData<PagedList<DocAndRelations>>
                                 activity!!.runOnUiThread {
                                     docListLiveData.observe(activity!!, Observer { it ->
-                                        listOfDocAdapter!!.submitList(it)
                                         displayLoading(false)
+                                        if (it.isNotEmpty() && it.size > 0) {
+                                            listOfDocAdapter!!.submitList(it)
+                                        } else {
+                                            if (!isInternetAvailable) {
+                                                displayConnectionSetting()
+                                            }
+                                        }
                                     })
                                 }
                             }}

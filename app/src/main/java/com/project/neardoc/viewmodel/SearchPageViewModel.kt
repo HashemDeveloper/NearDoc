@@ -189,6 +189,10 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
         super.onCleared()
     }
 
+    fun fetchDataForOfflineState() {
+        fetchDataFromLocalDb()
+    }
+
     override val coroutineContext: CoroutineContext
         get() = this.job + Dispatchers.Main
 
