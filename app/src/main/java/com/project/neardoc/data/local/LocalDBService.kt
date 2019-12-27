@@ -1,10 +1,7 @@
 package com.project.neardoc.data.local
 
 import android.content.Context
-import com.project.neardoc.data.local.searchdocdaos.IDocDao
-import com.project.neardoc.data.local.searchdocdaos.IDocProfileDao
-import com.project.neardoc.data.local.searchdocdaos.IDocProfileLanguageDao
-import com.project.neardoc.data.local.searchdocdaos.IDocRatingDao
+import com.project.neardoc.data.local.searchdocdaos.*
 import javax.inject.Inject
 
 class LocalDBService @Inject constructor(context: Context){
@@ -30,5 +27,8 @@ class LocalDBService @Inject constructor(context: Context){
     }
     fun getDocProfileLanguageDao(): IDocProfileLanguageDao {
         return this.localDB.getDocProfileLanguageDao()
+    }
+    fun getDocPracticeDao(): IDocPracticeDao {
+        return this.localDB.getDocPracticeDao()
     }
 }

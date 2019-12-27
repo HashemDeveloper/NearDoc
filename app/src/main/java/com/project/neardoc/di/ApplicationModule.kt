@@ -5,10 +5,7 @@ import com.project.neardoc.NearDocApp
 import com.project.neardoc.data.local.*
 import com.project.neardoc.data.local.remote.INearDocRemoteRepo
 import com.project.neardoc.data.local.remote.NearDocRemoteRepo
-import com.project.neardoc.data.local.searchdocdaos.IDocDao
-import com.project.neardoc.data.local.searchdocdaos.IDocProfileDao
-import com.project.neardoc.data.local.searchdocdaos.IDocProfileLanguageDao
-import com.project.neardoc.data.local.searchdocdaos.IDocRatingDao
+import com.project.neardoc.data.local.searchdocdaos.*
 import com.project.neardoc.rxauth.IRxAuthentication
 import com.project.neardoc.rxauth.RxAuthentication
 import com.project.neardoc.rxeventbus.IRxEventBus
@@ -154,6 +151,11 @@ class ApplicationModule {
     @Provides
     fun provideDocProfileLanguageDao(dbService: LocalDBService): IDocProfileLanguageDao {
         return dbService.getDocProfileLanguageDao()
+    }
+    @Singleton
+    @Provides
+    fun provideDocPracticeDao(dbService: LocalDBService): IDocPracticeDao {
+        return dbService.getDocPracticeDao()
     }
     // end -- local storage provider
     @Singleton
