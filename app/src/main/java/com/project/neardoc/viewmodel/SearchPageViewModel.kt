@@ -89,7 +89,7 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
 
     private fun fetchDataFromLocalDb() {
         this.fetchDocByDiseaseLiveData = liveData {
-            val docList = LivePagedListBuilder<Int, DocAndRelations>(iDocProfileDao.getDoctorsProfile(), pagedListConfig!!).build()
+            val docList = LivePagedListBuilder<Int, DocAndRelations>(iDocDao.getAllDoctorsInformation(), pagedListConfig!!).build()
             if (docList != null) {
                 emit(ResultHandler.success(docList))
             } else {
@@ -171,7 +171,7 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
                             }
                         }
                         iSharedPrefService.saveCachingTime(System.currentTimeMillis())
-                        val docList = LivePagedListBuilder<Int, DocAndRelations>(iDocProfileDao.getDoctorsProfile(), pagedListConfig!!).build()
+                        val docList = LivePagedListBuilder<Int, DocAndRelations>(iDocDao.getAllDoctorsInformation(), pagedListConfig!!).build()
                         emit(ResultHandler.success(docList))
                     }
                 } else {
