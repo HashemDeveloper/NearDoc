@@ -256,36 +256,44 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
         get() = this.job + Dispatchers.Main
 
     override fun onItemSelected(index: Int, s: CharSequence) {
-        s.trim().let {
-            if (it.isNotEmpty()) {
-                fragment_search_recycler_view_id.scrollToPosition(0)
-                this.homePageViewModel.initNearByDocList(
-                    betterDocApiKey,
-                    latitude,
-                    longitude,
-                    s.toString(),
-                    LocalDbInsertionOption.UPDATE
-                )
-                doctorResultHandler()
-                this.listOfDocAdapter!!.submitList(null)
+        if (this.isInternetAvailable) {
+            s.trim().let {
+                if (it.isNotEmpty()) {
+                    fragment_search_recycler_view_id.scrollToPosition(0)
+                    this.homePageViewModel.initNearByDocList(
+                        betterDocApiKey,
+                        latitude,
+                        longitude,
+                        s.toString(),
+                        LocalDbInsertionOption.UPDATE
+                    )
+                    doctorResultHandler()
+                    this.listOfDocAdapter!!.submitList(null)
+                }
             }
+        } else {
+            displayConnectionSetting()
         }
     }
 
     override fun onSearchComplete(index: Int, s: CharSequence) {
-        s.trim().let {
-            if (it.isNotEmpty()) {
-                fragment_search_recycler_view_id.scrollToPosition(0)
-                this.homePageViewModel.initNearByDocList(
-                    betterDocApiKey,
-                    latitude,
-                    longitude,
-                    s.toString(),
-                    LocalDbInsertionOption.UPDATE
-                )
-                doctorResultHandler()
-                this.listOfDocAdapter!!.submitList(null)
+        if (this.isInternetAvailable) {
+            s.trim().let {
+                if (it.isNotEmpty()) {
+                    fragment_search_recycler_view_id.scrollToPosition(0)
+                    this.homePageViewModel.initNearByDocList(
+                        betterDocApiKey,
+                        latitude,
+                        longitude,
+                        s.toString(),
+                        LocalDbInsertionOption.UPDATE
+                    )
+                    doctorResultHandler()
+                    this.listOfDocAdapter!!.submitList(null)
+                }
             }
+        } else {
+            displayConnectionSetting()
         }
     }
 
