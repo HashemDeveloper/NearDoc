@@ -1,13 +1,11 @@
 package com.project.neardoc.view.adapters
 
 import android.content.Context
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -21,16 +19,21 @@ import com.project.neardoc.utils.GlideApp
 import com.project.neardoc.utils.roundOff1DecimalPoint
 import com.project.neardoc.utils.roundOff2DecimalPoint
 import me.zhanghai.android.materialratingbar.MaterialRatingBar
-import java.net.URLEncoder
 
-class ListOfAllDocAdapter constructor(private val context: Context): PagedListAdapter<DocAndRelations, RecyclerView.ViewHolder>(
+class ListOfAllDocAdapter constructor(private val context: Context, private val listener: DocListClickListener): PagedListAdapter<DocAndRelations, RecyclerView.ViewHolder>(
     DOC_AND_RELATION_COMPARATOR) {
 
-    fun setData(docList: PagedList<DocAndRelations>) {
-        this.submitList(docList)
-    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view: View = LayoutInflater.from(this.context).inflate(R.layout.search_page_list_of_doc_layout, parent, false)
+        val viewHolder = ListOfDocViewHolder(view)
+        viewHolder.getDistanceContainerView().setOnClickListener {
+            val data: DocAndRelations = viewHolder.itemView.tag as DocAndRelations
+            this.listener.onDistanceContainerClicked(data)
+        }
+        viewHolder.getViewMoreDetailsBt().setOnClickListener {
+            val data: DocAndRelations = viewHolder.itemView.tag as DocAndRelations
+            this.listener.onViewMoreBtClicked(data)
+        }
         return ListOfDocViewHolder(view)
     }
 
@@ -59,7 +62,14 @@ class ListOfAllDocAdapter constructor(private val context: Context): PagedListAd
             this.viewMoreDetailsBt = view.findViewById(R.id.page_search_list_details_bt_id)
         }
 
+        fun getDistanceContainerView(): RelativeLayout {
+            return this.distanceContainerView!!
+        }
+        fun getViewMoreDetailsBt(): AppCompatImageView {
+            return this.viewMoreDetailsBt!!
+        }
         fun bindView(data: DocAndRelations) {
+            this.itemView.tag = data
             val docProfileList: List<DocProfile> = data.docProfile
             val docRatingList: List<DocRatings> = data.docRating
             val docPracticeList: List<DocPractice> = data.docPractice
@@ -79,8 +89,6 @@ class ListOfAllDocAdapter constructor(private val context: Context): PagedListAd
             for (docProfile in docProfileList) {
                 docProfile.let {profile ->
                     this.doctorImageView?.let {imageView ->
-                        val decodeImageUrl: String = URLEncoder.encode(profile.imageUrl, "UTF-8")
-                        val imageUrl: String = Uri.parse(decodeImageUrl).toString()
                         GlideApp.with(context).load(profile.imageUrl).into(imageView)
                     }
                     this.doctorsNameTextView?.let {nameView ->
@@ -119,5 +127,9 @@ class ListOfAllDocAdapter constructor(private val context: Context): PagedListAd
                 newItem: DocAndRelations
             ): Boolean = oldItem == newItem
         }
+    }
+    interface DocListClickListener {
+        fun onDistanceContainerClicked(data: DocAndRelations)
+        fun onViewMoreBtClicked(data: DocAndRelations)
     }
 }

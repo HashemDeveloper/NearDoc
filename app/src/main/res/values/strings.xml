@@ -120,5 +120,9 @@
     <string name="doc_description">Description</string>
     <string name="doc_distance">Distance</string>
     <string name="distance_result_in_meater">1.5 mi</string>
+    <string name="navtype_google">Google</string>
+    <string name="navtype_waze">Waze</string>
+    <string name="always_use_waze">Always use Waze</string>
+    <string name="always_use_google">Always use Google</string>
 
 </resources>

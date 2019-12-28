@@ -12,6 +12,7 @@ import com.project.neardoc.model.*
 import com.project.neardoc.model.localstoragemodels.*
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.LocalDbInsertionOption
+import com.project.neardoc.utils.NavigationType
 import com.project.neardoc.utils.livedata.ResultHandler
 import kotlinx.coroutines.*
 import retrofit2.Response
@@ -187,6 +188,14 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
 
     override fun onCleared() {
         super.onCleared()
+    }
+
+    fun fetchDataForOfflineState() {
+        fetchDataFromLocalDb()
+    }
+
+    fun saveNavigationType(waze: NavigationType) {
+
     }
 
     override val coroutineContext: CoroutineContext

@@ -76,6 +76,7 @@
                 android:layout_marginTop="2dp"
                 android:text="@string/doc_description"
                 android:textSize="12sp"
+                app:autoSizeTextType="uniform"
                 android:inputType="textMultiLine"
                 android:layout_toStartOf="@+id/search_page_list_doc_distance_container_id"
                 android:layout_toLeftOf="@+id/search_page_list_doc_distance_container_id" />

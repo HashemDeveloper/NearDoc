@@ -1,6 +1,8 @@
 package com.project.neardoc.view.fragments
 
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -23,12 +26,15 @@ import com.project.neardoc.events.LocationUpdateEvent
 import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.model.BetterDocApiHealthRes
 import com.project.neardoc.model.localstoragemodels.DocAndRelations
+import com.project.neardoc.model.localstoragemodels.DocPractice
 import com.project.neardoc.utils.networkconnections.ConnectionSettings
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.LocalDbInsertionOption
+import com.project.neardoc.utils.NavigationType
 import com.project.neardoc.utils.livedata.ResultHandler
 import com.project.neardoc.view.adapters.ListOfAllDocAdapter
 import com.project.neardoc.view.widgets.GlobalLoadingBar
+import com.project.neardoc.view.widgets.NavTypeBottomSheetDialog
 import com.project.neardoc.viewmodel.SearchPageViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_search_page.*
@@ -36,10 +42,12 @@ import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.lang.Exception
+import java.net.URLEncoder
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.MultiSearchViewListener{
+class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.MultiSearchViewListener, ListOfAllDocAdapter.DocListClickListener{
     private var listOfDocAdapter: ListOfAllDocAdapter?= null
     private var connectionSettings: ConnectionSettings?= null
     private var isInternetAvailable = false
@@ -55,6 +63,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
         this.viewModelFactory
     }
     private val job = Job()
+    private var displayNavigationTypeDialog: NavTypeBottomSheetDialog?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -72,7 +81,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
         super.onViewCreated(view, savedInstanceState)
         this.betterDocApiKey = resources.getString(R.string.better_doc_api_key)
         this.homePageViewModel.init()
-        this.listOfDocAdapter = ListOfAllDocAdapter(this.context!!)
+        this.listOfDocAdapter = ListOfAllDocAdapter(this.context!!, this)
         fragment_search_recycler_view_id.layoutManager = LinearLayoutManager(this.context)
         fragment_search_recycler_view_id.adapter = this.listOfDocAdapter
         fragment_search_page_search_container_id.setSearchViewListener(this)
@@ -104,7 +113,10 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                 this.connectionSettings?.getSnackBar()!!.dismiss()
             }
         } else {
-            displayConnectionSetting()
+            activity!!.runOnUiThread {
+                this.homePageViewModel.fetchDataForOfflineState()
+                doctorResultHandler()
+            }
         }
     }
     private fun checkBetterDocApiHealthObserver(): Observer<ResultHandler<Any>> {
@@ -152,6 +164,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                         if (it.message != null && it.message.isNotEmpty()) {
                             if (BuildConfig.DEBUG) {
                                 Log.i(TAG, "BetterDocApiHealth Exception: ${it.message}")
+                                // display a refresh button to refresh the list if error happens
                             }
                         }
                         displayLoading(false)
@@ -193,10 +206,18 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                             launch { withContext(Dispatchers.IO) {
                                 val docListLiveData: LiveData<PagedList<DocAndRelations>> = it.data as LiveData<PagedList<DocAndRelations>>
                                 activity!!.runOnUiThread {
-                                    docListLiveData.observe(activity!!, Observer { it ->
-                                        listOfDocAdapter!!.submitList(it)
-                                        displayLoading(false)
-                                    })
+                                    docListLiveData.let {list ->
+                                        list.observe(activity!!, Observer { it ->
+                                            displayLoading(false)
+                                            if (it.isNotEmpty() && it.size > 0) {
+                                                listOfDocAdapter!!.submitList(it)
+                                            } else {
+                                                if (!isInternetAvailable) {
+                                                    displayConnectionSetting()
+                                                }
+                                            }
+                                        })
+                                    }
                                 }
                             }}
                         }
@@ -245,36 +266,44 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
         get() = this.job + Dispatchers.Main
 
     override fun onItemSelected(index: Int, s: CharSequence) {
-        s.trim().let {
-            if (it.isNotEmpty()) {
-                fragment_search_recycler_view_id.scrollToPosition(0)
-                this.homePageViewModel.initNearByDocList(
-                    betterDocApiKey,
-                    latitude,
-                    longitude,
-                    s.toString(),
-                    LocalDbInsertionOption.UPDATE
-                )
-                doctorResultHandler()
-                this.listOfDocAdapter!!.submitList(null)
+        if (this.isInternetAvailable) {
+            s.trim().let {
+                if (it.isNotEmpty()) {
+                    fragment_search_recycler_view_id.scrollToPosition(0)
+                    this.homePageViewModel.initNearByDocList(
+                        betterDocApiKey,
+                        latitude,
+                        longitude,
+                        s.toString(),
+                        LocalDbInsertionOption.UPDATE
+                    )
+                    doctorResultHandler()
+                    this.listOfDocAdapter!!.submitList(null)
+                }
             }
+        } else {
+            displayConnectionSetting()
         }
     }
 
     override fun onSearchComplete(index: Int, s: CharSequence) {
-        s.trim().let {
-            if (it.isNotEmpty()) {
-                fragment_search_recycler_view_id.scrollToPosition(0)
-                this.homePageViewModel.initNearByDocList(
-                    betterDocApiKey,
-                    latitude,
-                    longitude,
-                    s.toString(),
-                    LocalDbInsertionOption.UPDATE
-                )
-                doctorResultHandler()
-                this.listOfDocAdapter!!.submitList(null)
+        if (this.isInternetAvailable) {
+            s.trim().let {
+                if (it.isNotEmpty()) {
+                    fragment_search_recycler_view_id.scrollToPosition(0)
+                    this.homePageViewModel.initNearByDocList(
+                        betterDocApiKey,
+                        latitude,
+                        longitude,
+                        s.toString(),
+                        LocalDbInsertionOption.UPDATE
+                    )
+                    doctorResultHandler()
+                    this.listOfDocAdapter!!.submitList(null)
+                }
             }
+        } else {
+            displayConnectionSetting()
         }
     }
 
@@ -286,5 +315,73 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
     }
     companion object {
         @JvmStatic private val TAG: String = SearchPage::class.java.canonicalName!!
+    }
+
+    override fun onDistanceContainerClicked(data: DocAndRelations) {
+        this.displayNavigationTypeDialog = NavTypeBottomSheetDialog()
+        displayNavigationTypeDialog?.show(activity!!.supportFragmentManager, displayNavigationTypeDialog?.tag)
+        displayNavigationTypeDialog?.getOnClickLiveDataObserver()!!.observe(activity!!, navBottomSheetClickObserver(data))
+    }
+    private fun navBottomSheetClickObserver(data: DocAndRelations): Observer<NavigationType> {
+        val practiceList: List<DocPractice> = data.docPractice
+        var practice: DocPractice?= null
+        for (p in practiceList) {
+            practice = p
+        }
+        val destination = "${practice!!.lat},${practice.lon}"
+        val wazeNavUrl: String = NavigationType.WAZE.uriString + URLEncoder.encode(destination, "UTF-8")
+        val googleNavUrl: String = NavigationType.GOOGLE.uriString + URLEncoder.encode(destination, "UTF-8")
+        return Observer {
+            when (it) {
+                NavigationType.WAZE -> {
+                    try {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(wazeNavUrl))
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        activity?.startActivity(intent)
+                        this.homePageViewModel.saveNavigationType(NavigationType.WAZE)
+                        this.displayNavigationTypeDialog!!.dismiss()
+
+                    } catch (ex: Exception) {
+                        if (BuildConfig.DEBUG) {
+                            if (ex.localizedMessage != null) {
+                                Log.d(TAG, "Failed to open Waze: ${ex.localizedMessage!!}")
+                                val installIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"))
+                                installIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                activity?.startActivity(installIntent)
+                                Log.d(TAG, "Destination: $destination")
+                            }
+                        }
+                    }
+
+                }
+                NavigationType.GOOGLE -> {
+                    try {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(googleNavUrl))
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        activity?.startActivity(intent)
+                        this.homePageViewModel.saveNavigationType(NavigationType.GOOGLE)
+                        this.displayNavigationTypeDialog!!.dismiss()
+                    } catch (ex: Exception) {
+                        if (BuildConfig.DEBUG) {
+                            if (ex.localizedMessage != null) {
+                                val installIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.apps.maps"))
+                                installIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                activity?.startActivity(installIntent)
+                                Log.d(TAG, "Failed to open Google: ${ex.localizedMessage!!}")
+                                Log.d(TAG, "Destination: $destination")
+                            }
+                        }
+                    }
+                }
+                else -> {
+
+                }
+            }
+        }
+    }
+
+
+    override fun onViewMoreBtClicked(data: DocAndRelations) {
+        Toast.makeText(this.context, "Clicked", Toast.LENGTH_SHORT).show()
     }
 }
