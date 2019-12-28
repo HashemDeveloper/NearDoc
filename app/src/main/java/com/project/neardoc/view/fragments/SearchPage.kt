@@ -27,9 +27,11 @@ import com.project.neardoc.model.localstoragemodels.DocAndRelations
 import com.project.neardoc.utils.networkconnections.ConnectionSettings
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.LocalDbInsertionOption
+import com.project.neardoc.utils.NavigationType
 import com.project.neardoc.utils.livedata.ResultHandler
 import com.project.neardoc.view.adapters.ListOfAllDocAdapter
 import com.project.neardoc.view.widgets.GlobalLoadingBar
+import com.project.neardoc.view.widgets.NavTypeBottomSheetDialog
 import com.project.neardoc.viewmodel.SearchPageViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_search_page.*
@@ -56,6 +58,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
         this.viewModelFactory
     }
     private val job = Job()
+    private var displayNavigationTypeDialog: NavTypeBottomSheetDialog?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -250,6 +253,9 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
     override fun onDestroy() {
         super.onDestroy()
         this.homePageViewModel.checkBetterDocApiHealth?.removeObserver(checkBetterDocApiHealthObserver())
+        if (this.displayNavigationTypeDialog != null) {
+            this.displayNavigationTypeDialog!!.getOnClickLiveDataObserver().removeObserver(navBottomSheetClickObserver())
+        }
     }
 
     override val coroutineContext: CoroutineContext
@@ -308,8 +314,26 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
     }
 
     override fun onDistanceContainerClicked(data: DocAndRelations) {
-        Toast.makeText(this.context, "Clicked", Toast.LENGTH_SHORT).show()
+        this.displayNavigationTypeDialog = NavTypeBottomSheetDialog()
+        displayNavigationTypeDialog?.show(activity!!.supportFragmentManager, displayNavigationTypeDialog?.tag)
+        displayNavigationTypeDialog?.getOnClickLiveDataObserver()!!.observe(activity!!, navBottomSheetClickObserver())
     }
+    private fun navBottomSheetClickObserver(): Observer<NavigationType> {
+        return Observer {
+            when (it) {
+                NavigationType.WAZE -> {
+                    Toast.makeText(this.context!!, "Waze", Toast.LENGTH_SHORT).show()
+                }
+                NavigationType.GOOGLE -> {
+                    Toast.makeText(this.context!!, "Google", Toast.LENGTH_SHORT).show()
+                }
+                else -> {
+
+                }
+            }
+        }
+    }
+
 
     override fun onViewMoreBtClicked(data: DocAndRelations) {
         Toast.makeText(this.context, "Clicked", Toast.LENGTH_SHORT).show()
