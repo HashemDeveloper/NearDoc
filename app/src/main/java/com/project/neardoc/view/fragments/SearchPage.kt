@@ -1,6 +1,8 @@
 package com.project.neardoc.view.fragments
 
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -24,6 +26,7 @@ import com.project.neardoc.events.LocationUpdateEvent
 import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.model.BetterDocApiHealthRes
 import com.project.neardoc.model.localstoragemodels.DocAndRelations
+import com.project.neardoc.model.localstoragemodels.DocPractice
 import com.project.neardoc.utils.networkconnections.ConnectionSettings
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.LocalDbInsertionOption
@@ -39,6 +42,8 @@ import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.lang.Exception
+import java.net.URLEncoder
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -201,16 +206,18 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                             launch { withContext(Dispatchers.IO) {
                                 val docListLiveData: LiveData<PagedList<DocAndRelations>> = it.data as LiveData<PagedList<DocAndRelations>>
                                 activity!!.runOnUiThread {
-                                    docListLiveData.observe(activity!!, Observer { it ->
-                                        displayLoading(false)
-                                        if (it.isNotEmpty() && it.size > 0) {
-                                            listOfDocAdapter!!.submitList(it)
-                                        } else {
-                                            if (!isInternetAvailable) {
-                                                displayConnectionSetting()
+                                    docListLiveData.let {list ->
+                                        list.observe(activity!!, Observer { it ->
+                                            displayLoading(false)
+                                            if (it.isNotEmpty() && it.size > 0) {
+                                                listOfDocAdapter!!.submitList(it)
+                                            } else {
+                                                if (!isInternetAvailable) {
+                                                    displayConnectionSetting()
+                                                }
                                             }
-                                        }
-                                    })
+                                        })
+                                    }
                                 }
                             }}
                         }
@@ -253,9 +260,6 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
     override fun onDestroy() {
         super.onDestroy()
         this.homePageViewModel.checkBetterDocApiHealth?.removeObserver(checkBetterDocApiHealthObserver())
-        if (this.displayNavigationTypeDialog != null) {
-            this.displayNavigationTypeDialog!!.getOnClickLiveDataObserver().removeObserver(navBottomSheetClickObserver())
-        }
     }
 
     override val coroutineContext: CoroutineContext
@@ -316,16 +320,58 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
     override fun onDistanceContainerClicked(data: DocAndRelations) {
         this.displayNavigationTypeDialog = NavTypeBottomSheetDialog()
         displayNavigationTypeDialog?.show(activity!!.supportFragmentManager, displayNavigationTypeDialog?.tag)
-        displayNavigationTypeDialog?.getOnClickLiveDataObserver()!!.observe(activity!!, navBottomSheetClickObserver())
+        displayNavigationTypeDialog?.getOnClickLiveDataObserver()!!.observe(activity!!, navBottomSheetClickObserver(data))
     }
-    private fun navBottomSheetClickObserver(): Observer<NavigationType> {
+    private fun navBottomSheetClickObserver(data: DocAndRelations): Observer<NavigationType> {
+        val practiceList: List<DocPractice> = data.docPractice
+        var practice: DocPractice?= null
+        for (p in practiceList) {
+            practice = p
+        }
+        val destination = "${practice!!.lat},${practice.lon}"
+        val wazeNavUrl: String = NavigationType.WAZE.uriString + URLEncoder.encode(destination, "UTF-8")
+        val googleNavUrl: String = NavigationType.GOOGLE.uriString + URLEncoder.encode(destination, "UTF-8")
         return Observer {
             when (it) {
                 NavigationType.WAZE -> {
-                    Toast.makeText(this.context!!, "Waze", Toast.LENGTH_SHORT).show()
+                    try {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(wazeNavUrl))
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        activity?.startActivity(intent)
+                        this.homePageViewModel.saveNavigationType(NavigationType.WAZE)
+                        this.displayNavigationTypeDialog!!.dismiss()
+
+                    } catch (ex: Exception) {
+                        if (BuildConfig.DEBUG) {
+                            if (ex.localizedMessage != null) {
+                                Log.d(TAG, "Failed to open Waze: ${ex.localizedMessage!!}")
+                                val installIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"))
+                                installIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                activity?.startActivity(installIntent)
+                                Log.d(TAG, "Destination: $destination")
+                            }
+                        }
+                    }
+
                 }
                 NavigationType.GOOGLE -> {
-                    Toast.makeText(this.context!!, "Google", Toast.LENGTH_SHORT).show()
+                    try {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(googleNavUrl))
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        activity?.startActivity(intent)
+                        this.homePageViewModel.saveNavigationType(NavigationType.GOOGLE)
+                        this.displayNavigationTypeDialog!!.dismiss()
+                    } catch (ex: Exception) {
+                        if (BuildConfig.DEBUG) {
+                            if (ex.localizedMessage != null) {
+                                val installIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.apps.maps"))
+                                installIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                activity?.startActivity(installIntent)
+                                Log.d(TAG, "Failed to open Google: ${ex.localizedMessage!!}")
+                                Log.d(TAG, "Destination: $destination")
+                            }
+                        }
+                    }
                 }
                 else -> {
 
