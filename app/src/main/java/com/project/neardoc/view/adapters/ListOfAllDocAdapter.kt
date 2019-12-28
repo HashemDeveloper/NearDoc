@@ -92,7 +92,7 @@ class ListOfAllDocAdapter constructor(private val context: Context, private val 
                         GlideApp.with(context).load(profile.imageUrl).into(imageView)
                     }
                     this.doctorsNameTextView?.let {nameView ->
-                        val docName: String = profile.firstName + " " + profile.lastName
+                        val docName: String = profile.title + ". " + profile.firstName + " " + profile.lastName
                         nameView.text = docName
                     }
                     this.doctorsDescriptionTextView?.let {
