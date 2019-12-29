@@ -37,4 +37,6 @@ abstract class FragmentBuilderModule {
     abstract fun contributeUpdatePassword(): UpdatePassword
     @ContributesAndroidInjector
     abstract fun contributeHeartBeat(): HeartBeat
+    @ContributesAndroidInjector
+    abstract fun contributeDoctorsDetails(): DoctorsDetails
 }
