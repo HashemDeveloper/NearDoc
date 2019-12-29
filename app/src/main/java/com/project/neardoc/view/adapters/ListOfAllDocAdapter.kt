@@ -9,6 +9,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.textview.MaterialTextView
 import com.project.neardoc.R
 import com.project.neardoc.model.localstoragemodels.DocAndRelations
@@ -89,10 +90,14 @@ class ListOfAllDocAdapter constructor(private val context: Context, private val 
             for (docProfile in docProfileList) {
                 docProfile.let {profile ->
                     this.doctorImageView?.let {imageView ->
-                        GlideApp.with(context).load(profile.imageUrl).into(imageView)
+                        GlideApp.with(context)
+                            .load(profile.imageUrl)
+                            .placeholder(R.drawable.ic_user_black_24dp)
+                            .signature(ObjectKey(profile.imageUrl))
+                            .into(imageView)
                     }
                     this.doctorsNameTextView?.let {nameView ->
-                        val docName: String = profile.firstName + " " + profile.lastName
+                        val docName: String =  profile.firstName + " " + profile.lastName + ", ${profile.title}"
                         nameView.text = docName
                     }
                     this.doctorsDescriptionTextView?.let {
