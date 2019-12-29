@@ -56,6 +56,6 @@ object FirebaseAuthNetServiceModule {
     @Named("base_url")
     @JvmStatic
     internal fun provideBaseUrl(): String {
-        return "https://neardoc-af101.firebaseio.com/"
+        return "https://api.betterdoctor.com/2016-03-01/"
     }
 }
