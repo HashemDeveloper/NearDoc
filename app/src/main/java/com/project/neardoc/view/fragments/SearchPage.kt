@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.findNavController
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -59,7 +60,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
     private val globalLoadingBar: GlobalLoadingBar by lazy {
         GlobalLoadingBar(activity!!, fragment_search_progress_bar_id)
     }
-    private val homePageViewModel: SearchPageViewModel by viewModels {
+    private val searchPageViewModel: SearchPageViewModel by viewModels {
         this.viewModelFactory
     }
     private val job = Job()
@@ -80,7 +81,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         this.betterDocApiKey = resources.getString(R.string.better_doc_api_key)
-        this.homePageViewModel.init()
+        this.searchPageViewModel.init()
         this.listOfDocAdapter = ListOfAllDocAdapter(this.context!!, this)
         fragment_search_recycler_view_id.layoutManager = LinearLayoutManager(this.context)
         fragment_search_recycler_view_id.adapter = this.listOfDocAdapter
@@ -105,8 +106,8 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
         }
         if (this.isInternetAvailable) {
             activity!!.runOnUiThread {
-                this.homePageViewModel.getDoctorsData()
-                this.homePageViewModel.checkBetterDocApiHealth?.observe(viewLifecycleOwner, checkBetterDocApiHealthObserver())
+                this.searchPageViewModel.getDoctorsData()
+                this.searchPageViewModel.checkBetterDocApiHealth?.observe(viewLifecycleOwner, checkBetterDocApiHealthObserver())
                 doctorResultHandler()
             }
             if (this.connectionSettings != null && this.connectionSettings?.getSnackBar() != null) {
@@ -114,7 +115,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
             }
         } else {
             activity!!.runOnUiThread {
-                this.homePageViewModel.fetchDataForOfflineState()
+                this.searchPageViewModel.fetchDataForOfflineState()
                 doctorResultHandler()
             }
         }
@@ -155,7 +156,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                                 if (BuildConfig.DEBUG) {
                                     Log.i(TAG, "Logging BetterDocApiHealth Information---> Status: ${data.status}, Api Version: ${data.apiVersion}")
                                 }
-                                homePageViewModel.initNearByDocList(betterDocApiKey, latitude, longitude, "", LocalDbInsertionOption.INSERT)
+                                searchPageViewModel.initNearByDocList(betterDocApiKey, latitude, longitude, "", LocalDbInsertionOption.INSERT)
                                 doctorResultHandler()
                             }
                         }
@@ -174,7 +175,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
         }
     }
     private fun doctorResultHandler() {
-        this.homePageViewModel.fetchDocByDiseaseLiveData?.let { result ->
+        this.searchPageViewModel.fetchDocByDiseaseLiveData?.let { result ->
             result.observe(viewLifecycleOwner, Observer { resultHandler ->
                 resultHandler?.let {
                     when (it.status) {
@@ -259,7 +260,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
 
     override fun onDestroy() {
         super.onDestroy()
-        this.homePageViewModel.checkBetterDocApiHealth?.removeObserver(checkBetterDocApiHealthObserver())
+        this.searchPageViewModel.checkBetterDocApiHealth?.removeObserver(checkBetterDocApiHealthObserver())
     }
 
     override val coroutineContext: CoroutineContext
@@ -270,7 +271,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
             s.trim().let {
                 if (it.isNotEmpty()) {
                     fragment_search_recycler_view_id.scrollToPosition(0)
-                    this.homePageViewModel.initNearByDocList(
+                    this.searchPageViewModel.initNearByDocList(
                         betterDocApiKey,
                         latitude,
                         longitude,
@@ -291,7 +292,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
             s.trim().let {
                 if (it.isNotEmpty()) {
                     fragment_search_recycler_view_id.scrollToPosition(0)
-                    this.homePageViewModel.initNearByDocList(
+                    this.searchPageViewModel.initNearByDocList(
                         betterDocApiKey,
                         latitude,
                         longitude,
@@ -318,17 +319,32 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
     }
 
     override fun onDistanceContainerClicked(data: DocAndRelations) {
-        this.displayNavigationTypeDialog = NavTypeBottomSheetDialog()
-        displayNavigationTypeDialog?.show(activity!!.supportFragmentManager, displayNavigationTypeDialog?.tag)
-        displayNavigationTypeDialog?.getOnClickLiveDataObserver()!!.observe(activity!!, navBottomSheetClickObserver(data))
-    }
-    private fun navBottomSheetClickObserver(data: DocAndRelations): Observer<NavigationType> {
+        val navigationType: String = this.searchPageViewModel.getNavigationType()
         val practiceList: List<DocPractice> = data.docPractice
         var practice: DocPractice?= null
         for (p in practiceList) {
             practice = p
         }
         val destination = "${practice!!.lat},${practice.lon}"
+        val wazeNavUrl: String = NavigationType.WAZE.uriString + URLEncoder.encode(destination, "UTF-8")
+        val googleNavUrl: String = NavigationType.GOOGLE.uriString + URLEncoder.encode(destination, "UTF-8")
+        if (navigationType.isNotEmpty()) {
+            if (navigationType == NavigationType.WAZE.name) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(wazeNavUrl))
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                activity?.startActivity(intent)
+            } else if (navigationType == NavigationType.GOOGLE.name) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(googleNavUrl))
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                activity?.startActivity(intent)
+            }
+        } else {
+            this.displayNavigationTypeDialog = NavTypeBottomSheetDialog()
+            displayNavigationTypeDialog?.show(activity!!.supportFragmentManager, displayNavigationTypeDialog?.tag)
+            displayNavigationTypeDialog?.getOnClickLiveDataObserver()!!.observe(activity!!, navBottomSheetClickObserver(destination))
+        }
+    }
+    private fun navBottomSheetClickObserver(destination: String): Observer<NavigationType> {
         val wazeNavUrl: String = NavigationType.WAZE.uriString + URLEncoder.encode(destination, "UTF-8")
         val googleNavUrl: String = NavigationType.GOOGLE.uriString + URLEncoder.encode(destination, "UTF-8")
         return Observer {
@@ -338,7 +354,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(wazeNavUrl))
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                         activity?.startActivity(intent)
-                        this.homePageViewModel.saveNavigationType(NavigationType.WAZE)
+                        this.searchPageViewModel.saveNavigationType(NavigationType.WAZE)
                         this.displayNavigationTypeDialog!!.dismiss()
 
                     } catch (ex: Exception) {
@@ -359,7 +375,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(googleNavUrl))
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                         activity?.startActivity(intent)
-                        this.homePageViewModel.saveNavigationType(NavigationType.GOOGLE)
+                        this.searchPageViewModel.saveNavigationType(NavigationType.GOOGLE)
                         this.displayNavigationTypeDialog!!.dismiss()
                     } catch (ex: Exception) {
                         if (BuildConfig.DEBUG) {

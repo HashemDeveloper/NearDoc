@@ -5,26 +5,37 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.viewModels
 import com.project.neardoc.view.fragments.DoctorsDetailsArgs.fromBundle
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
+import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.model.localstoragemodels.DocAndRelations
 import com.project.neardoc.model.localstoragemodels.DocPractice
 import com.project.neardoc.model.localstoragemodels.DocRatings
 import com.project.neardoc.utils.GlideApp
+import com.project.neardoc.view.widgets.NavTypeBottomSheetDialog
+import com.project.neardoc.viewmodel.DoctorDetailsViewModel
 import kotlinx.android.synthetic.main.fragment_doctors_details.*
+import javax.inject.Inject
 
 class DoctorsDetails : Fragment(), Injectable {
 
     private val doctorsDetails by lazy {
         fromBundle(arguments!!).doctorsDetails
     }
+    private var displayNavigationTypeDialog: NavTypeBottomSheetDialog?= null
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    private val doctorDetailsViewModel: DoctorDetailsViewModel by viewModels {
+        this.viewModelFactory
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -135,7 +146,8 @@ class DoctorsDetails : Fragment(), Injectable {
 
         fragment_doctors_details_navigate_bt_id?.let {
             it.setOnClickListener {
-
+                this.displayNavigationTypeDialog = NavTypeBottomSheetDialog()
+                displayNavigationTypeDialog?.show(activity!!.supportFragmentManager, displayNavigationTypeDialog?.tag)
             }
         }
     }

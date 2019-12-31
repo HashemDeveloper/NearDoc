@@ -266,4 +266,14 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
     override fun getCachingTime(): Long {
         return pref?.getLong(Constants.SEARCH_DOC_CACHE_TIME, 0L)!!
     }
+
+    override fun saveNavigationType(name: String) {
+        pref?.edit(commit = true) {
+            putString(Constants.NAVIGATION_TYPE, name)
+        }
+    }
+
+    override fun getNavigationType(): String {
+        return pref?.getString(Constants.NAVIGATION_TYPE, "")!!
+    }
 }

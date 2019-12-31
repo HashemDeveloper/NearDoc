@@ -53,4 +53,8 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(HeartBeatViewModel::class)
     internal abstract fun provideHeartBeatViewModel(heartBeatViewModel: HeartBeatViewModel): ViewModel
+    @Binds
+    @IntoMap
+    @ViewModelKey(DoctorDetailsViewModel::class)
+    internal abstract fun provideDoctorDetailsViewModel(doctorDetailsViewModel: DoctorDetailsViewModel): ViewModel
 }

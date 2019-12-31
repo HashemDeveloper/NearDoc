@@ -205,8 +205,12 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
         fetchDataFromLocalDb()
     }
 
-    fun saveNavigationType(waze: NavigationType) {
+    fun saveNavigationType(navType: NavigationType) {
+        this.iSharedPrefService.saveNavigationType(navType.name)
+    }
 
+    fun getNavigationType(): String {
+        return this.iSharedPrefService.getNavigationType()
     }
 
     override val coroutineContext: CoroutineContext
