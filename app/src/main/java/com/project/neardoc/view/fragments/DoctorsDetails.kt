@@ -5,12 +5,15 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import com.project.neardoc.BuildConfig
 import com.project.neardoc.view.fragments.DoctorsDetailsArgs.fromBundle
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
@@ -19,9 +22,13 @@ import com.project.neardoc.model.localstoragemodels.DocAndRelations
 import com.project.neardoc.model.localstoragemodels.DocPractice
 import com.project.neardoc.model.localstoragemodels.DocRatings
 import com.project.neardoc.utils.GlideApp
+import com.project.neardoc.utils.NavigationType
 import com.project.neardoc.view.widgets.NavTypeBottomSheetDialog
 import com.project.neardoc.viewmodel.DoctorDetailsViewModel
+import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_doctors_details.*
+import java.lang.Exception
+import java.net.URLEncoder
 import javax.inject.Inject
 
 class DoctorsDetails : Fragment(), Injectable {
@@ -29,14 +36,15 @@ class DoctorsDetails : Fragment(), Injectable {
     private val doctorsDetails by lazy {
         fromBundle(arguments!!).doctorsDetails
     }
-    private var displayNavigationTypeDialog: NavTypeBottomSheetDialog?= null
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val doctorDetailsViewModel: DoctorDetailsViewModel by viewModels {
         this.viewModelFactory
     }
+    private var displayNavigationTypeDialog: NavTypeBottomSheetDialog?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
     }
 
@@ -146,9 +154,81 @@ class DoctorsDetails : Fragment(), Injectable {
 
         fragment_doctors_details_navigate_bt_id?.let {
             it.setOnClickListener {
-                this.displayNavigationTypeDialog = NavTypeBottomSheetDialog()
-                displayNavigationTypeDialog?.show(activity!!.supportFragmentManager, displayNavigationTypeDialog?.tag)
+                val destination = "$lat,$lon"
+                val navigationType: String = this.doctorDetailsViewModel.getNavigationType()
+                val wazeNavUrl: String = NavigationType.WAZE.uriString + URLEncoder.encode(destination, "UTF-8")
+                val googleNavUrl: String = NavigationType.GOOGLE.uriString + URLEncoder.encode(destination, "UTF-8")
+                if (navigationType.isNotEmpty()) {
+                    if (navigationType == NavigationType.WAZE.name) {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(wazeNavUrl))
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        activity?.startActivity(intent)
+                    } else if (navigationType == NavigationType.GOOGLE.name) {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(googleNavUrl))
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        activity?.startActivity(intent)
+                    }
+                } else {
+                    this.displayNavigationTypeDialog = NavTypeBottomSheetDialog()
+                    displayNavigationTypeDialog?.show(activity!!.supportFragmentManager, displayNavigationTypeDialog?.tag)
+                    displayNavigationTypeDialog?.getOnClickLiveDataObserver()!!.observe(activity!!, navBottomSheetClickObserver(destination))
+                }
             }
         }
+    }
+
+    private fun navBottomSheetClickObserver(destination: String): Observer<NavigationType> {
+        val wazeNavUrl: String = NavigationType.WAZE.uriString + URLEncoder.encode(destination, "UTF-8")
+        val googleNavUrl: String = NavigationType.GOOGLE.uriString + URLEncoder.encode(destination, "UTF-8")
+        return Observer {
+            when (it) {
+                NavigationType.WAZE -> {
+                    try {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(wazeNavUrl))
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        activity?.startActivity(intent)
+                        this.doctorDetailsViewModel.saveNavigationType(NavigationType.WAZE)
+                        this.displayNavigationTypeDialog!!.dismiss()
+
+                    } catch (ex: Exception) {
+                        if (BuildConfig.DEBUG) {
+                            if (ex.localizedMessage != null) {
+                                Log.d(TAG, "Failed to open Waze: ${ex.localizedMessage!!}")
+                            }
+                        }
+                        val installIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"))
+                        installIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        activity?.startActivity(installIntent)
+                    }
+
+                }
+                NavigationType.GOOGLE -> {
+                    try {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(googleNavUrl))
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        activity?.startActivity(intent)
+                        this.doctorDetailsViewModel.saveNavigationType(NavigationType.GOOGLE)
+                        this.displayNavigationTypeDialog!!.dismiss()
+                    } catch (ex: Exception) {
+                        if (BuildConfig.DEBUG) {
+                            if (ex.localizedMessage != null) {
+                                Log.d(TAG, "Failed to open Google: ${ex.localizedMessage!!}")
+                            }
+                        }
+                        val installIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.apps.maps"))
+                        installIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        activity?.startActivity(installIntent)
+                    }
+                }
+                else -> {
+
+                }
+            }
+        }
+    }
+
+    companion object {
+        @JvmStatic
+        private val TAG: String = DoctorsDetails::class.java.canonicalName!!
     }
 }

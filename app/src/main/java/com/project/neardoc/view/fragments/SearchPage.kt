@@ -361,12 +361,11 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                         if (BuildConfig.DEBUG) {
                             if (ex.localizedMessage != null) {
                                 Log.d(TAG, "Failed to open Waze: ${ex.localizedMessage!!}")
-                                val installIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"))
-                                installIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                                activity?.startActivity(installIntent)
-                                Log.d(TAG, "Destination: $destination")
                             }
                         }
+                        val installIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"))
+                        installIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        activity?.startActivity(installIntent)
                     }
 
                 }
@@ -380,13 +379,12 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                     } catch (ex: Exception) {
                         if (BuildConfig.DEBUG) {
                             if (ex.localizedMessage != null) {
-                                val installIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.apps.maps"))
-                                installIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                                activity?.startActivity(installIntent)
                                 Log.d(TAG, "Failed to open Google: ${ex.localizedMessage!!}")
-                                Log.d(TAG, "Destination: $destination")
                             }
                         }
+                        val installIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.apps.maps"))
+                        installIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        activity?.startActivity(installIntent)
                     }
                 }
                 else -> {
