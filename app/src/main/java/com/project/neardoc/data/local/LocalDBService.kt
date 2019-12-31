@@ -31,4 +31,7 @@ class LocalDBService @Inject constructor(context: Context){
     fun getDocPracticeDao(): IDocPracticeDao {
         return this.localDB.getDocPracticeDao()
     }
+    fun getDocSpecialityDao(): IDocSpecialityDao {
+        return this.localDB.getDocSpecialityDao()
+    }
 }

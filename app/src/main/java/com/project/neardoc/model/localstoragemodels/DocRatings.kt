@@ -1,7 +1,10 @@
 package com.project.neardoc.model.localstoragemodels
 
+import android.os.Parcelable
 import androidx.room.*
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 @Entity(tableName = "doc_ratings")
 data class DocRatings(
     @PrimaryKey
@@ -29,4 +32,4 @@ data class DocRatings(
     var imageUrlLarge: String,
     @ColumnInfo(name = "image_url_large_2x")
     var imageUrlLarge2x: String
-)
+) : Parcelable

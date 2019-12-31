@@ -3,6 +3,7 @@ package com.project.neardoc.model.localstoragemodels
 import android.os.Parcelable
 import androidx.room.Embedded
 import androidx.room.Relation
+import com.project.neardoc.model.Specialty
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.RawValue
 
@@ -16,5 +17,7 @@ data class DocAndRelations(
     @Relation(parentColumn = "doc_parent_id", entityColumn = "doc_id")
     val docProfile: @RawValue List<DocProfile>,
     @Relation(parentColumn = "doc_parent_id", entityColumn = "doc_id")
-    val docRating: @RawValue List<DocRatings>
+    val docRating: @RawValue List<DocRatings>,
+    @Relation(parentColumn = "doc_parent_id", entityColumn = "doc_id")
+    val docSpeciality: @RawValue List<Specialty>
 ) : Parcelable

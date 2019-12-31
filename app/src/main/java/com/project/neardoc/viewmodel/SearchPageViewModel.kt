@@ -33,6 +33,8 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     @Inject
     lateinit var iDocPractice: IDocPracticeDao
     @Inject
+    lateinit var iDocSpecialityDao: IDocSpecialityDao
+    @Inject
     lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
     @Inject
     lateinit var context: Context
@@ -47,6 +49,7 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     private var ratingId: String?= null
     private var profileLanguageId: String?= null
     private var docPracticeId: String?= null
+    private var docSpecialityId: String?= null
     private var pagedListConfig: PagedList.Config?= null
 
     fun init() {
@@ -136,6 +139,7 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
                             ratingId = UUID.randomUUID().toString()
                             profileLanguageId = UUID.randomUUID().toString()
                             docPracticeId = UUID.randomUUID().toString()
+                            docSpecialityId = UUID.randomUUID().toString()
                             doc = Doc(docParentId!!, userEmail, doctor.uid)
                             iDocDao.insertDoctors(doc)
 
@@ -154,6 +158,13 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
                                             practice.distance, practice.lat, practice.lon, practice.uid, practice.name, practice.acceptsNewPatients.toString() ?: "", practice.website ?: "",
                                             practice.email ?: "", practice.npi ?: "", practice.slug ?: "", practice.description ?: "", practice.totalDocInPractice, practice.paginationUrlForDoc ?: "")
                                         iDocPractice.insertDocPractice(docPractice)
+                                    }
+                                }
+                                if (it.specialityList.isNotEmpty()) {
+                                    for (speciality: Specialty in it.specialityList) {
+                                        val specialty = Specialty(docSpecialityId!!, doc.docParentId, speciality.uid, speciality.name, speciality.name, speciality.category,
+                                            speciality.actor, speciality.actors)
+                                        iDocSpecialityDao.insertSpeciality(specialty)
                                     }
                                 }
                             }

@@ -7,11 +7,12 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.project.neardoc.data.local.searchdocdaos.*
+import com.project.neardoc.model.Specialty
 import com.project.neardoc.model.localstoragemodels.*
 
 @Database(
     entities = [UserPersonalInfo::class, StepCountDurationList::class, StepCountData::class, DocProfile::class, DocProfileLanguage::class, Doc::class,
-    DocRatings::class, DocPractice::class],
+    DocRatings::class, DocPractice::class, Specialty::class],
     version = 6,
     exportSchema = false
 )
@@ -54,4 +55,5 @@ abstract class NearDocLocalStorage : RoomDatabase() {
     abstract fun getDocProfileDao(): IDocProfileDao
     abstract fun getDocProfileLanguageDao(): IDocProfileLanguageDao
     abstract fun getDocPracticeDao(): IDocPracticeDao
+    abstract fun getDocSpecialityDao(): IDocSpecialityDao
 }

@@ -1,11 +1,14 @@
 package com.project.neardoc.model.localstoragemodels
 
+import android.os.Parcelable
 import androidx.room.*
 import androidx.room.ForeignKey.CASCADE
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.project.neardoc.model.Language
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 @Entity(tableName = "doc_profile")
 data class DocProfile(
     @PrimaryKey
@@ -31,4 +34,4 @@ data class DocProfile(
     var bio: String,
     @ColumnInfo(name = "unique_uid")
     var uniqueUid: String
-)
+) : Parcelable

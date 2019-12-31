@@ -1,16 +1,241 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.fragments.DoctorsDetails">
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/fragment_doctor_details_page_bg_imageView_id"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginBottom="585dp"
+        android:background="@drawable/dr_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/fragment_doctors_profile_image_view_id"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="116dp"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/fragment_doctor_details_page_bg_imageView_id"
+        app:srcCompat="@drawable/ic_user_black_24dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Doctor details"
-        android:layout_centerInParent="true"
-        android:textSize="30sp"
-        />
-</RelativeLayout>
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.04" />
+
+    <me.zhanghai.android.materialratingbar.MaterialRatingBar
+        android:id="@+id/fragment_doctors_details_ratingbarId"
+        android:layout_width="120dp"
+        android:layout_height="15dp"
+        android:isIndicator="true"
+        android:maxHeight="15dp"
+        android:numStars="5"
+        android:rating="4"
+        android:stepSize="0.5"
+        app:layout_constraintEnd_toEndOf="@+id/fragment_doctors_profile_image_view_id"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_doctors_profile_image_view_id"
+        app:mrb_fillBackgroundStars="false"
+        app:mrb_indeterminateTint="#7A5E08"
+        app:mrb_progressBackgroundTint="#B3A31A"
+        app:mrb_progressTint="#92700B"
+        app:mrb_secondaryProgressTint="#A39412" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/fragment_doctors_details_page_name_view_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/doctors_name"
+        app:layout_constraintStart_toEndOf="@+id/fragment_doctors_profile_image_view_id"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_doctor_details_page_bg_imageView_id" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/fragment_doctor_details_speciality_view_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/doc_speciality"
+        app:layout_constraintStart_toStartOf="@+id/fragment_doctors_details_page_name_view_id"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_doctors_details_page_name_view_id" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.96" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:barrierMargin="@dimen/dimen_8dp"
+        app:constraint_referenced_ids="fragment_doctors_details_ratingbarId"
+        tools:layout_editor_absoluteY="785dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fragment_doctors_details_navigate_bt_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:backgroundTint="@color/blue_gray_400"
+        app:elevation="@dimen/dimen_8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/fragment_doctors_details_website_bt_id"
+        app:layout_constraintTop_toTopOf="@id/barrier1"
+        app:rippleColor="@color/blue_gray_100"
+        app:srcCompat="@drawable/ic_navigation_white_24dp"
+        app:tint="@color/white" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fragment_doctors_details_contact_bt_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:backgroundTint="@color/blue_gray_400"
+        app:elevation="@dimen/dimen_8dp"
+        app:fabSize="auto"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/fragment_doctors_details_website_bt_id"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/fragment_doctors_details_insurance_list_bt_id"
+        app:layout_constraintTop_toTopOf="@id/barrier1"
+        app:rippleColor="@color/blue_gray_100"
+        app:srcCompat="@drawable/ic_contacts_white_24dp"
+        app:tint="@color/white" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fragment_doctors_details_website_bt_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:backgroundTint="@color/blue_gray_400"
+        app:elevation="@dimen/dimen_8dp"
+        app:fabSize="auto"
+        app:layout_constraintEnd_toStartOf="@+id/fragment_doctors_details_navigate_bt_id"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/fragment_doctors_details_contact_bt_id"
+        app:layout_constraintTop_toTopOf="@id/barrier1"
+        app:rippleColor="@color/blue_gray_100"
+        app:srcCompat="@drawable/worldwide"
+        app:tint="@color/white" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fragment_doctors_details_insurance_list_bt_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="416dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:backgroundTint="@color/blue_gray_400"
+        app:elevation="@dimen/dimen_8dp"
+        app:layout_constraintEnd_toStartOf="@+id/fragment_doctors_details_contact_bt_id"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/barrier1"
+        app:rippleColor="@color/blue_gray_100"
+        app:srcCompat="@drawable/ic_insurance_list_white_24dp"
+        app:tint="@color/white" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/fragment_doctors_insurance_list_title_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/insurances"
+        app:layout_constraintEnd_toEndOf="@+id/fragment_doctors_details_insurance_list_bt_id"
+        app:layout_constraintStart_toStartOf="@+id/fragment_doctors_details_insurance_list_bt_id"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_doctors_details_insurance_list_bt_id" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/fragment_doctors_details_contact_title_view_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/contact"
+        app:layout_constraintEnd_toEndOf="@+id/fragment_doctors_details_contact_bt_id"
+        app:layout_constraintStart_toStartOf="@+id/fragment_doctors_details_contact_bt_id"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_doctors_details_contact_bt_id" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/fragment_doctors_details_website_title_view_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/website"
+        app:layout_constraintEnd_toEndOf="@+id/fragment_doctors_details_website_bt_id"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/fragment_doctors_details_website_bt_id"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_doctors_details_website_bt_id" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/fragment_doctors_details_navigation_title_view_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/navigate"
+        app:layout_constraintEnd_toEndOf="@+id/fragment_doctors_details_navigate_bt_id"
+        app:layout_constraintStart_toStartOf="@+id/fragment_doctors_details_navigate_bt_id"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_doctors_details_navigate_bt_id" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:barrierMargin="@dimen/padding_16dp"
+        app:constraint_referenced_ids="fragment_doctors_insurance_list_title_id,fragment_doctors_details_contact_title_view_id,fragment_doctors_details_website_title_view_id,fragment_doctors_details_navigation_title_view_id"
+        tools:layout_editor_absoluteY="785dp" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/assistant_extralight"
+        android:text="@string/bio"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@id/barrier2"
+        tools:layout_editor_absoluteY="436dp" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/textView11"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/random_text"
+        android:fontFamily="@font/assistant_extralight"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline3"
+        app:layout_constraintEnd_toStartOf="@id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.80" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
