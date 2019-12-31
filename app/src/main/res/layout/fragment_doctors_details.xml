@@ -55,9 +55,14 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/fragment_doctors_details_page_name_view_id"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/doctors_name"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintHorizontal_bias="0.009"
+        app:layout_constraintLeft_toLeftOf="@id/guideline2"
         app:layout_constraintStart_toEndOf="@+id/fragment_doctors_profile_image_view_id"
         app:layout_constraintTop_toBottomOf="@+id/fragment_doctor_details_page_bg_imageView_id" />
 
@@ -208,7 +213,7 @@
         tools:layout_editor_absoluteY="785dp" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/textView8"
+        android:id="@+id/fragment_doctors_bio_title_view_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/assistant_extralight"
@@ -219,23 +224,45 @@
         tools:layout_editor_absoluteY="436dp" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/textView11"
+        android:id="@+id/fragment_doctors_bio_description_view_id"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:text="@string/random_text"
         android:fontFamily="@font/assistant_extralight"
         android:textSize="16sp"
+        android:inputType="textMultiLine"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toStartOf="@id/guideline2"
         app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/textView8" />
+        app:layout_constraintTop_toBottomOf="@+id/fragment_doctors_bio_title_view_id" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.80" />
+        app:layout_constraintGuide_percent="0.90" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/fragment_doctors_details_affiliation_bt_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/business_affiliation"
+        android:textColor="@color/blue_gray_400"
+        android:visibility="visible"
+        app:backgroundTint="@color/white"
+        app:elevation="@dimen/dimen_8dp"
+        app:icon="@drawable/business_affiliate_network"
+        app:iconTint="@color/blue_gray_400"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_doctors_bio_description_view_id"
+        app:layout_constraintVertical_bias="0.466"
+        app:rippleColor="@color/blue_gray_100" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
