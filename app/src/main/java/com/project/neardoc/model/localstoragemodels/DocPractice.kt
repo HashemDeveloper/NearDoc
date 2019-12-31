@@ -1,9 +1,12 @@
 package com.project.neardoc.model.localstoragemodels
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 @Entity(tableName = "practice")
 data class DocPractice(
     @PrimaryKey
@@ -41,4 +44,4 @@ data class DocPractice(
     var totalDocInPractice: Int,
     @ColumnInfo(name = "doctors_pagination_url")
     var paginationUrlForDoc: String
-)
+) : Parcelable

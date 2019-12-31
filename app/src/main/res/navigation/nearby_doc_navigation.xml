@@ -89,6 +89,9 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/actionDoctorDetails"
+            app:destination="@id/doctorsDetails" />
     </fragment>
     <fragment
         android:id="@+id/accountPage"
@@ -198,5 +201,17 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/doctorsDetails"
+        android:name="com.project.neardoc.view.fragments.DoctorsDetails"
+        android:label="fragment_doctors_details"
+        tools:layout="@layout/fragment_doctors_details" >
+        <action
+            android:id="@+id/actionSearchPage"
+            app:destination="@id/searchPage" />
+        <argument
+            android:name="DoctorsDetails"
+            app:argType="com.project.neardoc.model.localstoragemodels.DocAndRelations" />
     </fragment>
 </navigation>
