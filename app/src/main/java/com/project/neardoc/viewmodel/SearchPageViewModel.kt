@@ -35,6 +35,8 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     @Inject
     lateinit var iDocSpecialityDao: IDocSpecialityDao
     @Inject
+    lateinit var iDocHospitalAffiliation: IDocHospitalAffiliation
+    @Inject
     lateinit var iNearDocRemoteRepo: INearDocRemoteRepo
     @Inject
     lateinit var context: Context
@@ -51,12 +53,13 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     private var docPracticeId: String?= null
     private var docSpecialityId: String?= null
     private var pagedListConfig: PagedList.Config?= null
+    private var hospitaAffiliationId: String?= null
 
     fun init() {
         val limit: String = this.iSharedPrefService.getSearchLimit()
         this.pagedListConfig = PagedList.Config.Builder()
             .setEnablePlaceholders(true)
-            .setInitialLoadSizeHint(INITIAL_PAGE_LOAD_HINT)
+            .setInitialLoadSizeHint(limit.toInt())
             .setPageSize(limit.toInt())
             .build()
     }
@@ -140,6 +143,7 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
                             profileLanguageId = UUID.randomUUID().toString()
                             docPracticeId = UUID.randomUUID().toString()
                             docSpecialityId = UUID.randomUUID().toString()
+                            hospitaAffiliationId = UUID.randomUUID().toString()
                             doc = Doc(docParentId!!, userEmail, doctor.uid)
                             iDocDao.insertDoctors(doc)
 
@@ -154,9 +158,13 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
                                 }
                                 if (it.practiceList.isNotEmpty()) {
                                     for (practice: Practice in it.practiceList) {
+                                        var phoneList: List<Phone> = emptyList()
+                                        if (practice.phoneList.isNotEmpty()) {
+                                            phoneList = practice.phoneList
+                                        }
                                         val docPractice = DocPractice(docPracticeId!!, doc.docParentId, practice.locationSlug ?: "", practice.withinSearchArea.toString() ?: "",
                                             practice.distance, practice.lat, practice.lon, practice.uid, practice.name, practice.acceptsNewPatients.toString() ?: "", practice.website ?: "",
-                                            practice.email ?: "", practice.npi ?: "", practice.slug ?: "", practice.description ?: "", practice.totalDocInPractice, practice.paginationUrlForDoc ?: "")
+                                            practice.email ?: "", practice.npi ?: "", practice.slug ?: "", phoneList,practice.description ?: "", practice.totalDocInPractice, practice.paginationUrlForDoc ?: "")
                                         iDocPractice.insertDocPractice(docPractice)
                                     }
                                 }
@@ -165,6 +173,33 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
                                         val specialty = Specialty(docSpecialityId!!, doc.docParentId, speciality.uid, speciality.name, speciality.name, speciality.category,
                                             speciality.actor, speciality.actors)
                                         iDocSpecialityDao.insertSpeciality(specialty)
+                                    }
+                                }
+                                if (it.hospitalAffiliation != null) {
+                                    it.hospitalAffiliation.let {affiliation ->
+                                        var uid = ""
+                                        var name = ""
+                                        var type = ""
+                                        var address: StreetAddress?= null
+                                        var phone: Phone?= null
+                                        if (affiliation!!.uid.isNotEmpty()) {
+                                            uid = affiliation.uid
+                                        }
+                                        if (affiliation.name.isNotEmpty()) {
+                                            name = affiliation.name
+                                        }
+                                        if (affiliation.type.isNotEmpty()) {
+                                            type = affiliation.type
+                                        }
+                                        if (affiliation.address != null) {
+                                            address = affiliation.address
+                                        }
+                                        if (affiliation.phone != null) {
+                                            phone = affiliation.phone
+                                        }
+                                        val hospitalAffiliation = HospitalAffiliation(hospitaAffiliationId!!, doc.docParentId,
+                                            uid, name, type, address, phone)
+                                        iDocHospitalAffiliation.insertAffiliation(hospitalAffiliation)
                                     }
                                 }
                             }

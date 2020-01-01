@@ -4,18 +4,24 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.project.neardoc.data.local.searchdocdaos.*
+import com.project.neardoc.model.HospitalAffiliation
 import com.project.neardoc.model.Specialty
 import com.project.neardoc.model.localstoragemodels.*
+import com.project.neardoc.utils.typeconverters.PhoneListTypeConverter
+import com.project.neardoc.utils.typeconverters.PhoneTypeConverter
+import com.project.neardoc.utils.typeconverters.StreetAddressTypeConverter
 
 @Database(
     entities = [UserPersonalInfo::class, StepCountDurationList::class, StepCountData::class, DocProfile::class, DocProfileLanguage::class, Doc::class,
-    DocRatings::class, DocPractice::class, Specialty::class],
+    DocRatings::class, DocPractice::class, Specialty::class, HospitalAffiliation::class],
     version = 6,
     exportSchema = false
 )
+@TypeConverters(StreetAddressTypeConverter::class, PhoneListTypeConverter::class, PhoneTypeConverter::class)
 abstract class NearDocLocalStorage : RoomDatabase() {
     companion object {
         val DB_NAME = "ACTIVITY_INFORMATION"
@@ -56,4 +62,5 @@ abstract class NearDocLocalStorage : RoomDatabase() {
     abstract fun getDocProfileLanguageDao(): IDocProfileLanguageDao
     abstract fun getDocPracticeDao(): IDocPracticeDao
     abstract fun getDocSpecialityDao(): IDocSpecialityDao
+    abstract fun getDocHospitalAffiliation(): IDocHospitalAffiliation
 }

@@ -6,17 +6,17 @@ import com.google.gson.reflect.TypeToken
 import com.project.neardoc.model.Phone
 import java.lang.reflect.Type
 
-class PhoneTypeConverter {
+class PhoneListTypeConverter {
     @TypeConverter
-    fun stringToPhone(json: String): Phone {
+    fun stringToPhone(json: String): List<Phone> {
         val gson: Gson = Gson()
-        val type: Type = object : TypeToken<Phone>(){}.type
+        val type: Type = object : TypeToken<List<Phone>>(){}.type
         return gson.fromJson(json, type)
     }
     @TypeConverter
-    fun phoneToString(phone: Phone): String {
+    fun phoneToString(list: List<Phone>): String {
         val gson: Gson = Gson()
-        val type: Type = object : TypeToken<Phone>(){}.type
-        return gson.toJson(phone, type)
+        val type: Type = object : TypeToken<List<Phone>>(){}.type
+        return gson.toJson(list, type)
     }
 }

@@ -27,7 +27,7 @@ data class Doctor(
     var specialityList: List<Specialty>,
     @SerializedName("hospital_affiliations")
     @Expose
-    var hospitalAffiliation: HospitalAffiliation,
+    var hospitalAffiliation: HospitalAffiliation?,
     @SerializedName("group_affiliations")
     @Expose
     var groupAffiliation: GroupAffiliation,

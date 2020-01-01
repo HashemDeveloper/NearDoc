@@ -4,6 +4,10 @@ import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
+import com.project.neardoc.model.Language
+import com.project.neardoc.model.Phone
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -38,6 +42,8 @@ data class DocPractice(
     var npi: String,
     @ColumnInfo(name = "slug")
     var slug: String,
+    @ColumnInfo(name = "phone")
+    var phoneList: List<Phone>,
     @ColumnInfo(name = "description")
     var description: String,
     @ColumnInfo(name = "total_doctors")

@@ -2,8 +2,7 @@ package com.project.neardoc.model.localstoragemodels
 
 import androidx.room.*
 
-@Entity(tableName = "doc_practice_phone_list", foreignKeys = [ForeignKey(entity = DocPractice::class, parentColumns = ["id"], childColumns = ["practice_id"])],
-    indices = [Index("practice_id")])
+@Entity(tableName = "doc_practice_phone_list")
 data class DocPracticePhoneList(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
@@ -15,3 +14,6 @@ data class DocPracticePhoneList(
     @ColumnInfo(name = "type")
     var type: String
 )
+
+//, foreignKeys = [ForeignKey(entity = DocPractice::class, parentColumns = ["id"], childColumns = ["practice_id"])],
+//    indices = [Index("practice_id")]
