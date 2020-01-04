@@ -1,16 +1,10 @@
 package com.project.neardoc.view.widgets
 
-import android.Manifest
 import android.app.Dialog
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -19,8 +13,6 @@ import com.project.neardoc.R
 import com.project.neardoc.utils.BottomSheetType
 import com.project.neardoc.utils.NavigationType
 import com.project.neardoc.view.adapters.ContactListAdapter
-import com.project.neardoc.view.adapters.models.ContactEmail
-import com.project.neardoc.view.adapters.models.ContactPhone
 import kotlinx.android.synthetic.main.bottom_sheet_navigation_type_layout.*
 import kotlinx.android.synthetic.main.bottomsheet_contacts_main_layout.*
 
