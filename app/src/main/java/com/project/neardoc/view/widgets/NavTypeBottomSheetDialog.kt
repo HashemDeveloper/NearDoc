@@ -79,27 +79,5 @@ class NavTypeBottomSheetDialog constructor(private val bottomSheetType: BottomSh
 
     override fun <T> onClick(items: T) {
         this.clickLiveDataObserver.value = items
-//        when (items) {
-//            is ContactPhone -> {
-//                val phone: ContactPhone = items
-//                val phoneNumber: String = phone.phone
-//                val callIntent = Intent(Intent.ACTION_CALL)
-//                callIntent.data = Uri.parse("tel:$phoneNumber")
-////                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-////                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CALL_PHONE},REQUEST_PHONE_CALL);
-////                }
-////                else
-////                {
-////                    startActivity(intent);
-////                }
-//                if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-//
-//                }
-//                context!!.startActivity(callIntent)
-//            }
-//            is ContactEmail -> {
-//
-//            }
-//        }
     }
 }
