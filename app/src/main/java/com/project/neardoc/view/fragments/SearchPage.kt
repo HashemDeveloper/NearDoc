@@ -13,7 +13,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.fragment.findNavController
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,6 +27,7 @@ import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.model.BetterDocApiHealthRes
 import com.project.neardoc.model.localstoragemodels.DocAndRelations
 import com.project.neardoc.model.localstoragemodels.DocPractice
+import com.project.neardoc.utils.BottomSheetType
 import com.project.neardoc.utils.networkconnections.ConnectionSettings
 import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.LocalDbInsertionOption
@@ -339,56 +339,58 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
                 activity?.startActivity(intent)
             }
         } else {
-            this.displayNavigationTypeDialog = NavTypeBottomSheetDialog()
+            this.displayNavigationTypeDialog = NavTypeBottomSheetDialog(BottomSheetType.Navigation, null)
             displayNavigationTypeDialog?.show(activity!!.supportFragmentManager, displayNavigationTypeDialog?.tag)
-            displayNavigationTypeDialog?.getOnClickLiveDataObserver()!!.observe(activity!!, navBottomSheetClickObserver(destination))
+            displayNavigationTypeDialog?.getClickObserver()!!.observe(activity!!, navBottomSheetClickObserver(destination))
         }
     }
-    private fun navBottomSheetClickObserver(destination: String): Observer<NavigationType> {
+    private fun navBottomSheetClickObserver(destination: String): Observer<Any> {
         val wazeNavUrl: String = NavigationType.WAZE.uriString + URLEncoder.encode(destination, "UTF-8")
         val googleNavUrl: String = NavigationType.GOOGLE.uriString + URLEncoder.encode(destination, "UTF-8")
         return Observer {
-            when (it) {
-                NavigationType.WAZE -> {
-                    try {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(wazeNavUrl))
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        activity?.startActivity(intent)
-                        this.searchPageViewModel.saveNavigationType(NavigationType.WAZE)
-                        this.displayNavigationTypeDialog!!.dismiss()
+            if (it is NavigationType) {
+                when (it) {
+                    NavigationType.WAZE -> {
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(wazeNavUrl))
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            activity?.startActivity(intent)
+                            this.searchPageViewModel.saveNavigationType(NavigationType.WAZE)
+                            this.displayNavigationTypeDialog!!.dismiss()
 
-                    } catch (ex: Exception) {
-                        if (BuildConfig.DEBUG) {
-                            if (ex.localizedMessage != null) {
-                                Log.d(TAG, "Failed to open Waze: ${ex.localizedMessage!!}")
+                        } catch (ex: Exception) {
+                            if (BuildConfig.DEBUG) {
+                                if (ex.localizedMessage != null) {
+                                    Log.d(TAG, "Failed to open Waze: ${ex.localizedMessage!!}")
+                                }
                             }
+                            val installIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"))
+                            installIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            activity?.startActivity(installIntent)
                         }
-                        val installIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"))
-                        installIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        activity?.startActivity(installIntent)
-                    }
 
-                }
-                NavigationType.GOOGLE -> {
-                    try {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(googleNavUrl))
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        activity?.startActivity(intent)
-                        this.searchPageViewModel.saveNavigationType(NavigationType.GOOGLE)
-                        this.displayNavigationTypeDialog!!.dismiss()
-                    } catch (ex: Exception) {
-                        if (BuildConfig.DEBUG) {
-                            if (ex.localizedMessage != null) {
-                                Log.d(TAG, "Failed to open Google: ${ex.localizedMessage!!}")
+                    }
+                    NavigationType.GOOGLE -> {
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(googleNavUrl))
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            activity?.startActivity(intent)
+                            this.searchPageViewModel.saveNavigationType(NavigationType.GOOGLE)
+                            this.displayNavigationTypeDialog!!.dismiss()
+                        } catch (ex: Exception) {
+                            if (BuildConfig.DEBUG) {
+                                if (ex.localizedMessage != null) {
+                                    Log.d(TAG, "Failed to open Google: ${ex.localizedMessage!!}")
+                                }
                             }
+                            val installIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.apps.maps"))
+                            installIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            activity?.startActivity(installIntent)
                         }
-                        val installIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.apps.maps"))
-                        installIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        activity?.startActivity(installIntent)
                     }
-                }
-                else -> {
+                    else -> {
 
+                    }
                 }
             }
         }

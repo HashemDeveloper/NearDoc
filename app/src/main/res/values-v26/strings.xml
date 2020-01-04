@@ -129,7 +129,9 @@
     <string name="insurances">Insurances</string>
     <string name="contact">Contact</string>
     <string name="website">Website</string>
-    <string name="navigate">Navigate</string>
     <string name="random_text">Biodfsdfadfasdfasdfasdfadsfasddfasdfasdfasdfadsfadsfafasdfdsafsda</string>
     <string name="business_affiliation">Affiliations</string>
+    <string name="phone_number">000–000–0000</string>
+    <string name="phoneType">Type</string>
+    <string name="navigate">Navigate</string>
 </resources>
