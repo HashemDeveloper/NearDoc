@@ -1,7 +1,10 @@
 package com.project.neardoc.view.fragments
 
 
+import android.Manifest
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
@@ -11,6 +14,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.project.neardoc.BuildConfig
@@ -21,8 +26,12 @@ import com.project.neardoc.di.viewmodel.ViewModelFactory
 import com.project.neardoc.model.localstoragemodels.DocAndRelations
 import com.project.neardoc.model.localstoragemodels.DocPractice
 import com.project.neardoc.model.localstoragemodels.DocRatings
+import com.project.neardoc.utils.BottomSheetType
 import com.project.neardoc.utils.GlideApp
 import com.project.neardoc.utils.NavigationType
+import com.project.neardoc.view.adapters.models.ContactEmail
+import com.project.neardoc.view.adapters.models.ContactHeader
+import com.project.neardoc.view.adapters.models.ContactPhone
 import com.project.neardoc.view.widgets.NavTypeBottomSheetDialog
 import com.project.neardoc.viewmodel.DoctorDetailsViewModel
 import dagger.android.support.AndroidSupportInjection
@@ -100,16 +109,30 @@ class DoctorsDetails : Fragment(), Injectable {
 
     private fun setupClickListeners() {
         val docData: DocAndRelations = this.doctorsDetails
-        var docEmail = ""
+        var docEmail: String
         var lat = 0.0
         var lon = 0.0
         var website = ""
-
+        val contactList: MutableList<Any> = arrayListOf()
+        val header = ContactHeader("Contacts")
+        contactList.add(header)
         for (docPractice: DocPractice in docData.docPractice) {
             docEmail = docPractice.email
             lat = docPractice.lat
             lon = docPractice.lon
             website = docPractice.website
+            if (docPractice.phoneList.isNotEmpty()) {
+                for (phone in docPractice.phoneList) {
+                    if (phone.type == "landline") {
+                        val contactPhone = ContactPhone(phone.phone)
+                        contactList.add(contactPhone)
+                    }
+                }
+            }
+            if (docEmail.isNotEmpty()) {
+                val contactEmail = ContactEmail(docEmail)
+                contactList.add(contactEmail)
+            }
         }
         fragment_doctors_details_insurance_list_bt_id?.let {
             it.setOnClickListener {
@@ -118,7 +141,9 @@ class DoctorsDetails : Fragment(), Injectable {
         }
         fragment_doctors_details_contact_bt_id?.let {
             it.setOnClickListener {
-
+                this.displayNavigationTypeDialog = NavTypeBottomSheetDialog(BottomSheetType.Contacts, contactList)
+                this.displayNavigationTypeDialog?.show(activity!!.supportFragmentManager, this.displayNavigationTypeDialog?.tag)
+                this.displayNavigationTypeDialog?.getClickObserver()!!.observe(activity!!, navBottomSheetContactClickObserver())
             }
         }
         if (website.isEmpty()) {
@@ -169,59 +194,99 @@ class DoctorsDetails : Fragment(), Injectable {
                         activity?.startActivity(intent)
                     }
                 } else {
-                    this.displayNavigationTypeDialog = NavTypeBottomSheetDialog()
+                    this.displayNavigationTypeDialog = NavTypeBottomSheetDialog(BottomSheetType.Navigation, null)
                     displayNavigationTypeDialog?.show(activity!!.supportFragmentManager, displayNavigationTypeDialog?.tag)
-                    displayNavigationTypeDialog?.getOnClickLiveDataObserver()!!.observe(activity!!, navBottomSheetClickObserver(destination))
+                    displayNavigationTypeDialog?.getClickObserver()!!.observe(activity!!, navBottomSheetClickObserver(destination))
+                }
+            }
+        }
+    }
+    private fun navBottomSheetContactClickObserver(): Observer<Any> {
+        return Observer {
+            when (it) {
+                is ContactPhone -> {
+                    val phone: ContactPhone = it
+                    val phoneNumber: String = phone.phone
+                    val callIntent = Intent(Intent.ACTION_CALL)
+                    callIntent.data = Uri.parse("tel:$phoneNumber")
+                    if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(activity!!, arrayOf(Manifest.permission.CALL_PHONE), 103)
+                    } else {
+                        context!!.startActivity(callIntent)
+                    }
+                }
+                is ContactEmail -> {
+                    val contactEmail = "neardocapp@gmail.com"
+                    sendEmail(contactEmail)
                 }
             }
         }
     }
 
-    private fun navBottomSheetClickObserver(destination: String): Observer<NavigationType> {
+    private fun sendEmail(email: String) {
+        val i = Intent(Intent.ACTION_SEND)
+        i.type = "message/rfc822"
+        i.putExtra(
+            Intent.EXTRA_EMAIL,
+            arrayOf(email)
+        )
+        try {
+            startActivity(Intent.createChooser(i, "Send mail..."))
+        } catch (ex: ActivityNotFoundException) {
+            Toast.makeText(
+                context!!,
+                "There are no email clients installed.",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+    private fun navBottomSheetClickObserver(destination: String): Observer<Any> {
         val wazeNavUrl: String = NavigationType.WAZE.uriString + URLEncoder.encode(destination, "UTF-8")
         val googleNavUrl: String = NavigationType.GOOGLE.uriString + URLEncoder.encode(destination, "UTF-8")
         return Observer {
-            when (it) {
-                NavigationType.WAZE -> {
-                    try {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(wazeNavUrl))
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        activity?.startActivity(intent)
-                        this.doctorDetailsViewModel.saveNavigationType(NavigationType.WAZE)
-                        this.displayNavigationTypeDialog!!.dismiss()
+            if (it is NavigationType) {
+                when (it) {
+                    NavigationType.WAZE -> {
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(wazeNavUrl))
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            activity?.startActivity(intent)
+                            this.doctorDetailsViewModel.saveNavigationType(NavigationType.WAZE)
+                            this.displayNavigationTypeDialog!!.dismiss()
 
-                    } catch (ex: Exception) {
-                        if (BuildConfig.DEBUG) {
-                            if (ex.localizedMessage != null) {
-                                Log.d(TAG, "Failed to open Waze: ${ex.localizedMessage!!}")
+                        } catch (ex: Exception) {
+                            if (BuildConfig.DEBUG) {
+                                if (ex.localizedMessage != null) {
+                                    Log.d(TAG, "Failed to open Waze: ${ex.localizedMessage!!}")
+                                }
                             }
+                            val installIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"))
+                            installIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            activity?.startActivity(installIntent)
                         }
-                        val installIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"))
-                        installIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        activity?.startActivity(installIntent)
-                    }
 
-                }
-                NavigationType.GOOGLE -> {
-                    try {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(googleNavUrl))
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        activity?.startActivity(intent)
-                        this.doctorDetailsViewModel.saveNavigationType(NavigationType.GOOGLE)
-                        this.displayNavigationTypeDialog!!.dismiss()
-                    } catch (ex: Exception) {
-                        if (BuildConfig.DEBUG) {
-                            if (ex.localizedMessage != null) {
-                                Log.d(TAG, "Failed to open Google: ${ex.localizedMessage!!}")
+                    }
+                    NavigationType.GOOGLE -> {
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(googleNavUrl))
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            activity?.startActivity(intent)
+                            this.doctorDetailsViewModel.saveNavigationType(NavigationType.GOOGLE)
+                            this.displayNavigationTypeDialog!!.dismiss()
+                        } catch (ex: Exception) {
+                            if (BuildConfig.DEBUG) {
+                                if (ex.localizedMessage != null) {
+                                    Log.d(TAG, "Failed to open Google: ${ex.localizedMessage!!}")
+                                }
                             }
+                            val installIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.apps.maps"))
+                            installIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            activity?.startActivity(installIntent)
                         }
-                        val installIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.apps.maps"))
-                        installIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        activity?.startActivity(installIntent)
                     }
-                }
-                else -> {
+                    else -> {
 
+                    }
                 }
             }
         }

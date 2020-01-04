@@ -162,6 +162,11 @@ class ApplicationModule {
     fun provideDocSpecialityDao(dbService: LocalDBService): IDocSpecialityDao {
         return dbService.getDocSpecialityDao()
     }
+    @Singleton
+    @Provides
+    fun provideHospitalAffiliationDao(dbService: LocalDBService): IDocHospitalAffiliation {
+        return dbService.getHospitalAffiliationDao()
+    }
     // end -- local storage provider
     @Singleton
     @Provides

@@ -2,9 +2,7 @@ package com.project.neardoc.model.localstoragemodels
 
 import androidx.room.*
 
-@Entity(tableName = "practice_visit_address",
-    foreignKeys = [ForeignKey(entity = DocPractice::class, parentColumns = ["id"], childColumns = ["visit_address_practice_id"])],
-    indices = [Index("visit_address_practice_id")])
+@Entity(tableName = "practice_visit_address")
 data class PracticeVisitAddress(
     @PrimaryKey
     @ColumnInfo(name = "visit_address_practice_id")
@@ -26,3 +24,7 @@ data class PracticeVisitAddress(
     @ColumnInfo(name = "zip")
     var zipCode: String
 )
+
+//,
+//    foreignKeys = [ForeignKey(entity = DocPractice::class, parentColumns = ["id"], childColumns = ["visit_address_practice_id"])],
+//    indices = [Index("visit_address_practice_id")] sql file
