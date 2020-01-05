@@ -23,7 +23,12 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/insurance_plan"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/droid_sans"
+                android:textColor="@color/blue_gray_700"
+                />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/insurance_provider_id"
@@ -31,7 +36,12 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/insurance_provider"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/droid_sans"
+                android:textColor="@color/blue_gray_700"
+                />
         </TableRow>
         <View
             android:id="@+id/view2"

@@ -15,6 +15,8 @@
         app:layout_constraintEnd_toStartOf="@+id/fragment_insurance_provider_view_id"
         app:layout_constraintHorizontal_bias="0.5"
         android:textAlignment="center"
+        android:fontFamily="@font/droid_sans"
+        android:textColor="@color/blue_gray_400"
         app:layout_constraintStart_toStartOf="@+id/leftGuideLine" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -27,7 +29,10 @@
         app:layout_constraintEnd_toStartOf="@+id/rightGuideLine"
         app:layout_constraintHorizontal_bias="0.5"
         android:textAlignment="center"
-        app:layout_constraintStart_toEndOf="@+id/fragment_insurance_plan_view_id" />
+        app:layout_constraintStart_toEndOf="@+id/fragment_insurance_plan_view_id"
+        android:fontFamily="@font/droid_sans"
+        android:textColor="@color/blue_gray_400"
+        />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/leftGuideLine"
