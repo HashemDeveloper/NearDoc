@@ -10,4 +10,6 @@
     <string name="phone_number">000-000-0000</string>
     <string name="phoneType">Type</string>
     <string name="navigate">Navigate</string>
+    <string name="insurance_plan">Insurance Plan</string>
+    <string name="insurance_provider">Insurance Provider</string>
 </resources>
