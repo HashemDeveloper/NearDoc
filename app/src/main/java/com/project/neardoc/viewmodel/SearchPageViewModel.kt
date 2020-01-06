@@ -53,7 +53,8 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     private var docPracticeId: String?= null
     private var docSpecialityId: String?= null
     private var pagedListConfig: PagedList.Config?= null
-    private var hospitaAffiliationId: String?= null
+    private var hospitalAffiliation: String?= null
+    private var insuranceId: String?= null
 
     fun init() {
         val limit: String = this.iSharedPrefService.getSearchLimit()
@@ -104,7 +105,6 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
             }
         }
     }
-
    fun initNearByDocList(
         apiKey: String,
         latitude: String,
@@ -136,6 +136,8 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
                         iDocProfileDao.clearDocProfile()
                         iDocRatingDao.clearDocRatings()
                         iDocProfileLanguageDao.clearLanguage()
+                        iDocSpecialityDao.clearSpeciality()
+                        iDocHospitalAffiliation.clearHospitalAffiliation()
                         for (doctor: Doctor in body.searchByDiseaseData) {
                             docParentId = UUID.randomUUID().toString()
                             docProfileId = UUID.randomUUID().toString()
@@ -143,7 +145,8 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
                             profileLanguageId = UUID.randomUUID().toString()
                             docPracticeId = UUID.randomUUID().toString()
                             docSpecialityId = UUID.randomUUID().toString()
-                            hospitaAffiliationId = UUID.randomUUID().toString()
+                            hospitalAffiliation = UUID.randomUUID().toString()
+                            insuranceId = UUID.randomUUID().toString()
                             doc = Doc(docParentId!!, userEmail, doctor.uid)
                             iDocDao.insertDoctors(doc)
 
@@ -164,7 +167,7 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
                                         }
                                         val docPractice = DocPractice(docPracticeId!!, doc.docParentId, practice.locationSlug ?: "", practice.withinSearchArea.toString() ?: "",
                                             practice.distance, practice.lat, practice.lon, practice.uid, practice.name, practice.acceptsNewPatients.toString() ?: "", practice.website ?: "",
-                                            practice.email ?: "", practice.npi ?: "", practice.slug ?: "", phoneList,practice.description ?: "", practice.totalDocInPractice, practice.paginationUrlForDoc ?: "")
+                                            practice.email ?: "", practice.npi ?: "", practice.slug ?: "", phoneList,practice.description ?: "", practice.totalDocInPractice, practice.paginationUrlForDoc ?: "", it.insuranceList)
                                         iDocPractice.insertDocPractice(docPractice)
                                     }
                                 }
@@ -175,6 +178,7 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
                                         iDocSpecialityDao.insertSpeciality(specialty)
                                     }
                                 }
+
                                 if (it.hospitalAffiliation != null) {
                                     it.hospitalAffiliation.let {affiliation ->
                                         var uid = ""
@@ -197,7 +201,7 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
                                         if (affiliation.phone != null) {
                                             phone = affiliation.phone
                                         }
-                                        val hospitalAffiliation = HospitalAffiliation(hospitaAffiliationId!!, doc.docParentId,
+                                        val hospitalAffiliation = HospitalAffiliation(hospitalAffiliation!!, doc.docParentId,
                                             uid, name, type, address, phone)
                                         iDocHospitalAffiliation.insertAffiliation(hospitalAffiliation)
                                     }
@@ -226,7 +230,7 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
                 }
             } catch (ex: Exception) {
                 if (ex.localizedMessage != null) {
-                    emit(ResultHandler.onError(ex.localizedMessage!!, ex.localizedMessage!!))
+                    emit(ResultHandler.onError(null, ex.localizedMessage!!))
                 }
             }
         }

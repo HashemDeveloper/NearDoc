@@ -18,20 +18,23 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import com.project.neardoc.BuildConfig
 import com.project.neardoc.view.fragments.DoctorsDetailsArgs.fromBundle
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
+import com.project.neardoc.model.Insurance
+import com.project.neardoc.model.InsurancePlan
+import com.project.neardoc.model.InsuranceProvider
 import com.project.neardoc.model.localstoragemodels.DocAndRelations
 import com.project.neardoc.model.localstoragemodels.DocPractice
 import com.project.neardoc.model.localstoragemodels.DocRatings
 import com.project.neardoc.utils.BottomSheetType
 import com.project.neardoc.utils.GlideApp
 import com.project.neardoc.utils.NavigationType
-import com.project.neardoc.view.adapters.models.ContactEmail
-import com.project.neardoc.view.adapters.models.ContactHeader
-import com.project.neardoc.view.adapters.models.ContactPhone
+import com.project.neardoc.view.adapters.models.*
 import com.project.neardoc.view.widgets.NavTypeBottomSheetDialog
 import com.project.neardoc.viewmodel.DoctorDetailsViewModel
 import dagger.android.support.AndroidSupportInjection
@@ -51,6 +54,8 @@ class DoctorsDetails : Fragment(), Injectable {
         this.viewModelFactory
     }
     private var displayNavigationTypeDialog: NavTypeBottomSheetDialog?= null
+    private val insuranceInfoList: MutableList<InsurancePlanAndProvider> = arrayListOf()
+    private var insurancePlanAndProviderList: InsurancePlanAndProviderList? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
@@ -133,10 +138,31 @@ class DoctorsDetails : Fragment(), Injectable {
                 val contactEmail = ContactEmail(docEmail)
                 contactList.add(contactEmail)
             }
+            docPractice.insuranceList?.let {
+                if (it.isNotEmpty()) {
+                    this.insuranceInfoList.clear()
+                    for (insurances in it) {
+                        val insurance: Insurance = insurances
+                        val insurancePlan: InsurancePlan = insurance.insurancePlan
+                        val insuranceProvider: InsuranceProvider = insurance.insuranceProvider
+                        val insurancePlanAndProvider = InsurancePlanAndProvider(insurancePlan, insuranceProvider)
+                        this.insuranceInfoList.add(insurancePlanAndProvider)
+                        this.insurancePlanAndProviderList = InsurancePlanAndProviderList(this.insuranceInfoList)
+                    }
+                }
+            }
         }
-        fragment_doctors_details_insurance_list_bt_id?.let {
+        fragment_doctors_details_insurance_list_bt_id?.let { it ->
             it.setOnClickListener {
-
+                if (this.insurancePlanAndProviderList != null) {
+                    val navigateToInsuranceList: DoctorsDetailsDirections.ActionInsuranceList = DoctorsDetailsDirections.actionInsuranceList(this.insurancePlanAndProviderList)
+                    val navController: NavController = findNavController()
+                    navController.navigate(navigateToInsuranceList)
+                } else {
+                    val navigateToInsuranceList: DoctorsDetailsDirections.ActionInsuranceList = DoctorsDetailsDirections.actionInsuranceList(null)
+                    val navController: NavController = findNavController()
+                    navController.navigate(navigateToInsuranceList)
+                }
             }
         }
         fragment_doctors_details_contact_bt_id?.let {

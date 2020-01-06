@@ -39,4 +39,6 @@ abstract class FragmentBuilderModule {
     abstract fun contributeHeartBeat(): HeartBeat
     @ContributesAndroidInjector
     abstract fun contributeDoctorsDetails(): DoctorsDetails
+    @ContributesAndroidInjector
+    abstract fun contributeInsuranceList(): InsuranceList
 }

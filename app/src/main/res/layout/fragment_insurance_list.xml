@@ -85,4 +85,17 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.96" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/fragment_insurance_list_error_view_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/data_is_not_available"
+        android:textSize="18sp"
+        app:fontFamily="@font/chonburi"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/insurance_list_view_id"
+        app:layout_constraintEnd_toStartOf="@+id/rightGuidline"
+        app:layout_constraintStart_toStartOf="@+id/leftGuidLine"
+        app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
 </androidx.constraintlayout.widget.ConstraintLayout>
