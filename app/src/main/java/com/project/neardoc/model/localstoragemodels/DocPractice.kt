@@ -4,9 +4,7 @@ import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
-import com.project.neardoc.model.Language
+import com.project.neardoc.model.Insurance
 import com.project.neardoc.model.Phone
 import kotlinx.android.parcel.Parcelize
 
@@ -49,5 +47,7 @@ data class DocPractice(
     @ColumnInfo(name = "total_doctors")
     var totalDocInPractice: Int,
     @ColumnInfo(name = "doctors_pagination_url")
-    var paginationUrlForDoc: String
+    var paginationUrlForDoc: String,
+    @ColumnInfo(name = "insurance_list")
+    var insuranceList: List<Insurance>?
 ) : Parcelable

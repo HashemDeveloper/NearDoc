@@ -213,5 +213,22 @@
         <argument
             android:name="DoctorsDetails"
             app:argType="com.project.neardoc.model.localstoragemodels.DocAndRelations" />
+        <action
+            android:id="@+id/actionInsuranceList"
+            app:destination="@id/insuranceList" />
+    </fragment>
+    <fragment
+        android:id="@+id/insuranceList"
+        android:name="com.project.neardoc.view.fragments.InsuranceList"
+        android:label="fragment_insurance_list"
+        tools:layout="@layout/fragment_insurance_list" >
+        <action
+            android:id="@+id/actionDoctorDetails"
+            app:destination="@id/doctorsDetails" />
+        <argument
+            android:name="InsuranceInfo"
+            app:argType="com.project.neardoc.view.adapters.models.InsurancePlanAndProviderList"
+            app:nullable="true"
+            />
     </fragment>
 </navigation>

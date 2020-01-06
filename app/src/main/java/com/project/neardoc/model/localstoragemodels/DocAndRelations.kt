@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.room.Embedded
 import androidx.room.Relation
 import com.project.neardoc.model.HospitalAffiliation
+import com.project.neardoc.model.Insurance
 import com.project.neardoc.model.Specialty
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.RawValue
@@ -22,5 +23,7 @@ data class DocAndRelations(
     @Relation(parentColumn = "doc_parent_id", entityColumn = "doc_id")
     val docSpeciality: @RawValue List<Specialty>,
     @Relation(parentColumn = "doc_parent_id", entityColumn = "doc_id")
-    val affiliation: @RawValue HospitalAffiliation?
+    val affiliation: @RawValue HospitalAffiliation?,
+    @Relation(parentColumn = "doc_parent_id", entityColumn = "doc_id")
+    val insuranceList: @RawValue List<Insurance>?
 ) : Parcelable

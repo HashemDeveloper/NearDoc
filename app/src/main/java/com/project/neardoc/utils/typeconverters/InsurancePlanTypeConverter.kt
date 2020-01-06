@@ -8,15 +8,15 @@ import java.lang.reflect.Type
 
 class InsurancePlanTypeConverter {
     @TypeConverter
-    fun stringToInsurancePlan(json: String): List<InsurancePlan> {
+    fun stringToInsurancePlan(json: String): InsurancePlan{
         val gson: Gson = Gson()
-        val type: Type = object : TypeToken<List<InsurancePlan>>(){}.type
+        val type: Type = object : TypeToken<InsurancePlan>(){}.type
         return gson.fromJson(json, type)
     }
     @TypeConverter
-    fun insurancePlanToString(insurancePlanList: List<InsurancePlan>): String {
+    fun insurancePlanToString(insurancePlan: InsurancePlan): String {
         val gson: Gson = Gson()
-        val type: Type = object : TypeToken<List<InsurancePlan>>(){}.type
-        return gson.toJson(insurancePlanList, type)
+        val type: Type = object : TypeToken<InsurancePlan>(){}.type
+        return gson.toJson(insurancePlan, type)
     }
 }
