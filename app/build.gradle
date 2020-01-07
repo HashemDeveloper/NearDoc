@@ -25,12 +25,12 @@ android {
         resValue "string", "google_sign_in_api_key", (project.findProperty("GOOGLE_SIGN_IN_API_KEY") ?: "")
         resValue "string", "better_doc_api_key", (project.findProperty("BETER_DOC_API_KEY") ?: "")
         vectorDrawables.useSupportLibrary = true
+//        multiDexKeepFile file('multidex-config.txt')
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            multiDexKeepFile file('multidex-config.txt')
         }
     }
     dexOptions {

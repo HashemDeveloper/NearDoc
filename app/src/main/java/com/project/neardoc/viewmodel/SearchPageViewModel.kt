@@ -66,7 +66,7 @@ class SearchPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     }
 
     fun getDoctorsData() {
-        val expireTime: Long = TimeUnit.MINUTES.toMillis(1)
+        val expireTime: Long = TimeUnit.HOURS.toMillis(10)
         val createdTime: Long = this.iSharedPrefService.getCachingTime()
         val currentTime: Long = System.currentTimeMillis()
         if (createdTime < (currentTime - expireTime)) {

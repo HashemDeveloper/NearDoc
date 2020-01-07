@@ -10,4 +10,6 @@ enum class PageType {
     TERMS_AND_CONDITION,
     CHANGE_EMAIL,
     CHANGE_PASSWORD,
+    FIND_DOCTORS,
+    DOCTORS_DETAILS
 }

@@ -229,6 +229,7 @@ class AccountPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
         this.iSharedPrefService.removeItems(Constants.SHARED_PREF_USER_LOGIN_PROVIDER)
         this.iSharedPrefService.removeItems(Constants.SHARED_PREF_USER_IMAGE)
         this.iSharedPrefService.removeItems(Constants.NOTIFICATION_ENABLED)
+        this.iSharedPrefService.removeItems(Constants.NAVIGATION_TYPE)
     }
 
     fun getLastStepCountValue(): Int {
@@ -298,6 +299,10 @@ class AccountPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
 
     fun checkIfAnyServiceRunning(): Boolean {
         return this.iSharedPrefService.getStepCountServiceType() == Constants.SERVICE_FOREGROUND || this.iSharedPrefService.getStepCountServiceType() == Constants.SERVICE_BACKGROUND
+    }
+
+    fun checkIfHeartRateUnlocked(): Boolean {
+        return this.iSharedPrefService.getBreathingSession() >= 50
     }
 
     override val coroutineContext: CoroutineContext

@@ -296,6 +296,12 @@ class NearDocMainActivity : AppCompatActivity(), HasSupportFragmentInjector, Sha
             PageType.CHANGE_PASSWORD -> {
                 setupSettingFragment(getString(R.string.change_password))
             }
+            PageType.FIND_DOCTORS -> {
+                setupSettingFragment(getString(R.string.search_doctors))
+            }
+            PageType.DOCTORS_DETAILS -> {
+                setupSettingFragment(getString(R.string.doctor_details))
+            }
             PageType.MAIN_PAGE -> {
                 mainPageBottomBar()
             }
