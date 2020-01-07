@@ -301,6 +301,10 @@ class AccountPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
         return this.iSharedPrefService.getStepCountServiceType() == Constants.SERVICE_FOREGROUND || this.iSharedPrefService.getStepCountServiceType() == Constants.SERVICE_BACKGROUND
     }
 
+    fun checkIfHeartRateUnlocked(): Boolean {
+        return this.iSharedPrefService.getBreathingSession() >= 50
+    }
+
     override val coroutineContext: CoroutineContext
         get() = this.job + Dispatchers.Main
 }

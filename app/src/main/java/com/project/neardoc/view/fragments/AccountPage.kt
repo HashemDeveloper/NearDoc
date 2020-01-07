@@ -368,12 +368,17 @@ class AccountPage : Fragment(), Injectable, FilterMenu.OnMenuChangeListener {
                 signOut()
             }
             view.id == R.id.account_heart_rate_bt -> {
-                if (ActivityCompat.checkSelfPermission(this.context!!, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(arrayOf(Manifest.permission.CAMERA), CAMERA_REQUEST_CODE)
-                } else {
-                    view.let {
-                        Navigation.findNavController(it).navigate(R.id.heartBeat)
+                val isHeartRateUnlocked: Boolean = this.accountPageViewModel.checkIfHeartRateUnlocked()
+                if (isHeartRateUnlocked) {
+                    if (ActivityCompat.checkSelfPermission(this.context!!, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(arrayOf(Manifest.permission.CAMERA), CAMERA_REQUEST_CODE)
+                    } else {
+                        view.let {
+                            Navigation.findNavController(it).navigate(R.id.heartBeat)
+                        }
                     }
+                } else {
+                    Toast.makeText(context!!, "Please complete 50 sets to unlock this feature.", Toast.LENGTH_SHORT).show()
                 }
             }
             view.id == R.id.account_edit_personal_info_bt -> {
