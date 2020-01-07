@@ -4,11 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.settings.PrivacyPolicy">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <WebView
+        android:id="@+id/fragment_privacy_policy_webview_id"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-
+        />
+    <include android:id="@+id/fragment_privacy_policy_loading_bar_id"
+        layout="@layout/global_progress_bar_layout"
+        android:visibility="gone"
+        />
 </FrameLayout>
