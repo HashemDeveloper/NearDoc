@@ -65,9 +65,7 @@ class AccountPageViewModel @Inject constructor(): ViewModel(), CoroutineScope {
     fun init() {
         val email: String = this.iSharedPrefService.getUserEmail()
         val breathCount: Int = this.iSharedPrefService.getBreath()
-        if (breathCount == BREATH_COUNT_MAX) {
-            //TODO: Unlock the heart rate and save the state into server
-        }
+//
         var userPersonalInfo: UserPersonalInfo?= null
         launch {
             userPersonalInfo = iUserInfoDao.getUserByEmail(email)
