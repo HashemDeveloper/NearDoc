@@ -173,28 +173,11 @@ class DoctorsDetails : Fragment(), Injectable {
             }
         }
         if (website.isEmpty()) {
-            fragment_doctors_details_affiliation_bt_id?.let {
-                it.visibility = View.GONE
-            }
-            fragment_doctors_details_website_title_view_id?.let {
-                it.text = getString(R.string.business_affiliation)
-            }
-            fragment_doctors_details_website_bt_id?.let {
-                it.setImageResource(R.drawable.business_affiliate_network)
-                it.setOnClickListener {
-                    Toast.makeText(this.context!!, "Business Affiliate", Toast.LENGTH_SHORT).show()
-                }
-            }
+            fragment_doctors_details_website_bt_id?.visibility = View.GONE
+            fragment_doctors_details_website_title_view_id?.visibility = View.GONE
         } else {
-            fragment_doctors_details_affiliation_bt_id?.let {
-                it.visibility = View.VISIBLE
-                it.setOnClickListener {
-                    Toast.makeText(this.context!!, "Business Affiliate", Toast.LENGTH_SHORT).show()
-                }
-            }
-            fragment_doctors_details_website_title_view_id?.let {
-                it.text = getString(R.string.website)
-            }
+            fragment_doctors_details_website_bt_id?.visibility = View.VISIBLE
+            fragment_doctors_details_website_title_view_id?.visibility = View.VISIBLE
             fragment_doctors_details_website_bt_id?.let {
                 it.setOnClickListener {
                     val browseIntent = Intent(Intent.ACTION_VIEW, Uri.parse(website))
