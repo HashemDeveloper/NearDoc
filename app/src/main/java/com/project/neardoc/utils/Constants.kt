@@ -6,6 +6,7 @@ import java.util.regex.Pattern
 
 class Constants {
     companion object {
+        const val TERMS_AND_CONDITION_URL: String = "https://www.websitepolicies.com/policies/view/CEo1EHsM"
         const val NAVIGATION_TYPE: String = "NAVIGATION_TYPE"
         const val SEARCH_DOC_CACHE_TIME: String = "SEARCH_DOC_CACHE_TIME"
         const val SIGN_OUT: String = "SIGN_OUT"
