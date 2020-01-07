@@ -18,6 +18,8 @@ import kotlin.coroutines.CoroutineContext
 class ScheduleNotificationManager @Inject constructor(): IScheduleNotificationManager, CoroutineScope {
     companion object {
        @JvmStatic private val TAG: String = ScheduleNotificationManager::class.java.canonicalName!!
+        private const val MIN_PERIODIC_INTERVAL: Long = 18
+        private const val MIN_PERIODIC_FLEX_INTERVAL: Long = 9
     }
     @Inject
     lateinit var context: Context
@@ -37,8 +39,8 @@ class ScheduleNotificationManager @Inject constructor(): IScheduleNotificationMa
         withContext(Dispatchers.IO) {
             launch {
                 notificationRequest = PeriodicWorkRequest.Builder(
-                    StepCountNotificationWorker::class.java, PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS
-                    , TimeUnit.MILLISECONDS, PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS, TimeUnit.MILLISECONDS)
+                    StepCountNotificationWorker::class.java, MIN_PERIODIC_INTERVAL
+                    , TimeUnit.HOURS, MIN_PERIODIC_FLEX_INTERVAL, TimeUnit.HOURS)
                     .build()
                 workManager = WorkManager.getInstance(context)
                 workManager!!.enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.REPLACE, notificationRequest!!)
