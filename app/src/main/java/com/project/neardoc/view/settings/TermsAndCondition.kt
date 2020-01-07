@@ -27,8 +27,6 @@ import org.greenrobot.eventbus.EventBus
 
 @SuppressLint("SetJavaScriptEnabled")
 class TermsAndCondition : Fragment(), Injectable {
-    private var isLoadingFinished: Boolean = false
-    private var redirect: Boolean = true
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
