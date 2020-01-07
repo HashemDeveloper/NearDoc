@@ -22,6 +22,7 @@ import com.project.neardoc.BuildConfig
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
+import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.events.LocationUpdateEvent
 import com.project.neardoc.events.NetworkStateEvent
 import com.project.neardoc.model.BetterDocApiHealthRes
@@ -33,6 +34,7 @@ import com.project.neardoc.utils.Constants
 import com.project.neardoc.utils.LocalDbInsertionOption
 import com.project.neardoc.utils.NavigationType
 import com.project.neardoc.utils.livedata.ResultHandler
+import com.project.neardoc.utils.widgets.PageType
 import com.project.neardoc.view.adapters.ListOfAllDocAdapter
 import com.project.neardoc.view.widgets.GlobalLoadingBar
 import com.project.neardoc.view.widgets.NavTypeBottomSheetDialog
@@ -69,6 +71,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
+        EventBus.getDefault().postSticky(LandInSettingPageEvent(false, PageType.FIND_DOCTORS))
     }
 
     override fun onCreateView(
@@ -261,6 +264,7 @@ class SearchPage : Fragment(), Injectable, CoroutineScope, MultiSearchView.Multi
     override fun onDestroy() {
         super.onDestroy()
         this.searchPageViewModel.checkBetterDocApiHealth?.removeObserver(checkBetterDocApiHealthObserver())
+        EventBus.getDefault().postSticky(LandInSettingPageEvent(false, PageType.MAIN_PAGE))
     }
 
     override val coroutineContext: CoroutineContext

@@ -25,6 +25,7 @@ import com.project.neardoc.view.fragments.DoctorsDetailsArgs.fromBundle
 import com.project.neardoc.R
 import com.project.neardoc.di.Injectable
 import com.project.neardoc.di.viewmodel.ViewModelFactory
+import com.project.neardoc.events.LandInSettingPageEvent
 import com.project.neardoc.model.Insurance
 import com.project.neardoc.model.InsurancePlan
 import com.project.neardoc.model.InsuranceProvider
@@ -34,11 +35,13 @@ import com.project.neardoc.model.localstoragemodels.DocRatings
 import com.project.neardoc.utils.BottomSheetType
 import com.project.neardoc.utils.GlideApp
 import com.project.neardoc.utils.NavigationType
+import com.project.neardoc.utils.widgets.PageType
 import com.project.neardoc.view.adapters.models.*
 import com.project.neardoc.view.widgets.NavTypeBottomSheetDialog
 import com.project.neardoc.viewmodel.DoctorDetailsViewModel
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_doctors_details.*
+import org.greenrobot.eventbus.EventBus
 import java.lang.Exception
 import java.net.URLEncoder
 import javax.inject.Inject
@@ -60,6 +63,7 @@ class DoctorsDetails : Fragment(), Injectable {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
+        EventBus.getDefault().postSticky(LandInSettingPageEvent(false, PageType.DOCTORS_DETAILS))
     }
 
     override fun onCreateView(
@@ -299,6 +303,11 @@ class DoctorsDetails : Fragment(), Injectable {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().postSticky(LandInSettingPageEvent(false, PageType.FIND_DOCTORS))
     }
 
     companion object {
