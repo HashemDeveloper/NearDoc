@@ -39,6 +39,9 @@ class SharedPrefService @Inject constructor(): ISharedPrefService {
 
     override fun unregisterSharedPrefListener(onSharedPreferenceChangeListener: SharedPreferences.OnSharedPreferenceChangeListener) {
         listener = onSharedPreferenceChangeListener
+        if (listener != null) {
+            listener = null
+        }
     }
     override fun storeIdToken(encryptedIdToken: ByteArray) {
         pref?.edit(commit = true) {

@@ -10,13 +10,14 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
-    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" android:maxSdkVersion="29"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.CALL_PHONE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-feature android:name="android.hardware.sensor.stepcounter" />
-    <uses-feature android:name="android.hardware.sensor.stepdetector" />
-    <uses-feature android:name="android.hardware.camera2"/>
+    <uses-feature android:name="android.hardware.sensor.stepcounter" android:required="false"/>
+    <uses-feature android:name="android.hardware.sensor.stepdetector" android:required="false"/>
+    <uses-feature android:name="android.hardware.camera2"
+        android:required="false"
+        />
 
     <application
         android:name=".NearDocApp"

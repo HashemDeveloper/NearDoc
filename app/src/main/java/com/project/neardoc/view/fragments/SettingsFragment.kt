@@ -1,11 +1,13 @@
 package com.project.neardoc.view.fragments
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
@@ -26,6 +28,7 @@ import com.ramotion.fluidslider.FluidSlider
 import dagger.android.support.AndroidSupportInjection
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
+
 
 class SettingsFragment: PreferenceFragmentCompat(), Injectable {
     @Inject
@@ -111,7 +114,9 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
                         val contactUsFragment = findNavController()
                         contactUsFragment.navigate(R.id.contactUs)
                     }
-                    it.key == "prefRateKey" -> Toast.makeText(context, "RateUs", Toast.LENGTH_SHORT).show()
+                    it.key == "prefRateKey" ->  {
+                        rateApp()
+                    }
 
                     it.key == "prefTermsAndConditionKey" -> {
                         val termsAndConditionPage = findNavController()
@@ -124,6 +129,25 @@ class SettingsFragment: PreferenceFragmentCompat(), Injectable {
                 }
                 true
             }
+        }
+    }
+    private fun rateApp() {
+        val uri: Uri = Uri.parse("market://details?id=" + context!!.packageName)
+        val goToMarket = Intent(Intent.ACTION_VIEW, uri)
+        goToMarket.addFlags(
+            Intent.FLAG_ACTIVITY_NO_HISTORY or
+                    Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
+                    Intent.FLAG_ACTIVITY_MULTIPLE_TASK
+        )
+        try {
+            startActivity(goToMarket)
+        } catch (e: ActivityNotFoundException) {
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("http://play.google.com/store/apps/details?id=" + context!!.packageName)
+                )
+            )
         }
     }
     private fun initSeekBar(seekBarType: SeekBarType) {
