@@ -16,7 +16,7 @@ android {
         applicationId "com.project.neardoc"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 4
+        versionCode 6
         multiDexEnabled true
         versionName "1.01"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
